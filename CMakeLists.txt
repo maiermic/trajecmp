@@ -21,7 +21,7 @@ set(SOURCE_FILES
 set(TEST_FILES
         test/TestBase.h test/testsuite.cc
         test/DistanceTest.cpp test/DistanceTest.h
-        )
+        test/BoostGeometryTest.cpp test/BoostGeometryTest.h)
 
 add_executable(testsuite ${TEST_FILES} ${SOURCE_FILES})
 target_include_directories(testsuite PUBLIC .)
