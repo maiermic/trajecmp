@@ -2,6 +2,8 @@
 #define CPPPC__TEST__TEST_BASE_H_
 
 #include <gtest/gtest.h>
+#include <boost/geometry/algorithms/equals.hpp>
+#include <boost/geometry/io/wkt/wkt.hpp>
 
 
 namespace testing {
@@ -42,5 +44,18 @@ std::string range_to_string(Iter first, Iter last) {
             std::ostream_iterator<int>(oss, " "));
   return oss.str();
 }
+
+template<typename GeometryLeft, typename GeometryRight>
+::testing::AssertionResult matchGeoEq(const GeometryLeft &left,
+                                      const GeometryRight &right) {
+  return boost::geometry::equals(left, right)
+    ? ::testing::AssertionSuccess()
+    : ::testing::AssertionFailure()
+        << "\n    Geos not equal:\n      "
+        << boost::geometry::wkt(left)
+        << "\n        ==\n      "
+        << boost::geometry::wkt(right)
+        << "\n  ";
+};
 
 #endif // CPPPC__TEST__TEST_BASE_H_

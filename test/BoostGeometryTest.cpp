@@ -18,3 +18,20 @@ TEST_F(BoostGeometryTest, BoostGeometryExample) {
     EXPECT_EQ(1.0, x);
     EXPECT_EQ(2.3, y);
 }
+
+TEST_F(BoostGeometryTest, linestringExample) {
+    LOG_MESSAGE("BoostGeometryTest.linestringExample");
+
+    typedef bg::model::point<double, 2, bg::cs::cartesian> point_t;
+    typedef bg::model::linestring<point_t> linestring_t;
+
+    linestring_t ls1;
+    bg::append(ls1, point_t(0.0, 0.0));
+    bg::append(ls1, point_t(1.0, 0.0));
+    bg::append(ls1, point_t(1.0, 2.0));
+
+    linestring_t ls2{{0.0, 0.0}, {1.0, 0.0}, {1.0, 2.0}};
+//    linestring_t ls2;
+
+    EXPECT_TRUE(matchGeoEq(ls1, ls2));
+}
