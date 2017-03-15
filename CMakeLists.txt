@@ -22,7 +22,14 @@ set(TEST_FILES
         test/TestBase.h test/testsuite.cc
         test/DistanceTest.cpp test/DistanceTest.h
         test/BoostGeometryTest.cpp test/BoostGeometryTest.h)
+set(CATCH_TEST_FILES
+        test/runner.cpp
+        test/CatchTest.cpp)
 
 add_executable(testsuite ${TEST_FILES} ${SOURCE_FILES})
 target_include_directories(testsuite PUBLIC .)
 target_link_libraries(testsuite ${CONAN_LIBS} Threads::Threads)
+
+add_executable(catch ${CATCH_TEST_FILES} ${SOURCE_FILES})
+target_include_directories(catch PUBLIC .)
+target_link_libraries(catch ${CONAN_LIBS} Threads::Threads)
