@@ -17,10 +17,13 @@ find_package(Threads REQUIRED)
 
 set(SOURCE_FILES
         src/Distance.cpp src/Distance.h
-        )
+        src/generate_svg.cpp)
 set(CATCH_TEST_FILES
         test/runner.cpp
         test/CatchTest.cpp)
+
+add_executable(generate_svg src/generate_svg.cpp)
+target_link_libraries(generate_svg ${CONAN_LIBS})
 
 add_executable(catch ${CATCH_TEST_FILES} ${SOURCE_FILES})
 target_include_directories(catch PUBLIC .)
