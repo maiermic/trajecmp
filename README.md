@@ -73,5 +73,5 @@ environment variables and run *Tools > CMake > Reload CMake Project*.
 Go to build directory and run:
 
 ```sh
-./bin/testsuite
+./cmake-build-release/bin/catch
 ```
