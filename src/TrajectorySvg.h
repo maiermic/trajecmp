@@ -1,9 +1,12 @@
 #ifndef TRAJECTORY_DETECTION_TRAJECTORYSVG_H
 #define TRAJECTORY_DETECTION_TRAJECTORYSVG_H
 
+#include <string>
+#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <boost/geometry.hpp>
+#include "DistinctColorSet.h"
 
 namespace bg = boost::geometry;
 
@@ -28,6 +31,7 @@ class TrajectorySvg {
 
     std::ofstream _file;
     SvgMapper _mapper;
+    DistinctColorSet _colorSet;
 public:
     TrajectorySvg(std::string const &filename, int width, int height)
             : _file(filename.c_str()), _mapper(_file, width, height) {
@@ -37,9 +41,10 @@ public:
     }
 
     void add(Trajectory const &trajectory) {
-        const auto style = "fill-opacity:0.5;fill:rgb(153,204,0);stroke:rgb(153,204,0);stroke-width:2";
+        std::ostringstream style;
+        style << "stroke-width:2;stroke:" << _colorSet.next();
         _mapper.add(trajectory);
-        _mapper.map(trajectory, style);
+        _mapper.map(trajectory, style.str());
     }
 };
 

@@ -18,12 +18,13 @@ find_package(Threads REQUIRED)
 set(SOURCE_FILES
         src/Distance.cpp src/Distance.h
         src/TrajectorySvg.h
-        src/generate_svg.cpp)
+        src/generate_svg.cpp
+        src/DistinctColorSet.cpp src/DistinctColorSet.h)
 set(CATCH_TEST_FILES
         test/runner.cpp
         test/CatchTest.cpp)
 
-add_executable(generate_svg src/generate_svg.cpp)
+add_executable(generate_svg src/generate_svg.cpp ${SOURCE_FILES})
 target_link_libraries(generate_svg ${CONAN_LIBS})
 
 add_executable(catch ${CATCH_TEST_FILES} ${SOURCE_FILES})
