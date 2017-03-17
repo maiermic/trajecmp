@@ -17,6 +17,7 @@ find_package(Threads REQUIRED)
 
 set(SOURCE_FILES
         src/Distance.cpp src/Distance.h
+        src/TrajectorySvg.h
         src/generate_svg.cpp)
 set(CATCH_TEST_FILES
         test/runner.cpp
