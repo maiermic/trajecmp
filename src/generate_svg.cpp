@@ -8,6 +8,7 @@
 #include <boost/geometry/algorithms/envelope.hpp>
 
 #include <boost/geometry/io/svg/svg_mapper.hpp>
+#include <boost/geometry/io/wkt/read.hpp>
 
 namespace bg = boost::geometry;
 
@@ -44,6 +45,8 @@ void create_svg(std::string const& filename, Geometry1 const& first, Geometry2 c
 int main()
 {
     linestring trajectory_1 {{0.0, 0.0}, {1.0, 0.0}, {1.0, 2.0}};
-    linestring trajectory_2 {{0.0, 0.0}, {0.8, 0.1}, {0.9, 1.9}};
+//    linestring trajectory_2 {{0.0, 0.0}, {0.8, 0.1}, {0.9, 1.9}};
+    linestring trajectory_2;
+    bg::read_wkt("LINESTRING (0.0 0.0, 0.8 0.1, 0.9 1.9)", trajectory_2);
     create_svg("make_envelope.svg", trajectory_1, trajectory_2);
 }
