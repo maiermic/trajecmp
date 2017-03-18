@@ -58,7 +58,7 @@ int main() {
     bg::simplify(trajectory_1, trajectory_1_simplified, 10.0);
 
     TrajectorySvg svg("make_envelope.svg", 500, 500);
-    svg.add(trajectory_1);
-    svg.add(trajectory_1_simplified);
-    svg.add(trajectory_2);
+    svg.add(trajectory_1, "trajectory_1");
+    svg.add(trajectory_1_simplified, "trajectory_1_simplified");
+    svg.add(trajectory_2, "trajectory_2");
 }
