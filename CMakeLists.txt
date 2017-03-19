@@ -18,10 +18,12 @@ find_package(Threads REQUIRED)
 set(SOURCE_FILES
         src/Distance.cpp src/Distance.h
         src/TrajectorySvg.h
-        src/generate_svg.cpp
-        src/DistinctColorSet.cpp src/DistinctColorSet.h)
+        src/DistinctColorSet.cpp src/DistinctColorSet.h
+        src/distance.h)
 set(CATCH_TEST_FILES
         test/runner.cpp
+        test/boost_geometry_to_string.h
+        test/distance_test.cpp
         test/CatchTest.cpp)
 
 add_executable(generate_svg src/generate_svg.cpp ${SOURCE_FILES})
