@@ -21,9 +21,10 @@ TEST_CASE("modified_hausdorff", "[BoostGeometry]") {
         CAPTURE(t2);
         CHECK(0.0 == distance::modified_hausdorff(t1, t2));
     }
-    SECTION("distance of single point trajectory and trajectory") {
-        Trajectory trajectory {{0.0, 0.0}, {2.0, 0.0}};
-        Trajectory single_point_trajectory {{1.0, 1.0}};
-        CHECK(1.0 == distance::modified_hausdorff(single_point_trajectory, trajectory));
+    SECTION("distance is maximum") {
+        Trajectory trajectory {{0.0, 0.0}, {6.0, 0.0}};
+        Trajectory single_point_trajectory {{4.0, 3.0}};
+        // equals distance of (0,0) and (4,3)
+        CHECK(5.0 == distance::modified_hausdorff(single_point_trajectory, trajectory));
     }
 }
