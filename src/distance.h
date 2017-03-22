@@ -4,7 +4,7 @@
 namespace distance {
     template <class Trajectory>
     double modified_hausdorff(const Trajectory &t1, const Trajectory &t2) {
-        return 0.0;
+        return boost::geometry::distance(t1, t2);
     };
 } // namespace distance
 
