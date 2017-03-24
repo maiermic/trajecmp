@@ -16,7 +16,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 set(SOURCE_FILES
-        src/Distance.cpp src/Distance.h
         src/TrajectorySvg.h
         src/DistinctColorSet.cpp src/DistinctColorSet.h
         src/distance.h)
