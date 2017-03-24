@@ -25,7 +25,7 @@ set(CATCH_TEST_FILES
         test/boost_geometry_to_string.h
         test/logging.h
         test/distance_test.cpp
-        test/CatchTest.cpp test/logging.h)
+        )
 
 add_executable(boost_geometry_equals_bug src/boost_geometry_equals_bug.cpp ${SOURCE_FILES})
 target_link_libraries(boost_geometry_equals_bug ${CONAN_LIBS})
