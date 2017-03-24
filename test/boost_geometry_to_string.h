@@ -21,6 +21,24 @@ namespace boost {
 
             template<typename T>
             bool operator==(const linestring<T> &lhs, const linestring<T> &rhs) {
+                // fix bug of boost::geometry::equals
+                // see https://svn.boost.org/trac/boost/ticket/12929
+                if (bg::is_empty(lhs)) {
+                    return bg::is_empty(rhs);
+                } else if (1 == bg::num_points(lhs) && 1 == bg::num_points(rhs)) {
+                    return bg::equals(lhs[0], rhs[0]);
+                }
+                return ::boost::geometry::equals(lhs, rhs);
+            }
+
+            template
+            <
+                typename CoordinateType,
+                std::size_t DimensionCount,
+                typename CoordinateSystem
+            >
+            bool operator==(const point<CoordinateType, DimensionCount, CoordinateSystem> &lhs,
+                            const point<CoordinateType, DimensionCount, CoordinateSystem> &rhs) {
                 return ::boost::geometry::equals(lhs, rhs);
             }
         }
