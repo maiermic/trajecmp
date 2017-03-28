@@ -18,7 +18,7 @@ int main() {
 
     const Trajectory input_trajectory{{10, 4},
                                       {10, 0},
-                                      {12, 0}};
+                                      {12.1, 0}};
 
     // define pattern trajectory
     const Trajectory pattern_letter_L{{0, 2},
@@ -88,9 +88,13 @@ int main() {
     const auto distance = distance::modified_hausdorff(transformed_input,
                                                        transformed_pattern,
                                                        neighbours);
+    LOG(distance);
+
+    const auto max_distance = normalized_size * 0.05;
+    LOG(max_distance);
 
     // decide similarity based on distance
-    const auto is_similar = (0 == distance);
+    const auto is_similar = (distance <= max_distance);
 
     LOG(is_similar);
 }
