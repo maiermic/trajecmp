@@ -7,6 +7,7 @@
 #include <boost/geometry.hpp>
 
 #include "../src/coordinate_iterator.h"
+#include "../src/CoordinateAccessor.h"
 #include "../src/Miniball.hpp"
 
 namespace bg = boost::geometry;
@@ -15,13 +16,6 @@ using point = bg::model::point<double, 2, bg::cs::cartesian>;
 using linestring = bg::model::linestring<point>;
 using multi_linestring = bg::model::multi_linestring<linestring>;
 using Trajectory = linestring;
-
-template <typename Linestring>
-struct CoordinateAccessor {
-    using Pit = typename Linestring::const_iterator;
-    using Cit = CoordinateIterator<typename bg::point_type<Linestring>::type>;
-    inline Cit operator() (Pit it) const { return Cit(*it); }
-};
 
 int main (int argc, char* argv[])
 {
