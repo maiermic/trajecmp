@@ -32,14 +32,29 @@ int main() {
     MinBoundingSphere<Trajectory> input_mbs(input_trajectory);
     MinBoundingSphere<Trajectory> pattern_mbs(pattern_letter_L);
 
-    // translate
-    point translation_vector(input_mbs.center);
-    bg::subtract_point(translation_vector, pattern_mbs.center);
 
-    Trajectory translated_trajectory;
-    trans::translate_transformer<double, 2, 2> translate(bg::get<0>(translation_vector), bg::get<1>(translation_vector));
-    boost::geometry::transform(pattern_letter_L, translated_trajectory, translate);
-    LOG(translated_trajectory);
+    // translate
+    point pattern_translation_vector(pattern_mbs.center);
+    bg::multiply_value(pattern_translation_vector, -1);
+    LOG(pattern_translation_vector);
+
+    Trajectory pattern_translated;
+    trans::translate_transformer<double, 2, 2> pattern_translate(bg::get<0>(pattern_translation_vector),
+                                                         bg::get<1>(pattern_translation_vector));
+    boost::geometry::transform(pattern_letter_L, pattern_translated, pattern_translate);
+    LOG(pattern_translated);
+
+
+    point input_translation_vector(input_mbs.center);
+    bg::multiply_value(input_translation_vector, -1);
+    LOG(input_translation_vector);
+
+    Trajectory input_translated;
+    trans::translate_transformer<double, 2, 2> input_translate(bg::get<0>(input_translation_vector),
+                                                         bg::get<1>(input_translation_vector));
+    boost::geometry::transform(input_trajectory, input_translated, input_translate);
+    LOG(input_translated);
+
 
     // scale
 
@@ -47,8 +62,8 @@ int main() {
     // no
 
 
-    const Trajectory &transformed_input = input_trajectory;
-    const Trajectory &transformed_pattern = translated_trajectory;
+    const Trajectory &transformed_input = input_translated;
+    const Trajectory &transformed_pattern = pattern_translated;
 
     // ---------------------
     // compare trajectories
