@@ -4,6 +4,8 @@
 #include <iostream>
 #include <boost/geometry.hpp>
 
+namespace bg = boost::geometry;
+
 namespace boost {
     namespace geometry {
         namespace model {
