@@ -47,6 +47,9 @@ int main() {
     // no
 
 
+    const Trajectory &transformed_input = input_trajectory;
+    const Trajectory &transformed_pattern = translated_trajectory;
+
     // ---------------------
     // compare trajectories
     // ---------------------
@@ -55,8 +58,8 @@ int main() {
     distance::neighbours_percentage_range neighbours(0.1);
 
     // calculate distance
-    const auto distance = distance::modified_hausdorff(input_trajectory,
-                                                       translated_trajectory,
+    const auto distance = distance::modified_hausdorff(transformed_input,
+                                                       transformed_pattern,
                                                        neighbours);
 
     // decide similarity based on distance
