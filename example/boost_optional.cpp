@@ -3,7 +3,7 @@
 
 #include <boost/geometry.hpp>
 
-#include "../test/boost_geometry_to_string.h"
+#include "../src/boost_geometry_to_string.h"
 #include "../src/coordinate_iterator.h"
 #include "../src/Miniball.hpp"
 

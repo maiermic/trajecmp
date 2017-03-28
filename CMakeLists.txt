@@ -21,18 +21,18 @@ set(SOURCE_FILES
         src/distance.h
         src/Miniball.hpp
         src/coordinate_iterator.h
+        src/logging.h
+        src/boost_geometry_to_string.h
         )
 set(CATCH_TEST_FILES
         test/runner.cpp
-        test/boost_geometry_to_string.h
-        test/logging.h
         test/distance_test.cpp
         )
 
 add_executable(iterate_coordinates example/iterate_coordinates.cpp src/Miniball.hpp)
 target_link_libraries(iterate_coordinates ${CONAN_LIBS})
 
-add_executable(boost_optional example/boost_optional.cpp ${SOURCE_FILES} test/boost_geometry_to_string.h)
+add_executable(boost_optional example/boost_optional.cpp ${SOURCE_FILES} src/boost_geometry_to_string.h)
 target_link_libraries(boost_optional ${CONAN_LIBS})
 
 add_executable(boost_geometry_equals_bug example/boost_geometry_equals_bug.cpp ${SOURCE_FILES})
