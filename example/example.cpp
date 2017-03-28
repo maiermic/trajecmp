@@ -16,9 +16,9 @@ int main() {
 
     logging::is_logging = true;
 
-    const Trajectory input_trajectory{{10, 2},
+    const Trajectory input_trajectory{{10, 4},
                                       {10, 0},
-                                      {11, 0}};
+                                      {12, 0}};
 
     // define pattern trajectory
     const Trajectory pattern_letter_L{{0, 2},
@@ -57,13 +57,25 @@ int main() {
 
 
     // scale
+    const double normalized_size = 10000;
+
+    Trajectory pattern_scaled;
+    trans::scale_transformer<double, 2, 2> pattern_scale(normalized_size / pattern_mbs.radius);
+    boost::geometry::transform(pattern_translated, pattern_scaled, pattern_scale);
+    LOG(pattern_scaled);
+
+    Trajectory input_scaled;
+    trans::scale_transformer<double, 2, 2> input_scale(normalized_size / input_mbs.radius);
+    boost::geometry::transform(input_translated, input_scaled, input_scale);
+    LOG(input_scaled);
+
 
     // rotate
     // no
 
 
-    const Trajectory &transformed_input = input_translated;
-    const Trajectory &transformed_pattern = pattern_translated;
+    const Trajectory &transformed_input = input_scaled;
+    const Trajectory &transformed_pattern = pattern_scaled;
 
     // ---------------------
     // compare trajectories
