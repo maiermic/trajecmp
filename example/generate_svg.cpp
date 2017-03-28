@@ -9,7 +9,7 @@
 
 #include <boost/geometry/io/svg/svg_mapper.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
-#include "TrajectorySvg.h"
+#include "../src/TrajectorySvg.h"
 
 namespace bg = boost::geometry;
 

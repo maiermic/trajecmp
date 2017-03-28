@@ -6,8 +6,8 @@
 
 #include <boost/geometry.hpp>
 
-#include "coordinate_iterator.h"
-#include "Miniball.hpp"
+#include "../src/coordinate_iterator.h"
+#include "../src/Miniball.hpp"
 
 namespace bg = boost::geometry;
 

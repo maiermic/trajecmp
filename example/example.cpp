@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <boost/geometry.hpp>
-#include "distance.h"
+#include "../src/distance.h"
 
 namespace bg = boost::geometry;
 

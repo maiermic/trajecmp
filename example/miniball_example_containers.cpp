@@ -35,7 +35,7 @@
 #include <vector>
 #include <list>
 #include <iterator>
-#include "Miniball.hpp"
+#include "../src/Miniball.hpp"
 
 int main (int argc, char* argv[])
 {

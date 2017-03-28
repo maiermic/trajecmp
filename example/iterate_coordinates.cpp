@@ -1,5 +1,5 @@
 #include <boost/geometry.hpp>
-#include "Miniball.hpp"
+#include "../src/Miniball.hpp"
 
 namespace bg = boost::geometry;
 
