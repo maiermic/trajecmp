@@ -1,6 +1,7 @@
 #include "emscripten.h"
 #include "SDL.h"
 #include <vector>
+#include <cmath>
 
 #include <boost/geometry.hpp>
 #include "../../../src/distance.h"
@@ -20,6 +21,12 @@ using Trajectory = linestring;
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_bool done = SDL_FALSE;
+
+
+auto x_angle(const point p) {
+    return std::atan2(bg::get<0>(p),
+                      bg::get<1>(p));
+}
 
 
 struct rgb {
@@ -48,6 +55,19 @@ void draw_trajectory(SDL_Renderer* renderer,
                            (int) bg::get<0>(previous),
                            (int) bg::get<1>(previous));
     }
+    SDL_RenderPresent(renderer);
+}
+
+void draw_line(SDL_Renderer* renderer,
+               const point &start,
+               const point &end,
+               const rgb color = rgb {255, 255, 255}) {
+    SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawLine(renderer,
+                       (int) bg::get<0>(start),
+                       (int) bg::get<1>(start),
+                       (int) bg::get<0>(end),
+                       (int) bg::get<1>(end));
     SDL_RenderPresent(renderer);
 }
 
@@ -101,10 +121,19 @@ void compare_trajectories(const Trajectory &input_trajectory,
 
 
     // rotate
-    // no
+    const point pattern_orientation = bg::return_centroid<point>(pattern_scaled);
+    const point input_orientation = bg::return_centroid<point>(input_scaled);
+
+    const auto pattern_angle = x_angle(pattern_orientation);
+    const auto input_angle = x_angle(input_orientation);
+    using rotate_transformer = trans::rotate_transformer<bg::radian, double, 2, 2>;
+    rotate_transformer input_rotate(pattern_angle - input_angle);
+    Trajectory input_rotated;
+    bg::transform(input_scaled, input_rotated, input_rotate);
 
 
-    const Trajectory &transformed_input = input_scaled;
+
+    const Trajectory &transformed_input = input_rotated;
     const Trajectory &transformed_pattern = pattern_scaled;
 
     // ---------------------
@@ -121,7 +150,7 @@ void compare_trajectories(const Trajectory &input_trajectory,
     logging::is_logging = true;
     LOG(distance);
 
-    const auto max_distance = normalized_size * 0.12;
+    const auto max_distance = normalized_size * 0.20;
     LOG(max_distance);
 
     // decide similarity based on distance
@@ -173,6 +202,18 @@ void compare_trajectories(const Trajectory &input_trajectory,
     draw_trajectory(renderer,
                     visualization_normalized_input,
                     is_similar ? color_code::green : color_code::red);
+
+    const auto centroid_input = bg::return_centroid<point>(visualization_normalized_input);
+    const auto centroid_pattern = bg::return_centroid<point>(visualization_normalized_pattern);
+    draw_line(renderer,
+              visualization_normalized_pattern_mbs.center,
+              centroid_pattern,
+              color_code::yellow);
+    draw_line(renderer,
+              visualization_normalized_input_mbs.center,
+              centroid_input,
+              is_similar ? color_code::green : color_code::red);
+
 }
 
 
@@ -232,8 +273,6 @@ void one_iter() {
 
 int main(int argc, char* argv[])
 {
-    // logging::is_logging = true;
-
     if (SDL_Init(SDL_INIT_VIDEO) == 0) {
         if (SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer) == 0) {
             emscripten_set_main_loop(one_iter, 0, 1);
