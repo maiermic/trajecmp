@@ -121,8 +121,12 @@ void compare_trajectories(const Trajectory &input_trajectory,
 
 
     // rotate
-    const point pattern_orientation = bg::return_centroid<point>(pattern_scaled);
-    const point input_orientation = bg::return_centroid<point>(input_scaled);
+//    const point pattern_orientation = bg::return_centroid<point>(pattern_scaled);
+//    const point input_orientation = bg::return_centroid<point>(input_scaled);
+
+    // use first point if centroid is equal to center of bounding sphere
+    const point pattern_orientation = pattern_scaled[0];
+    const point input_orientation = input_scaled[0];
 
     const auto pattern_angle = x_angle(pattern_orientation);
     const auto input_angle = x_angle(input_orientation);
@@ -224,6 +228,12 @@ const Trajectory pattern_letter_L{{0, 0},
                                   {0, 2},
                                   {1, 2}};
 
+const Trajectory pattern_square{{0, 0},
+                                {0, 1},
+                                {1, 1},
+                                {1, 0},
+                                {0, 0}};
+
 void one_iter() {
     if (is_rerender) {
         is_rerender = false;
@@ -262,7 +272,8 @@ void one_iter() {
                 is_recording_trajectory = false;
 
                 // START_LOGGING("compare_trajectories");
-                compare_trajectories(trajectory, pattern_letter_L);
+//                compare_trajectories(trajectory, pattern_letter_L);
+                compare_trajectories(trajectory, pattern_square);
                 // STOP_LOGGING();
 
                 bg::clear(trajectory);
