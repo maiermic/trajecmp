@@ -1,4 +1,5 @@
 emcc src/index.cpp \
+  --shell-file src/shell.html \
   -o public/index.html \
   -I/home/maiermic/.conan/data/Boost/1.60.0/lasote/stable/package/89066e72c51676d91729a0d7fee21c166ca507da/include \
   -I../../src \
