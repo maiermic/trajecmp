@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 emcc src/index.cpp \
   --shell-file src/shell.html \
   -o public/index.html \
