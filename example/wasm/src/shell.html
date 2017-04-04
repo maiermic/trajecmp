@@ -45,7 +45,9 @@
     var spinnerElement = document.getElementById('spinner');
 
     var Module = {
-        preRun: [],
+        preRun: [
+            () => ENV.SDL_EMSCRIPTEN_KEYBOARD_ELEMENT = "#canvas"
+        ],
         postRun: [],
         print: (function () {
             var element = document.getElementById('output');
