@@ -5,6 +5,8 @@
 #include <sstream>
 #include <boost/geometry.hpp>
 
+#include "../../../src/coordinate_iterator.h"
+
 namespace input {
     using namespace emscripten;
     namespace bg = boost::geometry;
@@ -13,16 +15,45 @@ namespace input {
     using linestring = bg::model::linestring<point>;
     using Trajectory = linestring;
 
+    namespace details {
+        bool parse_trajectory(const std::string trajectory_string, Trajectory &output) {
+            std::istringstream trajectory_stream(trajectory_string);
+            std::string coordinates_string;
+            while (std::getline(trajectory_stream, coordinates_string, ',')) {
+                const char *p = coordinates_string.c_str();
+                char *end;
+                point current_point;
+                const auto dimension = bg::dimension<point>::value;
+                int coordinate_index = 0;
+                for (double coordinate = std::strtod(p, &end);
+                     p != end;
+                     coordinate = std::strtod(p, &end),
+                     ++coordinate_index
+                        ) {
+                    if (errno == ERANGE || coordinate_index >= dimension) {
+                        return false;
+                    }
+                    p = end;
+                    set(coordinate_index, current_point, coordinate);
+                }
+                if (coordinate_index < dimension) {
+                    return false;
+                }
+                bg::append(output, current_point);
+            }
+            return true;
+        }
+    }
+
     Trajectory pattern;
 
     bool setPattern(const std::string trajectoryString) {
-        try {
-            const std::string trajectoryWkt("LINESTRING (" + trajectoryString + ")");
-            bg::read_wkt(trajectoryWkt, pattern);
-            return true;
-        } catch (bg::read_wkt_exception e) {
+        Trajectory new_pattern;
+        if (!details::parse_trajectory(trajectoryString, new_pattern)) {
             return false;
         }
+        pattern = new_pattern;
+        return true;
     }
 
     EMSCRIPTEN_BINDINGS(my_module) {
