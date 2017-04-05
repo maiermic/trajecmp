@@ -48,7 +48,33 @@
         preRun: [
             () => ENV.SDL_EMSCRIPTEN_KEYBOARD_ELEMENT = "#canvas"
         ],
-        postRun: [],
+        postRun: [
+            () => {
+                function debounce(fn, time) {
+                    var timer = null;
+                    return function debounced(...args) {
+                        clearTimeout(timer)
+                        timer = setTimeout(fn.bind(this, ...args), time)
+                    }
+                }
+                document
+                    .getElementById('InputData-pattern')
+                    .addEventListener(
+                        'keydown',
+                        debounce(
+                            e => {
+                                let pattern = e.target.value
+                                if (Module.setPattern(pattern)) {
+                                    Module.print('changed pattern to: ' + pattern);
+                                } else {
+                                    Module.print('invalid pattern: ' + pattern);
+                                }
+                            },
+                            1000
+                        )
+                    )
+            }
+        ],
         print: (function () {
             var element = document.getElementById('output');
             if (element) element.value = ''; // clear browser cache

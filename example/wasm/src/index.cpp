@@ -4,6 +4,9 @@
 #include <cmath>
 
 #include <boost/geometry.hpp>
+
+#include "input.h"
+
 #include "../../../src/distance.h"
 #include "../../../src/boost_geometry_to_string.h"
 #include "../../../src/logging.h"
@@ -273,7 +276,8 @@ void one_iter() {
 
                 // START_LOGGING("compare_trajectories");
 //                compare_trajectories(trajectory, pattern_letter_L);
-                compare_trajectories(trajectory, pattern_square);
+//                compare_trajectories(trajectory, pattern_square);
+                compare_trajectories(trajectory, input::pattern);
                 // STOP_LOGGING();
 
                 bg::clear(trajectory);

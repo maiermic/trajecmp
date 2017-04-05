@@ -9,4 +9,5 @@ emcc src/index.cpp \
   -s WASM=1 \
   -s USE_SDL=2 \
   -s LEGACY_GL_EMULATION=1 \
-  --std=c++14
+  --std=c++14 \
+  --bind
