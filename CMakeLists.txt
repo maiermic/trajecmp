@@ -23,8 +23,9 @@ set(SOURCE_FILES
         src/coordinate_iterator.h
         src/logging.h
         src/boost_geometry_to_string.h
+        src/EventRegister.h
         )
-set(CATCH_TEST_FILES
+set(TEST_FILES
         test/runner.cpp
         test/distance_test.cpp
         )
@@ -50,6 +51,6 @@ target_link_libraries(miniball_boost_geometry_example ${CONAN_LIBS})
 add_executable(miniball_example_containers example/miniball_example_containers.cpp ${SOURCE_FILES})
 target_link_libraries(miniball_example_containers)
 
-add_executable(catch ${CATCH_TEST_FILES} ${SOURCE_FILES})
+add_executable(catch ${TEST_FILES} ${SOURCE_FILES})
 target_include_directories(catch PUBLIC .)
 target_link_libraries(catch ${CONAN_LIBS} Threads::Threads)
