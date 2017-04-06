@@ -79,6 +79,34 @@ void compare_trajectories(const Trajectory &input_trajectory,
                           const Trajectory &pattern_trajectory)
 {
     // --------------
+    // filter
+    // --------------
+
+    static const auto min_length = 2;
+
+    if (bg::num_points(input_trajectory) <= min_length) {
+        logging::is_logging = true;
+        LOG_TEXT("input trajectory needs at least "
+                         << min_length
+                         << " points, but has "
+                         << bg::num_points(input_trajectory)
+                         << " points");
+        logging::is_logging = false;
+        return;
+    }
+    if (bg::num_points(pattern_trajectory) <= min_length) {
+        logging::is_logging = true;
+        LOG_TEXT("pattern trajectory needs at least "
+                         << min_length
+                         << " points, but has "
+                         << bg::num_points(pattern_trajectory)
+                         << " points");
+        logging::is_logging = false;
+        return;
+    }
+
+
+    // --------------
     // preprocessing
     // --------------
 
