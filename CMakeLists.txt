@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(trajectory-detection)
+project(trajecmp)
 
 set(CMAKE_CXX_STANDARD 14)
 
