@@ -7,11 +7,12 @@
 
 #include "input.h"
 
-#include "../../../src/distance.h"
-#include "../../../src/boost_geometry_to_string.h"
-#include "../../../src/logging.h"
-#include "../../../src/MinBoundingSphere.h"
-#include "../../../src/TrajectorySvg.h"
+#include "../../../src/trajecmp/distance/modified_hausdorff.hpp"
+#include "../../../src/trajecmp/geometry/min_bounding_sphere.hpp"
+#include "../../../src/trajecmp/util/boost_geometry_to_string.hpp"
+
+#include "../../logging.hpp"
+#include "../../TrajectorySvg.hpp"
 
 namespace bg = boost::geometry;
 namespace trans = boost::geometry::strategy::transform;
@@ -19,10 +20,11 @@ namespace trans = boost::geometry::strategy::transform;
 using point = bg::model::point<double, 2, bg::cs::cartesian>;
 using linestring = bg::model::linestring<point>;
 using Trajectory = linestring;
+using trajecmp::geometry::min_bounding_sphere;
 
 
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
 SDL_bool done = SDL_FALSE;
 
 
@@ -37,17 +39,16 @@ struct rgb {
 };
 
 namespace color_code {
-    const rgb green {0, 255, 0};
-    const rgb red {255, 0, 0};
-    const rgb yellow {255, 255, 0};
+    const rgb green{0, 255, 0};
+    const rgb red{255, 0, 0};
+    const rgb yellow{255, 255, 0};
 }
 
-void draw_trajectory(SDL_Renderer* renderer,
+void draw_trajectory(SDL_Renderer *renderer,
                      const Trajectory &trajectory,
                      const rgb color = rgb {255, 255, 255}) {
     SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, SDL_ALPHA_OPAQUE);
-    for (auto i = trajectory.begin(); i != trajectory.end(); )
-    {
+    for (auto i = trajectory.begin(); i != trajectory.end();) {
         const point &previous = *i;
         ++i;
         if (i == trajectory.end()) break;
@@ -61,7 +62,7 @@ void draw_trajectory(SDL_Renderer* renderer,
     SDL_RenderPresent(renderer);
 }
 
-void draw_line(SDL_Renderer* renderer,
+void draw_line(SDL_Renderer *renderer,
                const point &start,
                const point &end,
                const rgb color = rgb {255, 255, 255}) {
@@ -76,8 +77,7 @@ void draw_line(SDL_Renderer* renderer,
 
 
 void compare_trajectories(const Trajectory &input_trajectory,
-                          const Trajectory &pattern_trajectory)
-{
+                          const Trajectory &pattern_trajectory) {
     // --------------
     // filter
     // --------------
@@ -110,8 +110,8 @@ void compare_trajectories(const Trajectory &input_trajectory,
     // preprocessing
     // --------------
 
-    MinBoundingSphere<Trajectory> input_mbs(input_trajectory);
-    MinBoundingSphere<Trajectory> pattern_mbs(pattern_trajectory);
+    const auto input_mbs = min_bounding_sphere(input_trajectory);
+    const auto pattern_mbs = min_bounding_sphere(pattern_trajectory);
 
 
     // translate
@@ -167,7 +167,6 @@ void compare_trajectories(const Trajectory &input_trajectory,
     bg::transform(input_scaled, input_rotated, input_rotate);
 
 
-
     const Trajectory &transformed_input = input_rotated;
     const Trajectory &transformed_pattern = pattern_scaled;
 
@@ -176,12 +175,12 @@ void compare_trajectories(const Trajectory &input_trajectory,
     // ---------------------
 
     // configure distance measurement
-    distance::neighbours_percentage_range neighbours(0.1);
+    trajecmp::distance::neighbours_percentage_range neighbours(0.1);
 
     // calculate distance
-    const auto distance = distance::modified_hausdorff(transformed_input,
-                                                       transformed_pattern,
-                                                       neighbours);
+    const auto distance = trajecmp::distance::modified_hausdorff(transformed_input,
+                                                                 transformed_pattern,
+                                                                 neighbours);
     logging::is_logging = true;
     LOG(distance);
 
@@ -209,7 +208,9 @@ void compare_trajectories(const Trajectory &input_trajectory,
     Trajectory input_visualization_translated;
     trans::translate_transformer<double, 2, 2> input_visualization_translate(visualization_size / 2,
                                                                              visualization_size / 2);
-    boost::geometry::transform(input_visualization_scaled, input_visualization_translated, input_visualization_translate);
+    boost::geometry::transform(input_visualization_scaled,
+                               input_visualization_translated,
+                               input_visualization_translate);
 
 
     Trajectory pattern_visualization_scaled;
@@ -219,13 +220,15 @@ void compare_trajectories(const Trajectory &input_trajectory,
     Trajectory pattern_visualization_translated;
     trans::translate_transformer<double, 2, 2> pattern_visualization_translate(visualization_size / 2,
                                                                                visualization_size / 2);
-    boost::geometry::transform(pattern_visualization_scaled, pattern_visualization_translated, pattern_visualization_translate);
+    boost::geometry::transform(pattern_visualization_scaled,
+                               pattern_visualization_translated,
+                               pattern_visualization_translate);
 
 
     const Trajectory &visualization_normalized_input = input_visualization_translated;
     const Trajectory &visualization_normalized_pattern = pattern_visualization_translated;
-    MinBoundingSphere<Trajectory> visualization_normalized_input_mbs(visualization_normalized_input);
-    MinBoundingSphere<Trajectory> visualization_normalized_pattern_mbs(visualization_normalized_pattern);
+    const auto visualization_normalized_input_mbs = min_bounding_sphere(visualization_normalized_input);
+    const auto visualization_normalized_pattern_mbs = min_bounding_sphere(visualization_normalized_pattern);
     // LOG(visualization_normalized_input_mbs);
     // LOG(visualization_normalized_pattern_mbs);
 
@@ -314,8 +317,7 @@ void one_iter() {
     }
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) == 0) {
         if (SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer) == 0) {
             emscripten_set_main_loop(one_iter, 0, 1);

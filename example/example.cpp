@@ -1,19 +1,24 @@
 #include <iostream>
 
 #include <boost/geometry.hpp>
-#include "../src/distance.h"
-#include "../src/boost_geometry_to_string.h"
-#include "../src/logging.h"
-#include "../src/MinBoundingSphere.h"
-#include "../src/TrajectorySvg.h"
 
-using point = bg::model::point<double, 2, bg::cs::cartesian>;
-using linestring = bg::model::linestring<point>;
-using Trajectory = linestring;
+#include "../src/trajecmp/distance/modified_hausdorff.hpp"
+#include "../src/trajecmp/geometry/min_bounding_sphere.hpp"
+#include "../src/trajecmp/util/boost_geometry_to_string.hpp"
+
+#include "logging.hpp"
+#include "TrajectorySvg.hpp"
+
 
 int main() {
     namespace bg = boost::geometry;
     namespace trans = boost::geometry::strategy::transform;
+
+    using point = bg::model::point<double, 2, bg::cs::cartesian>;
+    using linestring = bg::model::linestring<point>;
+    using Trajectory = linestring;
+
+    using trajecmp::geometry::min_bounding_sphere;
 
     logging::is_logging = true;
 
@@ -38,8 +43,8 @@ int main() {
     // preprocessing
     // --------------
 
-    MinBoundingSphere<Trajectory> input_mbs(input_trajectory);
-    MinBoundingSphere<Trajectory> pattern_mbs(pattern_trajectory);
+    const auto input_mbs = min_bounding_sphere(input_trajectory);
+    const auto pattern_mbs = min_bounding_sphere(pattern_trajectory);
 
 
     // translate
@@ -49,7 +54,7 @@ int main() {
 
     Trajectory pattern_translated;
     trans::translate_transformer<double, 2, 2> pattern_translate(bg::get<0>(pattern_translation_vector),
-                                                         bg::get<1>(pattern_translation_vector));
+                                                                 bg::get<1>(pattern_translation_vector));
     boost::geometry::transform(pattern_trajectory, pattern_translated, pattern_translate);
     LOG(pattern_translated);
 
@@ -60,7 +65,7 @@ int main() {
 
     Trajectory input_translated;
     trans::translate_transformer<double, 2, 2> input_translate(bg::get<0>(input_translation_vector),
-                                                         bg::get<1>(input_translation_vector));
+                                                               bg::get<1>(input_translation_vector));
     boost::geometry::transform(input_trajectory, input_translated, input_translate);
     LOG(input_translated);
 
@@ -91,12 +96,12 @@ int main() {
     // ---------------------
 
     // configure distance measurement
-    distance::neighbours_percentage_range neighbours(0.1);
+    trajecmp::distance::neighbours_percentage_range neighbours(0.1);
 
     // calculate distance
-    const auto distance = distance::modified_hausdorff(transformed_input,
-                                                       transformed_pattern,
-                                                       neighbours);
+    const auto distance = trajecmp::distance::modified_hausdorff(transformed_input,
+                                                                 transformed_pattern,
+                                                                 neighbours);
     LOG(distance);
 
     const auto max_distance = normalized_size * 0.12;
@@ -121,23 +126,29 @@ int main() {
     Trajectory input_visualization_translated;
     trans::translate_transformer<double, 2, 2> input_visualization_translate(visualization_size / 2,
                                                                              visualization_size / 2);
-    boost::geometry::transform(input_visualization_scaled, input_visualization_translated, input_visualization_translate);
+    boost::geometry::transform(input_visualization_scaled,
+                               input_visualization_translated,
+                               input_visualization_translate);
 
 
     Trajectory pattern_visualization_scaled;
     trans::scale_transformer<double, 2, 2> pattern_visualization_scale(visualization_size / 2 / normalized_size);
-    boost::geometry::transform(transformed_pattern, pattern_visualization_scaled, pattern_visualization_scale);
+    boost::geometry::transform(transformed_pattern,
+                               pattern_visualization_scaled,
+                               pattern_visualization_scale);
 
     Trajectory pattern_visualization_translated;
     trans::translate_transformer<double, 2, 2> pattern_visualization_translate(visualization_size / 2,
-                                                                             visualization_size / 2);
-    boost::geometry::transform(pattern_visualization_scaled, pattern_visualization_translated, pattern_visualization_translate);
+                                                                               visualization_size / 2);
+    boost::geometry::transform(pattern_visualization_scaled,
+                               pattern_visualization_translated,
+                               pattern_visualization_translate);
 
 
     const Trajectory &visualization_normalized_input = input_visualization_translated;
     const Trajectory &visualization_normalized_pattern = pattern_visualization_translated;
-    MinBoundingSphere<Trajectory> visualization_normalized_input_mbs(visualization_normalized_input);
-    MinBoundingSphere<Trajectory> visualization_normalized_pattern_mbs(visualization_normalized_pattern);
+    const auto visualization_normalized_input_mbs = min_bounding_sphere(visualization_normalized_input);
+    const auto visualization_normalized_pattern_mbs = min_bounding_sphere(visualization_normalized_pattern);
     LOG(visualization_normalized_input_mbs);
     LOG(visualization_normalized_pattern_mbs);
 

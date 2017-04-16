@@ -5,7 +5,7 @@
 #include <sstream>
 #include <boost/geometry.hpp>
 
-#include "../../../src/coordinate_iterator.h"
+#include "../../../src/trajecmp/geometry/coordinate.hpp"
 
 namespace input {
     using namespace emscripten;
@@ -34,7 +34,7 @@ namespace input {
                         return false;
                     }
                     p = end;
-                    set(coordinate_index, current_point, coordinate);
+                    trajecmp::geometry::set(coordinate_index, current_point, coordinate);
                 }
                 if (coordinate_index < dimension) {
                     return false;

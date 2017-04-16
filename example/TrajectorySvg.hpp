@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/geometry.hpp>
-#include "DistinctColorSet.h"
+#include "DistinctColorSet.hpp"
 
 namespace bg = boost::geometry;
 

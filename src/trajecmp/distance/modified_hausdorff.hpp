@@ -1,16 +1,15 @@
-#ifndef TRAJECTORY_DETECTION_DISTANCE_H
-#define TRAJECTORY_DETECTION_DISTANCE_H
+#ifndef TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP
+#define TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP
 
 #include <boost/geometry.hpp>
 
-namespace bg = boost::geometry;
-
-namespace distance {
+namespace trajecmp { namespace distance {
     namespace detail {
         template<class Point>
         Point point_at_percentage_between(const Point &start,
                                           const Point &end,
                                           const double percentage) {
+            namespace bg = boost::geometry;
             Point point_between = end;
             bg::subtract_point(point_between, start);
             bg::multiply_value(point_between, percentage);
@@ -22,6 +21,7 @@ namespace distance {
         auto sub_trajectory(const Trajectory &trajectory,
                             const double percentage_begin,
                             const double percentage_end) {
+            namespace bg = boost::geometry;
             if (bg::num_points(trajectory) <= 1) {
                 return Trajectory(trajectory);
             }
@@ -39,8 +39,8 @@ namespace distance {
                     if (bg::is_empty(neighbours)) {
                         const auto segment_to_begin_percentage =
                                 (0.0 == segment_length)
-                                    ? 0.0
-                                    : (length_begin - previous_length) / segment_length;
+                                ? 0.0
+                                : (length_begin - previous_length) / segment_length;
                         auto first_neighbour_point =
                                 point_at_percentage_between(previous_point,
                                                             current_point,
@@ -50,8 +50,8 @@ namespace distance {
                     if (current_length >= length_end) {
                         const auto segment_to_end_percentage =
                                 (0.0 == segment_length)
-                                    ? 0.0
-                                    : (length_end - previous_length) / segment_length;
+                                ? 0.0
+                                : (length_end - previous_length) / segment_length;
                         auto last_neighbour_point =
                                 point_at_percentage_between(previous_point,
                                                             current_point,
@@ -70,15 +70,16 @@ namespace distance {
 
         template<class Trajectory, class Neighbours>
         double modified_hausdorff(const Trajectory &t1, const Trajectory &t2, Neighbours neighbours) {
+            namespace bg = boost::geometry;
             const auto length_t1 = bg::length(t1);
             double distance = 0.0;
             Trajectory current_trajectory;
-            for (auto && current : t1) {
+            for (auto &&current : t1) {
                 bg::append(current_trajectory, current);
                 const auto current_percentage =
                         0 == bg::length(current_trajectory)
-                            ? 0
-                            : bg::length(current_trajectory) / length_t1;
+                        ? 0
+                        : bg::length(current_trajectory) / length_t1;
                 const auto neighbours_trajectory = neighbours(t2, current_percentage);
                 const auto current_distance = bg::distance(current, neighbours_trajectory);
                 distance = std::max(distance, current_distance);
@@ -86,6 +87,7 @@ namespace distance {
             return distance;
         };
     } // namespace detail
+
 
     class neighbours_percentage_range {
         const double _percentage_max_distance_from_position;
@@ -111,6 +113,7 @@ namespace distance {
                 detail::modified_hausdorff(t2, t1, neighbours)
         );
     };
-} // namespace distance
 
-#endif //TRAJECTORY_DETECTION_DISTANCE_H
+}} // namespace trajecmp::distance
+
+#endif //TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP

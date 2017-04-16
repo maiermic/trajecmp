@@ -30,7 +30,9 @@ class DistinctColorSet {
             "rgb(35, 44, 22)",
     };
 public:
-    std::string next();
+    std::string next() {
+        return _colors[(_index++) % _colors.size()];
+    }
 };
 
 
