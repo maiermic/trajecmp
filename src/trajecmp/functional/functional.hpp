@@ -65,9 +65,9 @@ namespace trajecmp { namespace functional {
         };
     }
 
-    const detail::compose compose;
-    const detail::pipe pipe;
-    const detail::mem_fn mem_fn;
+    detail::compose compose;
+    detail::pipe pipe;
+    detail::mem_fn mem_fn;
     const auto nested_mem_fn = map_function_arguments(mem_fn, pipe);
 
     template<typename L, typename R>
