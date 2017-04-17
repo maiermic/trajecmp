@@ -99,9 +99,7 @@ int main() {
     trajecmp::distance::neighbours_percentage_range neighbours(0.1);
 
     // calculate distance
-    const auto distance = trajecmp::distance::modified_hausdorff(transformed_input,
-                                                                 transformed_pattern,
-                                                                 neighbours);
+    const auto distance = trajecmp::distance::modified_hausdorff(neighbours)(transformed_input, transformed_pattern);
     LOG(distance);
 
     const auto max_distance = normalized_size * 0.12;

@@ -106,12 +106,14 @@ namespace trajecmp { namespace distance {
         }
     };
 
-    template<class Trajectory, class Neighbours>
-    double modified_hausdorff(const Trajectory &t1, const Trajectory &t2, Neighbours neighbours) {
-        return std::max(
-                detail::modified_hausdorff(t1, t2, neighbours),
-                detail::modified_hausdorff(t2, t1, neighbours)
-        );
+    template<class Neighbours>
+    constexpr auto modified_hausdorff(Neighbours &&neighbours) {
+        return [=](const auto &t1, const auto &t2) {
+            return std::max(
+                    detail::modified_hausdorff(t1, t2, neighbours),
+                    detail::modified_hausdorff(t2, t1, neighbours)
+            );
+        };
     };
 
 }} // namespace trajecmp::distance
