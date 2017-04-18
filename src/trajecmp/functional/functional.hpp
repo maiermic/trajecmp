@@ -41,11 +41,6 @@ namespace trajecmp { namespace functional {
             }
         };
 
-        template<typename F>
-        auto call(F f) {
-            return f();
-        }
-
     } // namespace detail
 
 
@@ -53,7 +48,7 @@ namespace trajecmp { namespace functional {
     auto call_arguments_on_function_call(F f) {
         return [=](auto &&... args) {
             return [=]() {
-                return f(detail::call(args)...);
+                return f(args()...);
             };
         };
     }
