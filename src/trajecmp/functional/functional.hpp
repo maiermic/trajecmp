@@ -53,6 +53,15 @@ namespace trajecmp { namespace functional {
         };
     }
 
+    template<typename F>
+    auto call_arguments_on_functor_call(F f) {
+        return [=](auto &&... args) {
+            return [=](auto &&... fun_args) {
+                return f(args()...)(fun_args...);
+            };
+        };
+    }
+
     template<typename M, typename F>
     auto map_function_arguments(M m, F f) {
         return [=](auto &&... args) {
