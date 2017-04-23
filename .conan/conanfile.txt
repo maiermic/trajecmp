@@ -1,6 +1,7 @@
 [requires]
 Boost/1.60.0@lasote/stable
 Catch/latest@signal9/stable
+RxCpp/4.0.0/maiermic/stable
 
 [generators]
 cmake
