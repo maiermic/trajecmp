@@ -41,15 +41,14 @@ namespace trajecmp { namespace transform {
 
     } // namespace detail
 
-    template<typename GetVector>
-    auto translate_by(const GetVector &get_translation_vector) {
+    template<typename Vector>
+    auto translate_by(const Vector &translation_vector) {
         return [=](auto &&trajectory) {
             using Trajectory = typename std::remove_reference<decltype(trajectory)>::type;
-            using Vector = typename std::remove_reference<decltype(get_translation_vector())>::type;
             Trajectory translated;
             boost::geometry::transform(trajectory,
                                        translated,
-                                       detail::simple_vector_translate_transformer<Vector>(get_translation_vector()));
+                                       detail::simple_vector_translate_transformer<Vector>(translation_vector));
             return translated;
         };
     }
