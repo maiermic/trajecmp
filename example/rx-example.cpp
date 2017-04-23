@@ -17,12 +17,6 @@
 
 #include "rxcpp/rx.hpp"
 
-namespace Rx {
-    using namespace rxcpp;
-    using namespace rxcpp::sources;
-    using namespace rxcpp::operators;
-    using namespace rxcpp::util;
-}
 
 using point = boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>;
 using linestring = boost::geometry::model::linestring<point>;
@@ -41,14 +35,14 @@ auto less_than(int upper) {
     };
 }
 
-Rx::rxsub::subject<Trajectory> input_trajectory_subject;
+rxcpp::rxsub::subject<Trajectory> input_trajectory_subject;
 
 int main() {
     logging::is_logging = true;
 
     auto input_trajectory_stream = input_trajectory_subject.get_observable();
     auto pattern_trajectory_stream =
-            Rx::observable<>::just(
+            rxcpp::observable<>::just(
                     Trajectory{
                             {0, 2},
                             {0, 0},
