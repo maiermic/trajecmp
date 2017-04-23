@@ -14,18 +14,19 @@ using Trajectory = linestring;
 
 TEST_CASE("modified_hausdorff", "[BoostGeometry]") {
     trajecmp::distance::neighbours_percentage_range neighbours(0.1);
+    const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
 
     SECTION("distance of same trajectory is zero") {
         Trajectory t1 {{0.0, 0.0}, {1.0, 0.0}, {1.0, 2.0}};
         Trajectory t2 {{0.0, 0.0}, {1.0, 0.0}, {1.0, 2.0}};
 
-        CHECK(0.0 == trajecmp::distance::modified_hausdorff(t1, t2, neighbours));
+        CHECK(0.0 == modified_hausdorff(t1, t2));
     }
     SECTION("distance is maximum") {
         Trajectory trajectory {{0.0, 0.0}, {6.0, 0.0}};
         Trajectory single_point_trajectory {{4.0, 3.0}};
         // equals distance of (0,0) and (4,3)
-        CHECK(5.0 == trajecmp::distance::modified_hausdorff(single_point_trajectory, trajectory, neighbours));
+        CHECK(5.0 == modified_hausdorff(single_point_trajectory, trajectory));
     }
     SECTION("distance is maximum of neighbours") {
         Trajectory t1 {{0, 0}, {10, 0}};
@@ -35,7 +36,7 @@ TEST_CASE("modified_hausdorff", "[BoostGeometry]") {
         // equals distance of (4,0) and (4,3)
         // (4,3) is at position 50% of t2
         // [(4,0), (6,0)] are the neighbours on t1 at position 50% with max distance of 10%
-        CHECK(3.0 == trajecmp::distance::modified_hausdorff(t2, t1, neighbours));
+        CHECK(3.0 == modified_hausdorff(t2, t1));
     }
 }
 
