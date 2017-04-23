@@ -3,6 +3,7 @@
 #include <functional>
 
 #include <boost/geometry.hpp>
+#include <rxcpp/rx.hpp>
 
 #include "logging.hpp"
 #include "../src/trajecmp/functional/functional.hpp"
@@ -14,8 +15,6 @@
 
 #include "../src/trajecmp/util/boost_geometry_to_string.hpp"
 #include "TrajectorySvg.hpp"
-
-#include "rxcpp/rx.hpp"
 
 
 using point = boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>;
