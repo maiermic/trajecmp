@@ -31,7 +31,7 @@ using vector = point;
 
 auto has_min_num_points(int min) {
     return [=](const auto &trajectory) {
-        return trajectory.size() >= min;
+        return boost::geometry::num_points(trajectory) >= min;
     };
 }
 
