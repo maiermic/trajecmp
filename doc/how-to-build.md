@@ -70,7 +70,11 @@ environment variables and run *Tools > CMake > Reload CMake Project*.
 
 ## Run
 
-Go to build directory and run:
+Binaries of examples and tests are created in the build directory `./cmake-build-release/bin/`.
+
+### Tests
+
+Run all tests
 
 ```sh
 ./cmake-build-release/bin/catch
