@@ -52,6 +52,27 @@ point<CoordinateType, DimensionCount>
 [Boost Geometry Point Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_point.html
 
 
+### System
+
+![system diagram](img/system-diagram.svg)
+
+It looks like this in C++
+
+```c++
+const auto result_stream =
+  compare(preprocess(input_stream),
+          preprocess(pattern_stream));
+
+result_stream.subscribe([](auto &&result) {
+    // process result
+  });
+```
+
+You define the source of your input trajectory (`input_stream`) and your pattern trajectory (`pattern_stream`).
+Then you preprocess both of them to prepare them for comparison.
+You compare the preprocessed trajectories and define what to do with the result.
+
+
 ### Transformation
 
 A transformation operation is a [Callable][Callable] with signature `Trajectory (const Trajectory &)`.
