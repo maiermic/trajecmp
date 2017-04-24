@@ -41,7 +41,7 @@ trajectory<point> {
 > but has no extent.  
 > [see Wikipedia](http://en.wikipedia.org/wiki/Point_(geometry))
 
-I focus on 2D and 3D points. I reuse the [Boost Geometry Point Concept].
+I focus on 2D and 3D points (cartesian coordinate system). I reuse the [Boost Geometry Point Concept].
 
 [Boost Geometry Point Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_point.html
 
