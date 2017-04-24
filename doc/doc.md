@@ -87,6 +87,27 @@ Usually, `pattern_stream` contains only one (static pattern) trajectory.
 However, a pattern trajectory might be dynamically created.
 For example, you could use another input trajectory as a pattern.
 
+You can compare the input trajectory with multiple patterns like this:
+
+```c++
+const auto preprocessed_input_stream = preprocess(input_stream);
+
+const auto result_1_stream = compare(preprocessed_input_stream,
+                                     preprocess(pattern_1_stream));
+
+const auto result_2_stream = compare(preprocessed_input_stream,
+                                     preprocess(pattern_2_stream));
+
+result_1_stream.subscribe([](auto &&result) {
+    // process result
+});
+
+result_2_stream.subscribe([](auto &&result) {
+    // process result
+});
+```
+
+
 
 ### Transformation
 
