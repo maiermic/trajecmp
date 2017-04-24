@@ -60,7 +60,7 @@ which are represented by the [ReactiveX Observable][ReactiveX Intro] model imple
 [RxCpp]: https://github.com/Reactive-Extensions/RxCpp
 
 
-### System
+## System
 
 ![system diagram](img/system-diagram.svg)
 
