@@ -21,5 +21,6 @@ result_stream.subscribe([](auto &&result) {
 
 ## Documentation
 
-- [Documentation](doc/doc.md)
+- [Terminology](doc/terminology.md)
+- [System Description](doc/system.md)
 - [How To Build](doc/how-to-build.md)

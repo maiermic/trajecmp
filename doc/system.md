@@ -1,65 +1,4 @@
-# Trajectory Comparison
-
-The project is called _trajecmp_ which is a abbreviation of _trajectory comparison_.
-
-## Abstract
-
-I'd like to detect specific movements in 2D and 3D space that are described as trajectories (called patterns).
-Input trajectory (recorded movement) and pattern trajectory (description of a specific movement) are preprocessed and
-compared by distance to each other. Dependent on the result, a function is called to process the result.
-
-![system diagram](img/system-diagram.png)
-
-```c++
-const auto result_stream = compare(preprocess(input_stream),
-                                   preprocess(pattern_stream));
-
-result_stream.subscribe([](auto &&result) {
-    // process result
-});
-```
-
-## Terminology
-
-### Trajectory
-
-A trajectory is a curve defined by a finite sequence of points with linear interpolation between consecutive points.
-I reuse the [Boost Geometry Linestring Concept].
-
-![trajectory example](img/trajectory-L.png)
-
-```c++
-trajectory<point> {
-      {0, 2},
-      {0, 0},
-      {1, 0},
-};
-```
-
-[Boost Geometry Linestring Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_linestring.html
-
-
-### Point
-
-> A point is an entity that has a location in space or on a plane,
-> but has no extent.  
-> [see Wikipedia](http://en.wikipedia.org/wiki/Point_(geometry))
-
-I focus on 2D and 3D points (cartesian coordinate system). I reuse the [Boost Geometry Point Concept].
-
-[Boost Geometry Point Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_point.html
-
-
-### Stream
-
-I use the term _stream_ for _values distributed in time_,
-which are represented by the [ReactiveX Observable][ReactiveX Intro] model implemented by [RxCpp].  
-
-[ReactiveX Intro]: http://reactivex.io/intro.html
-[RxCpp]: https://github.com/Reactive-Extensions/RxCpp
-
-
-## System
+# System
 
 ![system diagram](img/system-diagram.png)
 
@@ -105,14 +44,14 @@ result_2_stream.subscribe([](auto &&result) {
 ```
 
 
-### Preprocessing
+## Preprocessing
 
 The preprocessing is a sequence of filter and/or map operations.
 
 ![preprocessing diagram](img/preprocessing.png)
 
 
-#### Map (Transform)
+### Map (Transform)
 
 Mapping is part of the preprocessing.
 It performs a transformation operation that takes a trajectory as input and returns another trajectory as output
@@ -126,7 +65,7 @@ returns the result.
 [Callable]: http://en.cppreference.com/w/cpp/concept/Callable
 
 
-#### Filter
+### Filter
 
 Filtering is part of the preprocessing.
 It filters (input) trajectories that do not meet the requirements of the comparison or
