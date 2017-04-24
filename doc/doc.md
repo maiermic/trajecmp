@@ -7,13 +7,12 @@ compared by distance to each other. Dependent on the result, a function is calle
 ![system diagram](img/system-diagram.svg)
 
 ```c++
-const auto result_stream =
-  compare(preprocess(input_stream),
-          preprocess(pattern_stream));
+const auto result_stream = compare(preprocess(input_stream),
+                                   preprocess(pattern_stream));
 
 result_stream.subscribe([](auto &&result) {
     // process result
-  });
+});
 ```
 
 ## Terminology
@@ -68,13 +67,12 @@ which are represented by the [ReactiveX Observable][ReactiveX Intro] model imple
 It looks like this in C++
 
 ```c++
-const auto result_stream =
-  compare(preprocess(input_stream),
-          preprocess(pattern_stream));
+const auto result_stream = compare(preprocess(input_stream),
+                                   preprocess(pattern_stream));
 
 result_stream.subscribe([](auto &&result) {
     // process result
-  });
+});
 ```
 
 You define the source of your input trajectory (`input_stream`) and your pattern trajectory (`pattern_stream`).
