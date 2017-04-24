@@ -8,7 +8,7 @@ I'd like to detect specific movements in 2D and 3D space that are described as t
 Input trajectory (recorded movement) and pattern trajectory (description of a specific movement) are preprocessed and
 compared by distance to each other. Dependent on the result, a function is called to process the result.
 
-![system diagram](img/system-diagram.svg)
+![system diagram](img/system-diagram.png)
 
 ```c++
 const auto result_stream = compare(preprocess(input_stream),
@@ -26,7 +26,7 @@ result_stream.subscribe([](auto &&result) {
 A trajectory is a curve defined by a finite sequence of points with linear interpolation between consecutive points.
 I reuse the [Boost Geometry Linestring Concept].
 
-![trajectory example](img/trajectory-L.svg)
+![trajectory example](img/trajectory-L.png)
 
 ```c++
 trajectory<point> {
@@ -61,7 +61,7 @@ which are represented by the [ReactiveX Observable][ReactiveX Intro] model imple
 
 ## System
 
-![system diagram](img/system-diagram.svg)
+![system diagram](img/system-diagram.png)
 
 It looks like this in C++
 
@@ -109,7 +109,7 @@ result_2_stream.subscribe([](auto &&result) {
 
 The preprocessing is a sequence of filter and/or map operations.
 
-![preprocessing diagram](img/preprocessing.svg)
+![preprocessing diagram](img/preprocessing.png)
 
 
 #### Map (Transform)

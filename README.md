@@ -8,7 +8,7 @@ I'd like to detect specific movements in 2D and 3D space that are described as t
 Input trajectory (recorded movement) and pattern trajectory (description of a specific movement) are preprocessed and
 compared by distance to each other. Dependent on the result, a function is called to process the result.
 
-![system diagram](doc/img/system-diagram.svg)
+![system diagram](doc/img/system-diagram.png)
 
 ```c++
 const auto result_stream = compare(preprocess(input_stream),
