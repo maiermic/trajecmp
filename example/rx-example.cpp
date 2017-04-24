@@ -34,6 +34,23 @@ auto less_than(int upper) {
     };
 }
 
+template<typename D, typename P>
+auto match_by(const D &distance_of, const P &predicate) {
+    return [=](const auto &input_trajectory_stream, const auto &pattern_trajectory_stream) {
+        return input_trajectory_stream
+                .with_latest_from(
+                        [=](const auto &input_trajectory, const auto &pattern_trajectory) {
+                            using Trajectory = typename std::remove_reference<decltype(input_trajectory)>::type;
+                            return rxcpp::observable<>::just(distance_of(input_trajectory, pattern_trajectory))
+                                   .filter(predicate)
+                                    .map([=](auto &&_) { return input_trajectory; });
+                        },
+                        pattern_trajectory_stream
+                )
+                .merge();
+    };
+};
+
 rxcpp::rxsub::subject<Trajectory> input_trajectory_subject;
 
 int main() {
@@ -65,13 +82,13 @@ int main() {
                     .map(transform);
     const trajecmp::distance::neighbours_percentage_range neighbours(0.1);
     const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
-    auto distance_stream =
-            preprocessed_input_trajectory_stream
-                    .with_latest_from(modified_hausdorff, preprocessed_pattern_trajectory_stream);
-    auto input_matches_pattern_stream = distance_stream.filter(less_than(25));
+    const auto compare = match_by(modified_hausdorff, less_than(25));
+    auto input_matches_pattern_stream =
+            compare(preprocessed_input_trajectory_stream,
+                    preprocessed_pattern_trajectory_stream);
     input_matches_pattern_stream
-            .subscribe([](double distance) {
-                std::cout << "input matches pattern with distance " << distance << '\n';
+            .subscribe([](auto &&t) {
+                std::cout << "transformed input trajectory that matches pattern: " << t << '\n';
             });
 
 
