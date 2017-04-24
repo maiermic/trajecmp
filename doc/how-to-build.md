@@ -1,5 +1,7 @@
 # How To Build
 
+This document explains how to build and run the examples and tests.
+
 ## Prerequisites
 
 You need to install a C++14 compiler (for example [gcc][gcc] or [clang][clang]),
