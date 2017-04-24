@@ -1,3 +1,7 @@
+# Trajectory Comparison
+
+The project is called _trajecmp_ which is a abbreviation of _trajectory comparison_.
+
 ## Abstract
 
 I'd like to detect specific movements in 2D and 3D space that are described as trajectories (called patterns).
