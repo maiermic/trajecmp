@@ -81,6 +81,12 @@ You define the source of your input trajectory (`input_stream`) and your pattern
 Then you preprocess both of them to prepare them for comparison.
 You compare the preprocessed trajectories and define what to do with the result.
 
+`input_stream` and `pattern_stream` are streams of trajectories.
+Every time a input trajectory is emitted it is compared with the (latest) pattern trajectory.
+Usually, `pattern_stream` contains only one (static pattern) trajectory.
+However, a pattern trajectory might be dynamically created.
+For example, you could use another input trajectory as a pattern.
+
 
 ### Transformation
 
