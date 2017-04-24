@@ -21,6 +21,7 @@ result_stream.subscribe([](auto &&result) {
 ### Trajectory
 
 A trajectory is a curve defined by a finite sequence of points with linear interpolation between consecutive points.
+I reuse the [Boost Geometry Linestring Concept].
 
 ![trajectory example](img/trajectory-L.svg)
 
@@ -31,6 +32,8 @@ trajectory<point> {
       {1, 0},
 };
 ```
+
+[Boost Geometry Linestring Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_linestring.html
 
 
 ### Point
