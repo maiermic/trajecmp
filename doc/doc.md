@@ -112,7 +112,11 @@ The preprocessing is a sequence of filter and/or map operations.
 ![preprocessing diagram](img/preprocessing.svg)
 
 
-### Transformation
+#### Map (Transform)
+
+Mapping is part of the preprocessing.
+It performs a transformation operation that takes a trajectory as input and returns another trajectory as output
+without changing the input trajectory.
 
 A transformation operation is a [Callable][Callable] with signature `Trajectory (const Trajectory &)`.
 It might be a functor that depends on input arguments.
