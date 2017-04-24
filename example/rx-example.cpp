@@ -62,7 +62,7 @@ int main() {
                     Trajectory{
                             {0, 2},
                             {0, 0},
-                            {1, 0}
+                            {1, 0},
                     }
             );
     auto pattern_M_trajectory_stream =
