@@ -124,3 +124,16 @@ For example, `translate_by(vector)` creates a transformation operation that tran
 returns the result.
 
 [Callable]: http://en.cppreference.com/w/cpp/concept/Callable
+
+
+#### Filter
+
+Filtering is part of the preprocessing.
+It filters (input) trajectories that do not meet the requirements of the comparison or
+if the result is foreseeable without further processing.
+
+![filter diagram](http://reactivex.io/documentation/operators/images/filter.png)
+
+A filter operation needs a predicate, which is a [Callable] with signature `bool (const Trajectory &)`.
+It might be a functor that depends on input arguments.
+For example, `has_min_num_points(2)` only lets trajectories pass that have at least two points.
