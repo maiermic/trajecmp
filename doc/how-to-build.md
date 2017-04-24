@@ -1,8 +1,6 @@
-# Trajectory Detection
+# How To Build
 
-## How To Build
-
-### Prerequisites
+## Prerequisites
 
 You need to install a C++14 compiler (for example [gcc][gcc] or [clang][clang]),
 [cmake][cmake] and [conan][conan].
@@ -13,7 +11,7 @@ You need to install a C++14 compiler (for example [gcc][gcc] or [clang][clang]),
 [conan]: https://www.conan.io/
 
 
-### Install Dependencies
+## Install Dependencies
 
 You need to compile dependencies properly. Otherwise, you may get errors
 (like [this][undefined reference error]):
@@ -25,7 +23,7 @@ cd .conan
 conan install -s build_type=Release -s compiler=clang -s compiler.version=3.8 -s compiler.libcxx=libstdc++11 --build=missing
 ```
 
-### Build
+## Build
 
 Create build directory (if it does not exist) and change to it:
 ```
@@ -33,14 +31,14 @@ mkdir cmake-build-release
 cd cmake-build-release
 ```
 
-#### Linux or Mac
+### Linux or Mac
 
 ```sh
 cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
 
-#### Windows
+### Windows
 
 ```sh
 cmake .. -G "Visual Studio 14 Win64"
@@ -48,7 +46,7 @@ cmake --build . --config Release
 ```
 
 
-#### Note
+### Note
 
 You might need to tell *cmake* which compiler you are using:
 
