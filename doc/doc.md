@@ -4,6 +4,8 @@ I'd like to detect specific movements in 2D and 3D space that are described as t
 Input trajectory (recorded movement) and pattern trajectory (description of a specific movement) are preprocessed and
 compared by distance to each other. Dependent on the result, a function is called to process the result.
 
+![system diagram](img/system-diagram-trajecmp.png)
+
 ### Transformation
 
 A transformation operation is a [Callable][Callable] with signature `Trajectory (const Trajectory &)`.
