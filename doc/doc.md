@@ -101,6 +101,12 @@ result_2_stream.subscribe([](auto &&result) {
 ```
 
 
+### Preprocessing
+
+The preprocessing is a sequence of filter and/or map operations.
+
+![preprocessing diagram](img/preprocessing.svg)
+
 
 ### Transformation
 
