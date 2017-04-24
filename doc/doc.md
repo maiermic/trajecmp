@@ -52,6 +52,15 @@ point<CoordinateType, DimensionCount>
 [Boost Geometry Point Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_point.html
 
 
+### Stream
+
+I use the term _stream_ for _values distributed in time_,
+which are represented by the [ReactiveX Observable][ReactiveX Intro] model implemented by [RxCpp].  
+
+[ReactiveX Intro]: http://reactivex.io/intro.html
+[RxCpp]: https://github.com/Reactive-Extensions/RxCpp
+
+
 ### System
 
 ![system diagram](img/system-diagram.svg)
