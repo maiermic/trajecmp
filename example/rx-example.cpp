@@ -57,12 +57,22 @@ int main() {
     logging::is_logging = true;
 
     auto input_trajectory_stream = input_trajectory_subject.get_observable();
-    auto pattern_trajectory_stream =
+    auto pattern_L_trajectory_stream =
             rxcpp::observable<>::just(
                     Trajectory{
                             {0, 2},
                             {0, 0},
                             {1, 0}
+                    }
+            );
+    auto pattern_M_trajectory_stream =
+            rxcpp::observable<>::just(
+                    Trajectory{
+                            {0, 0},
+                            {1, 4},
+                            {2, 0},
+                            {3, 4},
+                            {4, 0},
                     }
             );
     const auto transform = [](Trajectory &trajectory) {
@@ -79,18 +89,23 @@ int main() {
     };
     auto preprocessed_input_trajectory_stream =
             preprocess(input_trajectory_stream);
-    auto preprocessed_pattern_trajectory_stream =
-            preprocess(pattern_trajectory_stream);
     const trajecmp::distance::neighbours_percentage_range neighbours(0.1);
     const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
     const auto compare = match_by(modified_hausdorff, less_than(25));
-    auto input_matches_pattern_stream =
+    auto input_matches_pattern_L_stream =
             compare(preprocessed_input_trajectory_stream,
-                    preprocessed_pattern_trajectory_stream);
-    input_matches_pattern_stream
+                    preprocess(pattern_L_trajectory_stream));
+    input_matches_pattern_L_stream
             .subscribe([](auto &&t) {
-                std::cout << "transformed input trajectory that matches pattern: " << t << '\n';
+                std::cout << "transformed input trajectory that matches pattern L: " << t << '\n';
             });
+    auto input_matches_pattern_M_stream =
+                compare(preprocessed_input_trajectory_stream,
+                        preprocess(pattern_M_trajectory_stream));
+        input_matches_pattern_M_stream
+                .subscribe([](auto &&t) {
+                    std::cout << "transformed input trajectory that matches pattern M: " << t << '\n';
+                });
 
 
     auto subscriber = input_trajectory_subject.get_subscriber();
@@ -107,6 +122,13 @@ int main() {
             {192, 232},
             {199, 230},
             {197, 232},
+    });
+    subscriber.on_next(Trajectory{
+            {0, 0},
+            {1, 4},
+            {2, 0},
+            {3, 4},
+            {4, 0},
     });
     subscriber.on_completed();
 }
