@@ -43,11 +43,6 @@ trajectory<point> {
 
 I focus on 2D and 3D points. I reuse the [Boost Geometry Point Concept].
 
-
-```c++
-point<CoordinateType, DimensionCount>
-```
-
 [Boost Geometry Point Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_point.html
 
 
