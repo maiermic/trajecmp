@@ -1,77 +1,25 @@
-# Trajectory Detection
+# Trajectory Comparison
 
-## How To Build
+The project is called _trajecmp_ which is a abbreviation of _trajectory comparison_.
 
-### Prerequisites
+## Abstract
 
-You need to install a C++14 compiler (for example [gcc][gcc] or [clang][clang]),
-[cmake][cmake] and [conan][conan].
+I'd like to detect specific movements in 2D and 3D space that are described as trajectories (called patterns).
+Input trajectory (recorded movement) and pattern trajectory (description of a specific movement) are preprocessed and
+compared by distance to each other. Dependent on the result, a function is called to process the result.
 
-[gcc]: https://gcc.gnu.org/
-[clang]: http://clang.llvm.org/
-[cmake]: https://cmake.org/
-[conan]: https://www.conan.io/
+![system diagram](doc/img/system-diagram.svg)
 
+```c++
+const auto result_stream = compare(preprocess(input_stream),
+                                   preprocess(pattern_stream));
 
-### Install Dependencies
-
-You need to compile dependencies properly. Otherwise, you may get errors
-(like [this][undefined reference error]):
-
-[undefined reference error]: http://stackoverflow.com/q/41408216/1065654
-
-```
-cd .conan
-conan install -s build_type=Release -s compiler=clang -s compiler.version=3.8 -s compiler.libcxx=libstdc++11 --build=missing
+result_stream.subscribe([](auto &&result) {
+    // process result
+});
 ```
 
-### Build
+## Documentation
 
-Create build directory (if it does not exist) and change to it:
-```
-mkdir cmake-build-release
-cd cmake-build-release
-```
-
-#### Linux or Mac
-
-```sh
-cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
-cmake --build .
-```
-
-#### Windows
-
-```sh
-cmake .. -G "Visual Studio 14 Win64"
-cmake --build . --config Release
-```
-
-
-#### Note
-
-You might need to tell *cmake* which compiler you are using:
-
-```
-export CC=clang
-export CXX=clang++
-```
-
-If you use [Clion][Clion] and don't start it from
-the shell you have to configure those environment variables in Clion (see
-[How to add environment variables in Clion][environment variables in Clion]).
-Delete Clion's build directory (e.g. `cmake-build-release`) after you changed
-environment variables and run *Tools > CMake > Reload CMake Project*.
-
-[Clion]: https://www.jetbrains.com/clion/
-[environment variables in Clion]: http://stackoverflow.com/a/38874446/1065654
-
-
-
-## Run
-
-Go to build directory and run:
-
-```sh
-./cmake-build-release/bin/catch
-```
+- [Documentation](doc/doc.md)
+- [How To Build](doc/how-to-build.md)
