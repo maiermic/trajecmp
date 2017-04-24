@@ -33,6 +33,22 @@ trajectory<point> {
 ```
 
 
+### Point
+
+> A point is an entity that has a location in space or on a plane,
+> but has no extent.  
+> [see Wikipedia](http://en.wikipedia.org/wiki/Point_(geometry))
+
+I focus on 2D and 3D points. I reuse the [Boost Geometry Point Concept].
+
+
+```c++
+point<CoordinateType, DimensionCount>
+```
+
+[Boost Geometry Point Concept]: http://www.boost.org/doc/libs/1_60_0/libs/geometry/doc/html/geometry/reference/concepts/concept_point.html
+
+
 ### Transformation
 
 A transformation operation is a [Callable][Callable] with signature `Trajectory (const Trajectory &)`.
