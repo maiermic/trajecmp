@@ -42,7 +42,7 @@ auto match_by(const D &distance_of, const P &predicate) {
                         [=](const auto &input_trajectory, const auto &pattern_trajectory) {
                             using Trajectory = typename std::remove_reference<decltype(input_trajectory)>::type;
                             return rxcpp::observable<>::just(distance_of(input_trajectory, pattern_trajectory))
-                                   .filter(predicate)
+                                    .filter(predicate)
                                     .map([=](auto &&_) { return input_trajectory; });
                         },
                         pattern_trajectory_stream
@@ -72,14 +72,15 @@ int main() {
         );
     };
 
+    const auto preprocess = [&transform](auto &&trajectory_stream) {
+        return trajectory_stream
+                .filter(has_min_num_points(2))
+                .map(transform);
+    };
     auto preprocessed_input_trajectory_stream =
-            input_trajectory_stream
-                    .filter(has_min_num_points(2))
-                    .map(transform);
+            preprocess(input_trajectory_stream);
     auto preprocessed_pattern_trajectory_stream =
-            pattern_trajectory_stream
-                    .filter(has_min_num_points(2))
-                    .map(transform);
+            preprocess(pattern_trajectory_stream);
     const trajecmp::distance::neighbours_percentage_range neighbours(0.1);
     const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
     const auto compare = match_by(modified_hausdorff, less_than(25));
