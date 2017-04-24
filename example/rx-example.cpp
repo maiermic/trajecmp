@@ -100,12 +100,12 @@ int main() {
                 std::cout << "transformed input trajectory that matches pattern L: " << t << '\n';
             });
     auto input_matches_pattern_M_stream =
-                compare(preprocessed_input_trajectory_stream,
-                        preprocess(pattern_M_trajectory_stream));
-        input_matches_pattern_M_stream
-                .subscribe([](auto &&t) {
-                    std::cout << "transformed input trajectory that matches pattern M: " << t << '\n';
-                });
+            compare(preprocessed_input_trajectory_stream,
+                    preprocess(pattern_M_trajectory_stream));
+    input_matches_pattern_M_stream
+            .subscribe([](auto &&t) {
+                std::cout << "transformed input trajectory that matches pattern M: " << t << '\n';
+            });
 
 
     auto subscriber = input_trajectory_subject.get_subscriber();
