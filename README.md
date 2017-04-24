@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-You need to install a C++11 compiler (for example [gcc][gcc] or [clang][clang]),
+You need to install a C++14 compiler (for example [gcc][gcc] or [clang][clang]),
 [cmake][cmake] and [conan][conan].
 
 [gcc]: https://gcc.gnu.org/
