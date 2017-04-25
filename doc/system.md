@@ -131,6 +131,9 @@ It might be a functor that depends on input arguments.
 For example, `translate_by(vector)` creates a transformation operation that translates a trajectory by `vector` and
 returns the result.
 
+Examples for commonly used transformations are:
+Translation, scaling, rotation, curve smoothing and outlier elimination.
+
 [Callable]: http://en.cppreference.com/w/cpp/concept/Callable
 
 
