@@ -23,7 +23,8 @@ Then you preprocess both of them to prepare them for comparison.
 You compare the preprocessed trajectories and define what to do with the result.
 
 `input_stream` and `pattern_stream` are streams of trajectories.
-Every time a input trajectory is emitted it is compared with the (latest) pattern trajectory.
+Every time a input trajectory is emitted on `input_stream` it is preprocessed and
+compared with the (latest) preprocessed pattern trajectory of `pattern_stream`.
 Usually, `pattern_stream` contains only one (static pattern) trajectory.
 However, a pattern trajectory might be dynamically created.
 For example, you could use another input trajectory as a pattern.
