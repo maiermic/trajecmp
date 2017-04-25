@@ -23,7 +23,7 @@ On a smartphone you track movements of the finger tips on a touchscreen.
 
 ![smartphone](doc/img/smartphone.jpg)
 
-For 3D space there a wide variety of more or less known input devices.
+For 3D space there is a wide variety of more or less known input devices.
 One of them is the Leap Motion that usually is attached to a virtual reality headset to track your hands.
 
 ![Leap Motion attached to HTC Vive](doc/img/leap-motion-attached-to-htc-vive.png)
