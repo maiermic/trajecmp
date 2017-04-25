@@ -106,11 +106,15 @@ Taken together, the limit depends on
 
 ## Preprocessing
 
-I already mentioned in the [introduction](../README.md) that input and pattern trajectory
+I already mentioned in the [introduction](../README.md) that most commonly input and pattern trajectory
 differ in the number of points, length/size, position, etc.
 Distance functions may assume specific preconditions.
 For example, some require that both trajectories have equal number of points or length.
 The goal of the preprocessing is to prepare a trajectory for comparison with another trajectory.
+The appropriate preprocessing steps depend on the same factors as
+the limit that is used for [deciding similarity](#deciding-simlarity)
+including the preprocessing itself in that way that the preprocessing steps influence each other.
+
 The preprocessing is a sequence of filter and/or map operations.
 
 ![preprocessing diagram](img/preprocessing.png) 
