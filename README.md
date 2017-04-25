@@ -55,7 +55,7 @@ It is more probable that you get something like this as input:
 
 The input trajectory has more points, different length/size, another position, etc.
 It is not equal to our defined trajectory, but it looks similar and should be recognized as our lightning movement.
-We can achieve this by comparing our two trajectories using a appropriate distance function and proper preprocessing.
+We can achieve this by comparing our two trajectories using an appropriate distance function and proper preprocessing.
 This library helps you with this process.
 
 
