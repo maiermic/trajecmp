@@ -50,6 +50,60 @@ result_2_stream.subscribe([](auto &&result) {
 ```
 
 
+## Comparing Trajectories
+
+To check two trajectories for similarity we use a distance function to calculate the distance between them.
+The distance is a scalar that indicates how similar two trajectories are.
+We can decide similarity based on a limit. 
+If the distance is lower than the limit we consider two trajectories to be similar.
+
+
+### Distance Function
+
+We can choose different distance functions.
+There is a wide range of distance functions to choose from.
+Each has its pros and cons.
+Which distance function to use is down to you.
+
+Take a look at my examples.
+I obtained good results using a modified Hausdorff distance function. See [Learning Traffic Patterns at Intersections by Spectral Clustering of Motion Trajectories](https://pdfs.semanticscholar.org/e422/b3bcf04a0f9ace1a4ea2b8be583831eec547.pdf)
+by Atev, Stefan, Osama Masoud and Nikolaos Papanikolopoulos.
+
+I expect the Fréchet Distance to be suitable, too.
+See [Measuring the Resemblance of Polygonal Curves](http://dl.acm.org/citation.cfm?id=142699)
+by Alt, Helmut und Michael Godau.
+
+Area based distance functions may be suitable for (closed) trajectory patterns with
+no specific start point and order of points.
+See [Performance evaluation metrics and statistics for positional tracker evaluation](http://ai2-s2-pdfs.s3.amazonaws.com/e686/72c74d44fab77c60c35f015b9e22acc86f91.pdf)
+by Needham, Chris J. und Roger D. Boyle.
+
+
+### Deciding Similarity
+
+We consider two trajectories to be similar if the distance is lower than the limit.
+Finding a good limit is crucial to avoid/reduce false positives and negatives.
+If the limit is not tolerant enough, measuring inaccuracy of the input device recording the object position and
+natural small deviations during each movement execution will make it hard or impossible to recognize a movement.
+If the limit is too tolerant we consider trajectories to be similar that should not.
+
+Another important factor is the preprocessing of the trajectories.
+Each preprocessing step might influence the distance (positive or negative).
+The influence depends on the distance function.
+Please also note that the distance might not grow linear.
+For example, some distance functions use squared values.
+Moreover, you should devote special attention to the scale of the trajectories,
+since the distance itself depends on it.
+
+Taken together, the limit depends on
+
+- the measuring (in-) accuracy of the input device
+- the minimum movement execution accuracy we claim from the user 
+- the preprocessing of the trajectories
+- the scale of the trajectories
+- the distance function
+
+
 ## Preprocessing
 
 I already mentioned in the [introduction](../README.md) that input and pattern trajectory
