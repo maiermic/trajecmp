@@ -48,7 +48,7 @@ Such kind of movements can quite easily be defined as a trajectory.
 
 ![draw lightning with magic wand](doc/img/lightning-trajectory.png)
 
-However, it is very unlikely that the exact same trajectory is drawn and recorded.
+However, it is very unlikely that exactly the same trajectory is drawn and recorded.
 It is more probable that you get something like this as input:
 
 ![draw lightning with magic wand](doc/img/possible-lightning-trajectory-input.png)
