@@ -112,7 +112,7 @@ Distance functions may assume specific preconditions.
 For example, some require that both trajectories have equal number of points or length.
 The goal of the preprocessing is to prepare a trajectory for comparison with another trajectory.
 The appropriate preprocessing steps depend on the same factors as
-the limit that is used for [deciding similarity](#deciding-simlarity)
+the limit that is used for [deciding similarity](#deciding-similarity)
 including the preprocessing itself in that way that the preprocessing steps influence each other.
 
 The preprocessing is a sequence of filter and/or map operations.
