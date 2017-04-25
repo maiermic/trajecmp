@@ -30,7 +30,7 @@ One of them is the Leap Motion that usually is attached to a virtual reality hea
 
 ![Leap Motion in action](doc/img/leap-motion-in-action.png)
 
-After all, all of those input devices determine the current position of a moving object.
+All those input devices determine the current position of a moving object.
 You can record the position of an object over time to get a trajectory that represents the movement of the object.
 Movements can be used to interact with an application.
 For example, specific movements can trigger special events.
