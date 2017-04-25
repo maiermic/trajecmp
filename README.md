@@ -59,8 +59,13 @@ We can achieve this by comparing our two trajectories using a appropriate distan
 This library helps you with this process.
 
 
-## Documentation
+## What To Read Next
 
-- [Terminology](doc/terminology.md)
-- [System Description](doc/system.md)
-- [How To Build](doc/how-to-build.md)
+Take a quick look at the [terminology](doc/terminology.md) I use.
+Then read the [system description](doc/system.md) to get a better understanding how it works.
+Have a look at the examples to see it in action.
+[This](doc/how-to-build.md) guide explains how to build the tests and examples.
+If your browser supports [WebAssembly] you can run [this][online demo] demo online. 
+
+[WebAssembly]: http://caniuse.com/#feat=wasm
+[online demo]: http://cpppc.maiermic.surge.sh/
