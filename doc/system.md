@@ -52,9 +52,14 @@ result_2_stream.subscribe([](auto &&result) {
 
 ## Preprocessing
 
+I already mentioned in the [introduction](../README.md) that input and pattern trajectory
+differ in the number of points, length/size, position, etc.
+Distance functions may assume specific preconditions.
+For example, some require that both trajectories have equal number of points or length.
+The goal of the preprocessing is to prepare a trajectory for comparison with another trajectory.
 The preprocessing is a sequence of filter and/or map operations.
 
-![preprocessing diagram](img/preprocessing.png)
+![preprocessing diagram](img/preprocessing.png) 
 
 
 ### Map (Transform)
