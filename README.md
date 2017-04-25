@@ -10,14 +10,6 @@ compared by distance to each other. Dependent on the result, a function is calle
 
 ![system diagram](doc/img/system-diagram.png)
 
-```c++
-const auto result_stream = compare(preprocess(input_stream),
-                                   preprocess(pattern_stream));
-
-result_stream.subscribe([](auto &&result) {
-    // process result
-});
-```
 
 ## Documentation
 
