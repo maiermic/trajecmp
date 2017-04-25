@@ -1,4 +1,9 @@
-# System
+# How It Works
+
+I like to describe specific movements as trajectories that I call _pattern trajectories_.
+The recorded movements of the user is further called _input trajectories_.
+I like to check input and pattern trajectory for similarity.
+This system diagram visualizes my approach:
 
 ![system diagram](img/system-diagram.png)
 
