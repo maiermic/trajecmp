@@ -98,14 +98,15 @@ int main() {
                 .filter(has_min_num_points(2))
                 .map(transform);
     };
-    auto preprocessed_input_trajectory_stream =
-            preprocess(input_trajectory_stream);
+    auto preprocessed_input_trajectory_stream = preprocess(input_trajectory_stream);
+    auto preprocessed_pattern_L_trajectory_stream = preprocess(pattern_L_trajectory_stream);
+    auto preprocessed_pattern_M_trajectory_stream = preprocess(pattern_M_trajectory_stream);
     const trajecmp::distance::neighbours_percentage_range neighbours(0.1);
     const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
     const auto compare = match_by(modified_hausdorff, less_than(normalized_size * 0.25));
     auto input_matches_pattern_L_stream =
             compare(preprocessed_input_trajectory_stream,
-                    preprocess(pattern_L_trajectory_stream));
+                    preprocessed_pattern_L_trajectory_stream);
     input_matches_pattern_L_stream
             | subscribe_with_latest_from(
                     [](auto distance, auto &&input_trajcetory) {
@@ -116,7 +117,7 @@ int main() {
             );
     auto input_matches_pattern_M_stream =
             compare(preprocessed_input_trajectory_stream,
-                    preprocess(pattern_M_trajectory_stream));
+                    preprocessed_pattern_M_trajectory_stream);
     input_matches_pattern_M_stream
             | subscribe_with_latest_from(
                 [](auto distance, auto &&input_trajcetory) {
