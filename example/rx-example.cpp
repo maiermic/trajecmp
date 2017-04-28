@@ -112,19 +112,21 @@ int main() {
                     preprocessed_pattern_M_trajectory_stream);
     input_matches_pattern_L_stream
             | subscribe_with_latest_from(
-                    [](auto distance, auto &&input_trajcetory) {
+                    [](auto distance, auto &&input_trajcetory, auto &&pattern_trajcetory) {
                         std::cout << "transformed input trajectory that matches pattern L with distance of "
                                   << distance << ": " << input_trajcetory << '\n';
                     },
-                    preprocessed_input_trajectory_stream
+                    preprocessed_input_trajectory_stream,
+                    preprocessed_pattern_L_trajectory_stream
             );
     input_matches_pattern_M_stream
             | subscribe_with_latest_from(
-                [](auto distance, auto &&input_trajcetory) {
+                [](auto distance, auto &&input_trajcetory, auto &&pattern_trajcetory) {
                     std::cout << "transformed input trajectory that matches pattern M with distance of "
                               << distance << ": " << input_trajcetory << '\n';
                 },
-                preprocessed_input_trajectory_stream
+                preprocessed_input_trajectory_stream,
+                preprocessed_pattern_M_trajectory_stream
             );
 
 
