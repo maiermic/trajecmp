@@ -28,8 +28,9 @@ auto has_min_num_points(std::size_t min) {
     };
 }
 
-auto less_than(int upper) {
-    return [=](int value) {
+template<typename T>
+auto less_than(T upper) {
+    return [=](T value) {
         return value <= upper;
     };
 }
