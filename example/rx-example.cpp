@@ -84,9 +84,11 @@ int main() {
                             {4, 0},
                     }
             );
-    const auto transform = [](Trajectory &trajectory) {
+
+    static const auto normalized_size = 100;
+    const auto transform = [=](Trajectory &trajectory) {
         const auto mbs = trajecmp::geometry::min_bounding_sphere(trajectory);
-        return trajecmp::transform::scale_to_const<100>(mbs.radius)(
+        return trajecmp::transform::scale_to_const<normalized_size>(mbs.radius)(
                 trajecmp::transform::translate_by(trajecmp::geometry::negative_vector_of(mbs.center))(trajectory)
         );
     };
@@ -100,7 +102,7 @@ int main() {
             preprocess(input_trajectory_stream);
     const trajecmp::distance::neighbours_percentage_range neighbours(0.1);
     const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
-    const auto compare = match_by(modified_hausdorff, less_than(25));
+    const auto compare = match_by(modified_hausdorff, less_than(normalized_size * 0.25));
     auto input_matches_pattern_L_stream =
             compare(preprocessed_input_trajectory_stream,
                     preprocess(pattern_L_trajectory_stream));
