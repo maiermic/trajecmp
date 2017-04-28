@@ -88,7 +88,7 @@ int main() {
     static const auto normalized_size = 100;
     const auto transform = [=](Trajectory &trajectory) {
         const auto mbs = trajecmp::geometry::min_bounding_sphere(trajectory);
-        return trajecmp::transform::scale_to_const<normalized_size>(mbs.radius)(
+        return trajecmp::transform::scale_to_const<normalized_size>(mbs.radius * 2)(
                 trajecmp::transform::translate_by(trajecmp::geometry::negative_vector_of(mbs.center))(trajectory)
         );
     };
@@ -110,20 +110,34 @@ int main() {
     auto input_matches_pattern_M_stream =
             compare(preprocessed_input_trajectory_stream,
                     preprocessed_pattern_M_trajectory_stream);
+
+
+    const auto visualization_size = 500;
+    const auto transform_for_visualization = trajecmp::functional::pipe(
+            trajecmp::transform::scale_to_const<visualization_size>(normalized_size),
+            trajecmp::transform::translate_by(vector(visualization_size / 2, visualization_size / 2))
+    );
+
     input_matches_pattern_L_stream
             | subscribe_with_latest_from(
-                    [](auto distance, auto &&input_trajcetory, auto &&pattern_trajcetory) {
+                    [&](auto distance, auto &&input_trajcetory, auto &&pattern_trajcetory) {
                         std::cout << "transformed input trajectory that matches pattern L with distance of "
                                   << distance << ": " << input_trajcetory << '\n';
+                        TrajectorySvg svg("pattern-L.svg", visualization_size, visualization_size);
+                        svg.add(transform_for_visualization(input_trajcetory), "visualization_normalized_input");
+                        svg.add(transform_for_visualization(pattern_trajcetory), "visualization_normalized_pattern");
                     },
                     preprocessed_input_trajectory_stream,
                     preprocessed_pattern_L_trajectory_stream
             );
     input_matches_pattern_M_stream
             | subscribe_with_latest_from(
-                [](auto distance, auto &&input_trajcetory, auto &&pattern_trajcetory) {
+                [&](auto distance, auto &&input_trajcetory, auto &&pattern_trajcetory) {
                     std::cout << "transformed input trajectory that matches pattern M with distance of "
                               << distance << ": " << input_trajcetory << '\n';
+                    TrajectorySvg svg("pattern-M.svg", visualization_size, visualization_size);
+                    svg.add(transform_for_visualization(input_trajcetory), "visualization_normalized_input");
+                    svg.add(transform_for_visualization(pattern_trajcetory), "visualization_normalized_pattern");
                 },
                 preprocessed_input_trajectory_stream,
                 preprocessed_pattern_M_trajectory_stream
