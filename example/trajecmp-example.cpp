@@ -63,9 +63,9 @@ auto get_min_bounding_spehere_center(transformation_data &data) {
     };
 }
 
-auto get_min_bounding_spehere_radius(transformation_data &data) {
+auto get_min_bounding_spehere_diameter(transformation_data &data) {
     return [&]() {
-        return data.min_bounding_spehere.radius;
+        return data.min_bounding_spehere.radius * 2;
     };
 }
 
@@ -79,7 +79,8 @@ const auto make_transform = [](auto &&data) {
     using trajecmp::functional::operator|;
     return min_bounding_sphere_transformer<Trajectory>(set_min_bounding_spehere(data))
     | trajecmp::functional::call_arguments_on_functor_call(trajecmp::transform::translate_by<vector>)(get_min_bounding_spehere_center_to_origin(data))
-    | trajecmp::functional::call_arguments_on_functor_call(trajecmp::transform::scale_to_const<100, double>)(get_min_bounding_spehere_radius(data));
+    | trajecmp::functional::call_arguments_on_functor_call(trajecmp::transform::scale_to_const<100, double>)(
+            get_min_bounding_spehere_diameter(data));
 };
 
 
@@ -146,12 +147,12 @@ int main() {
     // visualize
     // ---------------------
 
-    const auto visualization_size = 250;
+    const auto visualization_size = 500;
 
     using trajecmp::functional::operator|;
     const auto transform_for_visualization =
             trajecmp::transform::scale_to_const<visualization_size>(normalized_size)
-               | trajecmp::transform::translate_by(vector(visualization_size, visualization_size));
+               | trajecmp::transform::translate_by(vector(visualization_size / 2, visualization_size / 2));
 
 
     const Trajectory &visualization_normalized_input = transform_for_visualization(transformed_input);
