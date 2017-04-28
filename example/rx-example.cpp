@@ -22,7 +22,7 @@ using linestring = boost::geometry::model::linestring<point>;
 using Trajectory = linestring;
 using vector = point;
 
-auto has_min_num_points(int min) {
+auto has_min_num_points(std::size_t min) {
     return [=](const auto &trajectory) {
         return boost::geometry::num_points(trajectory) >= min;
     };
