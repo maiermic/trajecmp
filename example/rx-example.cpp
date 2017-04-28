@@ -107,6 +107,9 @@ int main() {
     auto input_matches_pattern_L_stream =
             compare(preprocessed_input_trajectory_stream,
                     preprocessed_pattern_L_trajectory_stream);
+    auto input_matches_pattern_M_stream =
+            compare(preprocessed_input_trajectory_stream,
+                    preprocessed_pattern_M_trajectory_stream);
     input_matches_pattern_L_stream
             | subscribe_with_latest_from(
                     [](auto distance, auto &&input_trajcetory) {
@@ -115,9 +118,6 @@ int main() {
                     },
                     preprocessed_input_trajectory_stream
             );
-    auto input_matches_pattern_M_stream =
-            compare(preprocessed_input_trajectory_stream,
-                    preprocessed_pattern_M_trajectory_stream);
     input_matches_pattern_M_stream
             | subscribe_with_latest_from(
                 [](auto distance, auto &&input_trajcetory) {
