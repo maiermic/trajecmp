@@ -1,6 +1,6 @@
 [requires]
 Boost/1.60.0@lasote/stable
-RxCpp/4.0.0/maiermic/stable
+RxCpp/latest/maiermic/stable
 
 [generators]
 gcc
