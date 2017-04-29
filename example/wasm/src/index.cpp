@@ -221,9 +221,6 @@ const model::trajectory pattern_square{{0, 0},
 void one_iter() {
     if (is_rerender) {
         is_rerender = false;
-        // const model::trajectory trajectory{{320, 200},
-        //                             {300, 240},
-        //                             {340, 240}};
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(renderer);
