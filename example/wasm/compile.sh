@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
 
+# compile dependencies
+cd .conan
+conan install \
+    -s build_type=Release \
+    -s compiler=clang \
+    -s compiler.version=4.0 \
+    -s compiler.libcxx=libstdc++11 \
+    --build=missing
+cd ..
+
+# compile index.cpp using Emscripten (see https://github.com/juj/emsdk)
 emcc src/index.cpp \
   --shell-file src/shell.html \
   -o public/index.html \
-  -I/home/maiermic/.conan/data/Boost/1.60.0/lasote/stable/package/89066e72c51676d91729a0d7fee21c166ca507da/include \
-  -I../../src \
+  @.conan/conanbuildinfo.gcc \
   -O2 \
   -s WASM=1 \
   -s USE_SDL=2 \
