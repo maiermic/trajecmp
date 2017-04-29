@@ -15,7 +15,6 @@
 #include "../../../src/trajecmp/util/boost_geometry_to_string.hpp"
 
 #include "../../logging.hpp"
-#include "../../TrajectorySvg.hpp"
 
 namespace bg = boost::geometry;
 namespace trans = boost::geometry::strategy::transform;
@@ -186,10 +185,6 @@ void compare_trajectories(const model::trajectory &input_trajectory,
     const auto visualization_normalized_pattern_mbs = min_bounding_sphere(visualization_normalized_pattern);
     // LOG(visualization_normalized_input_mbs);
     // LOG(visualization_normalized_pattern_mbs);
-
-    // TrajectorySvg svg("example.svg", visualization_size, visualization_size);
-    // svg.add(visualization_normalized_input, "visualization_normalized_input");
-    // svg.add(visualization_normalized_pattern, "visualization_normalized_pattern");
 
     draw_trajectory(renderer, visualization_normalized_pattern, color_code::yellow);
     draw_trajectory(renderer,
