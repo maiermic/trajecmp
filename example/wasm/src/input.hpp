@@ -11,18 +11,17 @@
 
 namespace input {
     using namespace emscripten;
-    using namespace model;
     namespace bg = boost::geometry;
 
     namespace details {
-        bool parse_trajectory(const std::string trajectory_string, Trajectory &output) {
+        bool parse_trajectory(const std::string trajectory_string, model::Trajectory &output) {
             std::istringstream trajectory_stream(trajectory_string);
             std::string coordinates_string;
             while (std::getline(trajectory_stream, coordinates_string, ',')) {
                 const char *p = coordinates_string.c_str();
                 char *end;
-                point current_point;
-                const auto dimension = bg::dimension<point>::value;
+                model::point current_point;
+                const auto dimension = bg::dimension<model::point>::value;
                 int coordinate_index = 0;
                 for (double coordinate = std::strtod(p, &end);
                      p != end;
@@ -44,10 +43,10 @@ namespace input {
         }
     }
 
-    Trajectory pattern;
+    model::Trajectory pattern;
 
     bool setPattern(const std::string trajectoryString) {
-        Trajectory new_pattern;
+        model::Trajectory new_pattern;
         if (!details::parse_trajectory(trajectoryString, new_pattern)) {
             return false;
         }
