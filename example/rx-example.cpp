@@ -12,7 +12,7 @@
 #include "../src/trajecmp/geometry/vector.hpp"
 #include "../src/trajecmp/transform/translate.hpp"
 #include "../src/trajecmp/transform/scale.hpp"
-
+#include "../src/trajecmp/compare/match_by.hpp"
 #include "../src/trajecmp/util/subscribe_with_latest_from.hpp"
 #include "../src/trajecmp/util/boost_geometry_to_string.hpp"
 #include "TrajectorySvg.hpp"
@@ -36,21 +36,13 @@ auto less_than(T upper) {
     };
 }
 
-template<typename D, typename P>
-auto match_by(const D &distance_of, const P &predicate) {
-    return [=](const auto &input_trajectory_stream, const auto &pattern_trajectory_stream) {
-        return input_trajectory_stream
-                .with_latest_from(distance_of, pattern_trajectory_stream)
-                .filter(predicate);
-    };
-};
-
 
 rxcpp::rxsub::subject<Trajectory> input_trajectory_subject;
 
 int main() {
+    using trajecmp::compare::match_by;
     using trajecmp::util::subscribe_with_latest_from;
-    
+
     logging::is_logging = true;
 
     auto input_trajectory_stream = input_trajectory_subject.get_observable();
