@@ -43,7 +43,7 @@ namespace color_code {
 }
 
 void draw_trajectory(SDL_Renderer *renderer,
-                     const model::Trajectory &trajectory,
+                     const model::trajectory &trajectory,
                      const rgb color = rgb {255, 255, 255}) {
     SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, SDL_ALPHA_OPAQUE);
     for (auto i = trajectory.begin(); i != trajectory.end();) {
@@ -74,8 +74,8 @@ void draw_line(SDL_Renderer *renderer,
 }
 
 
-void compare_trajectories(const model::Trajectory &input_trajectory,
-                          const model::Trajectory &pattern_trajectory) {
+void compare_trajectories(const model::trajectory &input_trajectory,
+                          const model::trajectory &pattern_trajectory) {
     // --------------
     // filter
     // --------------
@@ -117,7 +117,7 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
     bg::multiply_value(pattern_translation_vector, -1);
     LOG(pattern_translation_vector);
 
-    model::Trajectory pattern_translated;
+    model::trajectory pattern_translated;
     trans::translate_transformer<double, 2, 2> pattern_translate(bg::get<0>(pattern_translation_vector),
                                                                  bg::get<1>(pattern_translation_vector));
     boost::geometry::transform(pattern_trajectory, pattern_translated, pattern_translate);
@@ -128,7 +128,7 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
     bg::multiply_value(input_translation_vector, -1);
     LOG(input_translation_vector);
 
-    model::Trajectory input_translated;
+    model::trajectory input_translated;
     trans::translate_transformer<double, 2, 2> input_translate(bg::get<0>(input_translation_vector),
                                                                bg::get<1>(input_translation_vector));
     boost::geometry::transform(input_trajectory, input_translated, input_translate);
@@ -138,12 +138,12 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
     // scale
     const double normalized_size = 100;
 
-    model::Trajectory pattern_scaled;
+    model::trajectory pattern_scaled;
     trans::scale_transformer<double, 2, 2> pattern_scale(normalized_size / pattern_mbs.radius);
     boost::geometry::transform(pattern_translated, pattern_scaled, pattern_scale);
     LOG(pattern_scaled);
 
-    model::Trajectory input_scaled;
+    model::trajectory input_scaled;
     trans::scale_transformer<double, 2, 2> input_scale(normalized_size / input_mbs.radius);
     boost::geometry::transform(input_translated, input_scaled, input_scale);
     LOG(input_scaled);
@@ -161,12 +161,12 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
     const auto input_angle = x_angle(input_orientation);
     using rotate_transformer = trans::rotate_transformer<bg::radian, double, 2, 2>;
     rotate_transformer input_rotate(pattern_angle - input_angle);
-    model::Trajectory input_rotated;
+    model::trajectory input_rotated;
     bg::transform(input_scaled, input_rotated, input_rotate);
 
 
-    const model::Trajectory &transformed_input = input_rotated;
-    const model::Trajectory &transformed_pattern = pattern_scaled;
+    const model::trajectory &transformed_input = input_rotated;
+    const model::trajectory &transformed_pattern = pattern_scaled;
 
     // ---------------------
     // compare trajectories
@@ -197,11 +197,11 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
 
     const auto visualization_size = 300;
 
-    model::Trajectory input_visualization_scaled;
+    model::trajectory input_visualization_scaled;
     trans::scale_transformer<double, 2, 2> input_visualization_scale(visualization_size / 2 / normalized_size);
     boost::geometry::transform(transformed_input, input_visualization_scaled, input_visualization_scale);
 
-    model::Trajectory input_visualization_translated;
+    model::trajectory input_visualization_translated;
     trans::translate_transformer<double, 2, 2> input_visualization_translate(visualization_size / 2,
                                                                              visualization_size / 2);
     boost::geometry::transform(input_visualization_scaled,
@@ -209,11 +209,11 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
                                input_visualization_translate);
 
 
-    model::Trajectory pattern_visualization_scaled;
+    model::trajectory pattern_visualization_scaled;
     trans::scale_transformer<double, 2, 2> pattern_visualization_scale(visualization_size / 2 / normalized_size);
     boost::geometry::transform(transformed_pattern, pattern_visualization_scaled, pattern_visualization_scale);
 
-    model::Trajectory pattern_visualization_translated;
+    model::trajectory pattern_visualization_translated;
     trans::translate_transformer<double, 2, 2> pattern_visualization_translate(visualization_size / 2,
                                                                                visualization_size / 2);
     boost::geometry::transform(pattern_visualization_scaled,
@@ -221,8 +221,8 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
                                pattern_visualization_translate);
 
 
-    const model::Trajectory &visualization_normalized_input = input_visualization_translated;
-    const model::Trajectory &visualization_normalized_pattern = pattern_visualization_translated;
+    const model::trajectory &visualization_normalized_input = input_visualization_translated;
+    const model::trajectory &visualization_normalized_pattern = pattern_visualization_translated;
     const auto visualization_normalized_input_mbs = min_bounding_sphere(visualization_normalized_input);
     const auto visualization_normalized_pattern_mbs = min_bounding_sphere(visualization_normalized_pattern);
     // LOG(visualization_normalized_input_mbs);
@@ -253,12 +253,12 @@ void compare_trajectories(const model::Trajectory &input_trajectory,
 
 auto is_rerender = true;
 auto is_recording_trajectory = false;
-model::Trajectory trajectory;
-const model::Trajectory pattern_letter_L{{0, 0},
+model::trajectory trajectory;
+const model::trajectory pattern_letter_L{{0, 0},
                                   {0, 2},
                                   {1, 2}};
 
-const model::Trajectory pattern_square{{0, 0},
+const model::trajectory pattern_square{{0, 0},
                                 {0, 1},
                                 {1, 1},
                                 {1, 0},
@@ -267,7 +267,7 @@ const model::Trajectory pattern_square{{0, 0},
 void one_iter() {
     if (is_rerender) {
         is_rerender = false;
-        // const model::Trajectory trajectory{{320, 200},
+        // const model::trajectory trajectory{{320, 200},
         //                             {300, 240},
         //                             {340, 240}};
 

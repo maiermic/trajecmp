@@ -5,7 +5,7 @@
 
 namespace model {
     using point = boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>;
-    using Trajectory = boost::geometry::model::linestring<point>;
+    using trajectory = boost::geometry::model::linestring<point>;
 } // namespace model
 
 #endif //MODEL_HPP

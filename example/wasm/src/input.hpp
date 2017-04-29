@@ -14,7 +14,7 @@ namespace input {
     namespace bg = boost::geometry;
 
     namespace details {
-        bool parse_trajectory(const std::string trajectory_string, model::Trajectory &output) {
+        bool parse_trajectory(const std::string trajectory_string, model::trajectory &output) {
             std::istringstream trajectory_stream(trajectory_string);
             std::string coordinates_string;
             while (std::getline(trajectory_stream, coordinates_string, ',')) {
@@ -43,10 +43,10 @@ namespace input {
         }
     }
 
-    model::Trajectory pattern;
+    model::trajectory pattern;
 
     bool setPattern(const std::string trajectoryString) {
-        model::Trajectory new_pattern;
+        model::trajectory new_pattern;
         if (!details::parse_trajectory(trajectoryString, new_pattern)) {
             return false;
         }
