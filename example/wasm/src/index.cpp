@@ -252,11 +252,7 @@ void one_iter() {
                 is_rerender = false;
                 is_recording_trajectory = false;
 
-                // START_LOGGING("compare_trajectories");
-//                compare_trajectories(trajectory, pattern_letter_L);
-//                compare_trajectories(trajectory, pattern_square);
                 compare_trajectories(trajectory, input::pattern);
-                // STOP_LOGGING();
 
                 bg::clear(trajectory);
                 break;
