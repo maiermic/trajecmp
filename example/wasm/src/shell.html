@@ -50,7 +50,10 @@
         ],
         postRun: [
             () => {
-                Module.setPattern(document.getElementById('InputData-pattern').value)
+                const current_pattern = document.getElementById('InputData-pattern').value;
+                const pattern_L = '0 0, 0 2, 1 2';
+                const initialPattern = current_pattern !== '' ? current_pattern : pattern_L;
+                Module.setPattern(initialPattern);
                 function debounce(fn, time) {
                     var timer = null;
                     return function debounced(...args) {
