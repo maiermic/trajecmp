@@ -7,7 +7,6 @@
 
 #include "input.hpp"
 #include "model.hpp"
-using namespace model;
 
 #include "../../../src/trajecmp/distance/modified_hausdorff.hpp"
 #include "../../../src/trajecmp/geometry/min_bounding_sphere.hpp"
@@ -27,7 +26,7 @@ SDL_Renderer *renderer = NULL;
 SDL_bool done = SDL_FALSE;
 
 
-auto x_angle(const point p) {
+auto x_angle(const model::point p) {
     return std::atan2(bg::get<0>(p),
                       bg::get<1>(p));
 }
@@ -44,14 +43,14 @@ namespace color_code {
 }
 
 void draw_trajectory(SDL_Renderer *renderer,
-                     const Trajectory &trajectory,
+                     const model::Trajectory &trajectory,
                      const rgb color = rgb {255, 255, 255}) {
     SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, SDL_ALPHA_OPAQUE);
     for (auto i = trajectory.begin(); i != trajectory.end();) {
-        const point &previous = *i;
+        const model::point &previous = *i;
         ++i;
         if (i == trajectory.end()) break;
-        const point &current = *i;
+        const model::point &current = *i;
         SDL_RenderDrawLine(renderer,
                            (int) bg::get<0>(current),
                            (int) bg::get<1>(current),
@@ -62,8 +61,8 @@ void draw_trajectory(SDL_Renderer *renderer,
 }
 
 void draw_line(SDL_Renderer *renderer,
-               const point &start,
-               const point &end,
+               const model::point &start,
+               const model::point &end,
                const rgb color = rgb {255, 255, 255}) {
     SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawLine(renderer,
@@ -75,8 +74,8 @@ void draw_line(SDL_Renderer *renderer,
 }
 
 
-void compare_trajectories(const Trajectory &input_trajectory,
-                          const Trajectory &pattern_trajectory) {
+void compare_trajectories(const model::Trajectory &input_trajectory,
+                          const model::Trajectory &pattern_trajectory) {
     // --------------
     // filter
     // --------------
@@ -114,22 +113,22 @@ void compare_trajectories(const Trajectory &input_trajectory,
 
 
     // translate
-    point pattern_translation_vector(pattern_mbs.center);
+    model::point pattern_translation_vector(pattern_mbs.center);
     bg::multiply_value(pattern_translation_vector, -1);
     LOG(pattern_translation_vector);
 
-    Trajectory pattern_translated;
+    model::Trajectory pattern_translated;
     trans::translate_transformer<double, 2, 2> pattern_translate(bg::get<0>(pattern_translation_vector),
                                                                  bg::get<1>(pattern_translation_vector));
     boost::geometry::transform(pattern_trajectory, pattern_translated, pattern_translate);
     LOG(pattern_translated);
 
 
-    point input_translation_vector(input_mbs.center);
+    model::point input_translation_vector(input_mbs.center);
     bg::multiply_value(input_translation_vector, -1);
     LOG(input_translation_vector);
 
-    Trajectory input_translated;
+    model::Trajectory input_translated;
     trans::translate_transformer<double, 2, 2> input_translate(bg::get<0>(input_translation_vector),
                                                                bg::get<1>(input_translation_vector));
     boost::geometry::transform(input_trajectory, input_translated, input_translate);
@@ -139,35 +138,35 @@ void compare_trajectories(const Trajectory &input_trajectory,
     // scale
     const double normalized_size = 100;
 
-    Trajectory pattern_scaled;
+    model::Trajectory pattern_scaled;
     trans::scale_transformer<double, 2, 2> pattern_scale(normalized_size / pattern_mbs.radius);
     boost::geometry::transform(pattern_translated, pattern_scaled, pattern_scale);
     LOG(pattern_scaled);
 
-    Trajectory input_scaled;
+    model::Trajectory input_scaled;
     trans::scale_transformer<double, 2, 2> input_scale(normalized_size / input_mbs.radius);
     boost::geometry::transform(input_translated, input_scaled, input_scale);
     LOG(input_scaled);
 
 
     // rotate
-//    const point pattern_orientation = bg::return_centroid<point>(pattern_scaled);
-//    const point input_orientation = bg::return_centroid<point>(input_scaled);
+//    const model::point pattern_orientation = bg::return_centroid<model::point>(pattern_scaled);
+//    const model::point input_orientation = bg::return_centroid<model::point>(input_scaled);
 
     // use first point if centroid is equal to center of bounding sphere
-    const point pattern_orientation = pattern_scaled[0];
-    const point input_orientation = input_scaled[0];
+    const model::point pattern_orientation = pattern_scaled[0];
+    const model::point input_orientation = input_scaled[0];
 
     const auto pattern_angle = x_angle(pattern_orientation);
     const auto input_angle = x_angle(input_orientation);
     using rotate_transformer = trans::rotate_transformer<bg::radian, double, 2, 2>;
     rotate_transformer input_rotate(pattern_angle - input_angle);
-    Trajectory input_rotated;
+    model::Trajectory input_rotated;
     bg::transform(input_scaled, input_rotated, input_rotate);
 
 
-    const Trajectory &transformed_input = input_rotated;
-    const Trajectory &transformed_pattern = pattern_scaled;
+    const model::Trajectory &transformed_input = input_rotated;
+    const model::Trajectory &transformed_pattern = pattern_scaled;
 
     // ---------------------
     // compare trajectories
@@ -198,11 +197,11 @@ void compare_trajectories(const Trajectory &input_trajectory,
 
     const auto visualization_size = 300;
 
-    Trajectory input_visualization_scaled;
+    model::Trajectory input_visualization_scaled;
     trans::scale_transformer<double, 2, 2> input_visualization_scale(visualization_size / 2 / normalized_size);
     boost::geometry::transform(transformed_input, input_visualization_scaled, input_visualization_scale);
 
-    Trajectory input_visualization_translated;
+    model::Trajectory input_visualization_translated;
     trans::translate_transformer<double, 2, 2> input_visualization_translate(visualization_size / 2,
                                                                              visualization_size / 2);
     boost::geometry::transform(input_visualization_scaled,
@@ -210,11 +209,11 @@ void compare_trajectories(const Trajectory &input_trajectory,
                                input_visualization_translate);
 
 
-    Trajectory pattern_visualization_scaled;
+    model::Trajectory pattern_visualization_scaled;
     trans::scale_transformer<double, 2, 2> pattern_visualization_scale(visualization_size / 2 / normalized_size);
     boost::geometry::transform(transformed_pattern, pattern_visualization_scaled, pattern_visualization_scale);
 
-    Trajectory pattern_visualization_translated;
+    model::Trajectory pattern_visualization_translated;
     trans::translate_transformer<double, 2, 2> pattern_visualization_translate(visualization_size / 2,
                                                                                visualization_size / 2);
     boost::geometry::transform(pattern_visualization_scaled,
@@ -222,8 +221,8 @@ void compare_trajectories(const Trajectory &input_trajectory,
                                pattern_visualization_translate);
 
 
-    const Trajectory &visualization_normalized_input = input_visualization_translated;
-    const Trajectory &visualization_normalized_pattern = pattern_visualization_translated;
+    const model::Trajectory &visualization_normalized_input = input_visualization_translated;
+    const model::Trajectory &visualization_normalized_pattern = pattern_visualization_translated;
     const auto visualization_normalized_input_mbs = min_bounding_sphere(visualization_normalized_input);
     const auto visualization_normalized_pattern_mbs = min_bounding_sphere(visualization_normalized_pattern);
     // LOG(visualization_normalized_input_mbs);
@@ -238,8 +237,8 @@ void compare_trajectories(const Trajectory &input_trajectory,
                     visualization_normalized_input,
                     is_similar ? color_code::green : color_code::red);
 
-    const auto centroid_input = bg::return_centroid<point>(visualization_normalized_input);
-    const auto centroid_pattern = bg::return_centroid<point>(visualization_normalized_pattern);
+    const auto centroid_input = bg::return_centroid<model::point>(visualization_normalized_input);
+    const auto centroid_pattern = bg::return_centroid<model::point>(visualization_normalized_pattern);
     draw_line(renderer,
               visualization_normalized_pattern_mbs.center,
               centroid_pattern,
@@ -254,12 +253,12 @@ void compare_trajectories(const Trajectory &input_trajectory,
 
 auto is_rerender = true;
 auto is_recording_trajectory = false;
-Trajectory trajectory;
-const Trajectory pattern_letter_L{{0, 0},
+model::Trajectory trajectory;
+const model::Trajectory pattern_letter_L{{0, 0},
                                   {0, 2},
                                   {1, 2}};
 
-const Trajectory pattern_square{{0, 0},
+const model::Trajectory pattern_square{{0, 0},
                                 {0, 1},
                                 {1, 1},
                                 {1, 0},
@@ -268,7 +267,7 @@ const Trajectory pattern_square{{0, 0},
 void one_iter() {
     if (is_rerender) {
         is_rerender = false;
-        // const Trajectory trajectory{{320, 200},
+        // const model::Trajectory trajectory{{320, 200},
         //                             {300, 240},
         //                             {340, 240}};
 
@@ -288,13 +287,13 @@ void one_iter() {
                 LOG_TEXT("SDL_MOUSEBUTTONDOWN");
                 is_rerender = true;
                 is_recording_trajectory = true;
-                bg::append(trajectory, point(event.motion.x, event.motion.y));
+                bg::append(trajectory, model::point(event.motion.x, event.motion.y));
                 break;
             case SDL_MOUSEMOTION:
                 if (is_recording_trajectory) {
                     LOG_TEXT("SDL_MOUSEMOTION");
                     is_rerender = true;
-                    bg::append(trajectory, point(event.motion.x, event.motion.y));
+                    bg::append(trajectory, model::point(event.motion.x, event.motion.y));
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
