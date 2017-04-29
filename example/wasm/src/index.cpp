@@ -5,6 +5,7 @@
 
 #include <boost/geometry.hpp>
 
+#include "color.hpp"
 #include "input.hpp"
 #include "model.hpp"
 
@@ -31,16 +32,6 @@ auto x_angle(const model::point p) {
                       bg::get<1>(p));
 }
 
-
-struct rgb {
-    int red, green, blue;
-};
-
-namespace color_code {
-    const rgb green{0, 255, 0};
-    const rgb red{255, 0, 0};
-    const rgb yellow{255, 255, 0};
-}
 
 void draw_trajectory(SDL_Renderer *renderer,
                      const model::trajectory &trajectory,
