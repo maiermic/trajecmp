@@ -5,7 +5,7 @@
 
 #include <boost/geometry.hpp>
 
-#include "input.h"
+#include "input.hpp"
 
 #include "../../../src/trajecmp/distance/modified_hausdorff.hpp"
 #include "../../../src/trajecmp/geometry/min_bounding_sphere.hpp"
