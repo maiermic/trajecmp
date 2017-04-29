@@ -12,6 +12,7 @@
 #include "../src/trajecmp/geometry/vector.hpp"
 #include "../src/trajecmp/transform/translate.hpp"
 #include "../src/trajecmp/transform/scale.hpp"
+#include "../src/trajecmp/predicate/has_min_num_points.hpp"
 #include "../src/trajecmp/compare/less_than.hpp"
 #include "../src/trajecmp/compare/match_by.hpp"
 #include "../src/trajecmp/util/subscribe_with_latest_from.hpp"
@@ -24,16 +25,11 @@ using linestring = boost::geometry::model::linestring<point>;
 using Trajectory = linestring;
 using vector = point;
 
-auto has_min_num_points(std::size_t min) {
-    return [=](const auto &trajectory) {
-        return boost::geometry::num_points(trajectory) >= min;
-    };
-}
-
 
 rxcpp::rxsub::subject<Trajectory> input_trajectory_subject;
 
 int main() {
+    using trajecmp::predicate::has_min_num_points;
     using trajecmp::compare::less_than;
     using trajecmp::compare::match_by;
     using trajecmp::util::subscribe_with_latest_from;
