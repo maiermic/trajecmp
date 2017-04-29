@@ -5,15 +5,14 @@
 #include <sstream>
 #include <boost/geometry.hpp>
 
+#include "model.hpp"
+
 #include "../../../src/trajecmp/geometry/coordinate.hpp"
 
 namespace input {
     using namespace emscripten;
+    using namespace model;
     namespace bg = boost::geometry;
-
-    using point = bg::model::point<double, 2, bg::cs::cartesian>;
-    using linestring = bg::model::linestring<point>;
-    using Trajectory = linestring;
 
     namespace details {
         bool parse_trajectory(const std::string trajectory_string, Trajectory &output) {

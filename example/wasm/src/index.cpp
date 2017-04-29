@@ -6,6 +6,8 @@
 #include <boost/geometry.hpp>
 
 #include "input.hpp"
+#include "model.hpp"
+using namespace model;
 
 #include "../../../src/trajecmp/distance/modified_hausdorff.hpp"
 #include "../../../src/trajecmp/geometry/min_bounding_sphere.hpp"
@@ -17,9 +19,6 @@
 namespace bg = boost::geometry;
 namespace trans = boost::geometry::strategy::transform;
 
-using point = bg::model::point<double, 2, bg::cs::cartesian>;
-using linestring = bg::model::linestring<point>;
-using Trajectory = linestring;
 using trajecmp::geometry::min_bounding_sphere;
 
 
