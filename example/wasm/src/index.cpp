@@ -6,6 +6,7 @@
 #include <boost/geometry.hpp>
 
 #include "color.hpp"
+#include "draw.hpp"
 #include "input.hpp"
 #include "model.hpp"
 
@@ -31,39 +32,6 @@ auto x_angle(const model::point p) {
     return std::atan2(bg::get<0>(p),
                       bg::get<1>(p));
 }
-
-
-void draw_trajectory(SDL_Renderer *renderer,
-                     const model::trajectory &trajectory,
-                     const rgb color = rgb {255, 255, 255}) {
-    SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, SDL_ALPHA_OPAQUE);
-    for (auto i = trajectory.begin(); i != trajectory.end();) {
-        const model::point &previous = *i;
-        ++i;
-        if (i == trajectory.end()) break;
-        const model::point &current = *i;
-        SDL_RenderDrawLine(renderer,
-                           (int) bg::get<0>(current),
-                           (int) bg::get<1>(current),
-                           (int) bg::get<0>(previous),
-                           (int) bg::get<1>(previous));
-    }
-    SDL_RenderPresent(renderer);
-}
-
-void draw_line(SDL_Renderer *renderer,
-               const model::point &start,
-               const model::point &end,
-               const rgb color = rgb {255, 255, 255}) {
-    SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawLine(renderer,
-                       (int) bg::get<0>(start),
-                       (int) bg::get<1>(start),
-                       (int) bg::get<0>(end),
-                       (int) bg::get<1>(end));
-    SDL_RenderPresent(renderer);
-}
-
 
 void compare_trajectories(const model::trajectory &input_trajectory,
                           const model::trajectory &pattern_trajectory) {
