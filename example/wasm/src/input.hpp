@@ -1,11 +1,13 @@
 #ifndef INPUT_HPP
 #define INPUT_HPP
 
+
 #include <emscripten/bind.h>
 #include <sstream>
 #include <boost/geometry.hpp>
 
 #include "model.hpp"
+#include "pattern_matching.hpp"
 
 #include "../../../src/trajecmp/geometry/coordinate.hpp"
 
@@ -43,14 +45,14 @@ namespace input {
         }
     }
 
-    model::trajectory pattern;
-
     bool setPattern(const std::string trajectoryString) {
         model::trajectory new_pattern;
         if (!details::parse_trajectory(trajectoryString, new_pattern)) {
             return false;
         }
-        pattern = new_pattern;
+        pattern_matching::pattern_trajectory_subject
+                .get_subscriber()
+                .on_next(new_pattern);
         return true;
     }
 
@@ -58,5 +60,6 @@ namespace input {
         function("setPattern", &setPattern);
     }
 } // namespace input
+
 
 #endif //INPUT_HPP
