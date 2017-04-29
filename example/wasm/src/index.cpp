@@ -183,8 +183,6 @@ void compare_trajectories(const model::trajectory &input_trajectory,
     const model::trajectory &visualization_normalized_pattern = pattern_visualization_translated;
     const auto visualization_normalized_input_mbs = min_bounding_sphere(visualization_normalized_input);
     const auto visualization_normalized_pattern_mbs = min_bounding_sphere(visualization_normalized_pattern);
-    // LOG(visualization_normalized_input_mbs);
-    // LOG(visualization_normalized_pattern_mbs);
 
     draw_trajectory(renderer, visualization_normalized_pattern, color_code::yellow);
     draw_trajectory(renderer,
