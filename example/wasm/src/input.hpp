@@ -1,5 +1,5 @@
-#ifndef TRAJECTORY_DETECTION_INPUT_H
-#define TRAJECTORY_DETECTION_INPUT_H
+#ifndef INPUT_HPP
+#define INPUT_HPP
 
 #include <emscripten/bind.h>
 #include <sstream>
@@ -61,4 +61,4 @@ namespace input {
     }
 } // namespace input
 
-#endif //TRAJECTORY_DETECTION_INPUT_H
+#endif //INPUT_HPP
