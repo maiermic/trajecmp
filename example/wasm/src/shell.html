@@ -50,10 +50,14 @@
         ],
         postRun: [
             () => {
-                const current_pattern = document.getElementById('InputData-pattern').value;
-                const pattern_L = '0 0, 0 2, 1 2';
-                const initialPattern = current_pattern !== '' ? current_pattern : pattern_L;
-                Module.setPattern(initialPattern);
+                const initialPattern = document.getElementById('InputData-pattern').value;
+                if (initialPattern !== '') {
+                    Module.setPattern(initialPattern);
+                } else {
+                    const pattern_L = '0 0, 0 2, 1 2';
+                    document.getElementById('InputData-pattern').value = pattern_L;
+                    Module.setPattern(pattern_L);
+                }
                 function debounce(fn, time) {
                     var timer = null;
                     return function debounced(...args) {
