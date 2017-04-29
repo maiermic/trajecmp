@@ -50,6 +50,7 @@
         ],
         postRun: [
             () => {
+                Module.setPattern(document.getElementById('InputData-pattern').value)
                 function debounce(fn, time) {
                     var timer = null;
                     return function debounced(...args) {
