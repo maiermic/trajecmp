@@ -12,6 +12,7 @@
 #include "../src/trajecmp/geometry/vector.hpp"
 #include "../src/trajecmp/transform/translate.hpp"
 #include "../src/trajecmp/transform/scale.hpp"
+#include "../src/trajecmp/compare/less_than.hpp"
 #include "../src/trajecmp/compare/match_by.hpp"
 #include "../src/trajecmp/util/subscribe_with_latest_from.hpp"
 #include "../src/trajecmp/util/boost_geometry_to_string.hpp"
@@ -29,17 +30,11 @@ auto has_min_num_points(std::size_t min) {
     };
 }
 
-template<typename T>
-auto less_than(T upper) {
-    return [=](T value) {
-        return value <= upper;
-    };
-}
-
 
 rxcpp::rxsub::subject<Trajectory> input_trajectory_subject;
 
 int main() {
+    using trajecmp::compare::less_than;
     using trajecmp::compare::match_by;
     using trajecmp::util::subscribe_with_latest_from;
 
