@@ -206,15 +206,6 @@ void compare_trajectories(const model::trajectory &input_trajectory,
 auto is_rerender = true;
 auto is_recording_trajectory = false;
 model::trajectory trajectory;
-const model::trajectory pattern_letter_L{{0, 0},
-                                  {0, 2},
-                                  {1, 2}};
-
-const model::trajectory pattern_square{{0, 0},
-                                {0, 1},
-                                {1, 1},
-                                {1, 0},
-                                {0, 0}};
 
 void one_iter() {
     if (is_rerender) {
