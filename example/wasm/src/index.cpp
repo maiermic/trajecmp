@@ -264,7 +264,6 @@ int main(int argc, char *argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) == 0) {
         if (SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer) == 0) {
             emscripten_set_main_loop(one_iter, 0, 1);
-            // emscripten_set_main_loop(one_iter, 0, 1);
         }
         if (renderer) {
             SDL_DestroyRenderer(renderer);
@@ -273,6 +272,5 @@ int main(int argc, char *argv[]) {
             SDL_DestroyWindow(window);
         }
     }
-    // SDL_Quit();
     return 0;
 }
