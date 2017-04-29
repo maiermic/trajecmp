@@ -13,6 +13,7 @@
 #include "../src/trajecmp/transform/translate.hpp"
 #include "../src/trajecmp/transform/scale.hpp"
 
+#include "../src/trajecmp/util/subscribe_with_latest_from.hpp"
 #include "../src/trajecmp/util/boost_geometry_to_string.hpp"
 #include "TrajectorySvg.hpp"
 
@@ -44,25 +45,12 @@ auto match_by(const D &distance_of, const P &predicate) {
     };
 };
 
-template<typename Fn, typename... Observables>
-auto subscribe_with_latest_from(Fn f, Observables... observables) {
-    return [=](auto &&source) {
-        return source
-                .with_latest_from(
-                        [=](auto &&...args) {
-                            f(args...);
-                            return 0; // dummy value
-                        },
-                        observables...
-                )
-                .subscribe([](auto _) {});
-    };
-}
-
 
 rxcpp::rxsub::subject<Trajectory> input_trajectory_subject;
 
 int main() {
+    using trajecmp::util::subscribe_with_latest_from;
+    
     logging::is_logging = true;
 
     auto input_trajectory_stream = input_trajectory_subject.get_observable();
