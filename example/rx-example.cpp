@@ -27,6 +27,7 @@ using vector = point;
 
 
 rxcpp::rxsub::subject<Trajectory> input_trajectory_subject;
+const auto input_trajectory_stream = input_trajectory_subject.get_observable();
 
 int main() {
     using trajecmp::predicate::has_min_num_points;
@@ -36,7 +37,6 @@ int main() {
 
     logging::is_logging = true;
 
-    auto input_trajectory_stream = input_trajectory_subject.get_observable();
     auto pattern_L_trajectory_stream =
             rxcpp::observable<>::just(
                     Trajectory{
