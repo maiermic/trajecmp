@@ -40,7 +40,7 @@ that controls the recording (start and stop).
 Thereby, you only record trajectories that are intended by the user.
 
 Imagine a game where you play a wizard that can do magic tricks by moving his magic wand.
-If you draw a lightning in the air you can magic up a flash light.
+By drawing a lightning in the air you can magic up a flash light.
 
 ![draw lightning with magic wand](doc/img/lightning.png)
 
