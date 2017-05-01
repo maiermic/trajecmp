@@ -9,6 +9,7 @@
 #include "../../../src/trajecmp/geometry/vector.hpp"
 #include "../../../src/trajecmp/transform/translate.hpp"
 #include "../../../src/trajecmp/transform/scale.hpp"
+#include "../../../src/trajecmp/transform/douglas_peucker.hpp"
 #include "../../../src/trajecmp/predicate/has_min_num_points.hpp"
 #include "../../../src/trajecmp/compare/less_than.hpp"
 #include "../../../src/trajecmp/compare/match_by.hpp"
@@ -24,6 +25,7 @@ namespace pattern_matching {
     using rxcpp::operators::ref_count;
     using trajecmp::compare::less_than;
     using trajecmp::compare::match_by;
+    using trajecmp::transform::douglas_peucker;
 
     const rxcpp::rxsub::subject<model::trajectory> input_trajectory_subject;
     const auto input_trajectory_stream = input_trajectory_subject.get_observable();
@@ -60,7 +62,8 @@ namespace pattern_matching {
                 });
     };
 
-    const auto preprocessed_input_trajectory_stream = preprocess(input_trajectory_stream, "input trajectory");
+    const auto preprocessed_input_trajectory_stream =
+            preprocess(input_trajectory_stream.map(douglas_peucker(3)), "input trajectory");
     const auto preprocessed_pattern_trajectory_stream = preprocess(pattern_trajectory_stream, "pattern trajectory");
     const trajecmp::distance::neighbours_percentage_range neighbours(0.1);
     const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
