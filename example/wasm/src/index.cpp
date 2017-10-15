@@ -111,6 +111,12 @@ void subscribe_to_pattern_matching() {
                     draw_trajectory(renderer,
                                     transform_for_visualization(input_trajectory),
                                     is_similar ? color_code::green : color_code::red);
+                    model::trajectory distance_trajectory {
+                            distance.projected_point1,
+                            distance.projected_point2,
+                    };
+                    draw_trajectory(renderer, transform_for_visualization(distance_trajectory), color_code::pink);
+                    std::cout << "distance: " << distance.real_distance << '\n';
                 },
                 pm::preprocessed_input_trajectory_stream,
                 pm::preprocessed_pattern_trajectory_stream
