@@ -26,6 +26,7 @@ target_link_libraries(trajecmp-example ${CONAN_LIBS})
 set(TEST_FILES
         test/runner.cpp
         test/distance_test.cpp
+        test/find_local_extrema_test.cpp
         )
 
 add_executable(catch ${TEST_FILES})
