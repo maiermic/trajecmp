@@ -5,7 +5,7 @@
 
 #include <boost/geometry.hpp>
 
-#include "../../../src/trajecmp/util/boost_geometry_to_string.hpp"
+#include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "../../logging.hpp"
 
 #include "color.hpp"
@@ -14,7 +14,7 @@
 #include "model.hpp"
 #include "pattern_matching.hpp"
 
-#include "../../../src/trajecmp/util/subscribe_with_latest_from.hpp"
+#include "trajecmp/util/subscribe_with_latest_from.hpp"
 
 
 namespace bg = boost::geometry;
