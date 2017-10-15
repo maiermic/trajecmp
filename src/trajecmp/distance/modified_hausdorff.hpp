@@ -1,6 +1,8 @@
 #ifndef TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP
 #define TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP
 
+#include <algorithm>
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/extensions/algorithms/distance_info.hpp>
 
@@ -107,6 +109,19 @@ namespace trajecmp { namespace distance {
                 bg::distance_info(current, neighbours_trajectory, current_result);
                 if (result.real_distance < current_result.real_distance) {
                     result = current_result;
+                    // fix distance_info result
+                    // https://gitter.im/boostorg/geometry?at=59e3878af7299e8f53ee02a7
+                    result.projected_point2 = current;
+                    // https://gitter.im/boostorg/geometry?at=59e3a246177fb9fe7e8063f6
+                    if (result.fraction1 < 0) {
+                        result.fraction1 = 0;
+                        result.projected_point1 =
+                                *std::begin(neighbours_trajectory);
+                    } else if (result.fraction1 > 1) {
+                        result.fraction1 = 1;
+                        result.projected_point1 =
+                                *(--std::end(neighbours_trajectory));
+                    }
                 }
             }
             return result;
