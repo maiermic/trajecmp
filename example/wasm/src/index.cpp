@@ -106,7 +106,7 @@ void subscribe_to_pattern_matching() {
                             trajecmp::transform::scale_to_const<visualization_size>(pm::normalized_size),
                             trajecmp::transform::translate_by(model::vector(visualization_size / 2, visualization_size / 2))
                     );
-                    const auto is_similar = distance < pattern_matching::normalized_size * 0.20;
+                    const auto is_similar = distance.real_distance < pattern_matching::normalized_size * 0.20;
                     draw_trajectory(renderer, transform_for_visualization(pattern_trajectory), color_code::yellow);
                     draw_trajectory(renderer,
                                     transform_for_visualization(input_trajectory),
