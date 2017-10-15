@@ -1,9 +1,9 @@
 #include <catch.hpp>
 #include <boost/geometry.hpp>
 
-#include "src/trajecmp/distance/modified_hausdorff.hpp"
+#include "trajecmp/distance/modified_hausdorff.hpp"
 
-#include "src/trajecmp/util/boost_geometry_to_string.hpp"
+#include "trajecmp/util/boost_geometry_to_string.hpp"
 
 namespace bg = boost::geometry;
 

@@ -14,12 +14,15 @@ conan_basic_setup()
 
 
 add_executable(example example/example.cpp)
+target_include_directories(example PUBLIC src)
 target_link_libraries(example ${CONAN_LIBS})
 
 add_executable(rx-example example/rx-example.cpp)
+target_include_directories(rx-example PUBLIC src)
 target_link_libraries(rx-example ${CONAN_LIBS})
 
 add_executable(trajecmp-example example/trajecmp-example.cpp)
+target_include_directories(trajecmp-example PUBLIC src)
 target_link_libraries(trajecmp-example ${CONAN_LIBS})
 
 
@@ -30,5 +33,5 @@ set(TEST_FILES
         )
 
 add_executable(catch ${TEST_FILES})
-target_include_directories(catch PUBLIC .)
+target_include_directories(catch PUBLIC src)
 target_link_libraries(catch ${CONAN_LIBS})

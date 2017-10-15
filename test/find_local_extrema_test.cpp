@@ -2,7 +2,7 @@
 
 #include <catch.hpp>
 
-#include "src/trajecmp/util/find_local_extrema.hpp"
+#include "trajecmp/util/find_local_extrema.hpp"
 
 using namespace trajecmp::util;
 

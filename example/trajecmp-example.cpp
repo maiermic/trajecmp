@@ -3,13 +3,13 @@
 
 #include <boost/geometry.hpp>
 
-#include "../src/trajecmp/functional/functional.hpp"
-#include "../src/trajecmp/distance/modified_hausdorff.hpp"
-#include "../src/trajecmp/geometry/min_bounding_sphere.hpp"
-#include "../src/trajecmp/geometry/vector.hpp"
-#include "../src/trajecmp/transform/translate.hpp"
-#include "../src/trajecmp/transform/scale.hpp"
-#include "../src/trajecmp/util/boost_geometry_to_string.hpp"
+#include "trajecmp/functional/functional.hpp"
+#include "trajecmp/distance/modified_hausdorff.hpp"
+#include "trajecmp/geometry/min_bounding_sphere.hpp"
+#include "trajecmp/geometry/vector.hpp"
+#include "trajecmp/transform/translate.hpp"
+#include "trajecmp/transform/scale.hpp"
+#include "trajecmp/util/boost_geometry_to_string.hpp"
 
 #include "logging.hpp"
 #include "TrajectorySvg.hpp"

@@ -6,17 +6,17 @@
 #include <rxcpp/rx.hpp>
 
 #include "logging.hpp"
-#include "../src/trajecmp/functional/functional.hpp"
-#include "../src/trajecmp/distance/modified_hausdorff.hpp"
-#include "../src/trajecmp/geometry/min_bounding_sphere.hpp"
-#include "../src/trajecmp/geometry/vector.hpp"
-#include "../src/trajecmp/transform/translate.hpp"
-#include "../src/trajecmp/transform/scale.hpp"
-#include "../src/trajecmp/predicate/has_min_num_points.hpp"
-#include "../src/trajecmp/compare/less_than.hpp"
-#include "../src/trajecmp/compare/match_by.hpp"
-#include "../src/trajecmp/util/subscribe_with_latest_from.hpp"
-#include "../src/trajecmp/util/boost_geometry_to_string.hpp"
+#include "trajecmp/functional/functional.hpp"
+#include "trajecmp/distance/modified_hausdorff.hpp"
+#include "trajecmp/geometry/min_bounding_sphere.hpp"
+#include "trajecmp/geometry/vector.hpp"
+#include "trajecmp/transform/translate.hpp"
+#include "trajecmp/transform/scale.hpp"
+#include "trajecmp/predicate/has_min_num_points.hpp"
+#include "trajecmp/compare/less_than.hpp"
+#include "trajecmp/compare/match_by.hpp"
+#include "trajecmp/util/subscribe_with_latest_from.hpp"
+#include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "TrajectorySvg.hpp"
 
 

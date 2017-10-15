@@ -2,9 +2,9 @@
 
 #include <boost/geometry.hpp>
 
-#include "../src/trajecmp/distance/modified_hausdorff.hpp"
-#include "../src/trajecmp/geometry/min_bounding_sphere.hpp"
-#include "../src/trajecmp/util/boost_geometry_to_string.hpp"
+#include "trajecmp/distance/modified_hausdorff.hpp"
+#include "trajecmp/geometry/min_bounding_sphere.hpp"
+#include "trajecmp/util/boost_geometry_to_string.hpp"
 
 #include "logging.hpp"
 #include "TrajectorySvg.hpp"
