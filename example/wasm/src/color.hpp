@@ -7,6 +7,7 @@ struct rgb {
 
 namespace color_code {
     const rgb green{0, 255, 0};
+    const rgb pink{255, 0, 255};
     const rgb red{255, 0, 0};
     const rgb yellow{255, 255, 0};
 }

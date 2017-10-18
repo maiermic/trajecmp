@@ -25,6 +25,10 @@ add_executable(trajecmp-example example/trajecmp-example.cpp)
 target_include_directories(trajecmp-example PUBLIC src)
 target_link_libraries(trajecmp-example ${CONAN_LIBS})
 
+add_executable(distance-info-example example/distance-info-example.cpp)
+target_include_directories(distance-info-example PUBLIC src)
+target_link_libraries(distance-info-example ${CONAN_LIBS})
+
 
 set(TEST_FILES
         test/runner.cpp

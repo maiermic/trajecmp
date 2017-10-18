@@ -67,11 +67,12 @@ namespace pattern_matching {
     const auto preprocessed_pattern_trajectory_stream = preprocess(pattern_trajectory_stream, "pattern trajectory");
     const trajecmp::distance::neighbours_percentage_range neighbours(0.1);
     const auto modified_hausdorff = trajecmp::distance::modified_hausdorff(neighbours);
+    const auto modified_hausdorff_info = trajecmp::distance::modified_hausdorff_info(neighbours);
     const auto compare = match_by(modified_hausdorff, less_than(normalized_size * 0.20));
 
     const auto distance_stream =
             preprocessed_input_trajectory_stream
-                    .with_latest_from(modified_hausdorff, preprocessed_pattern_trajectory_stream);
+                    .with_latest_from(modified_hausdorff_info, preprocessed_pattern_trajectory_stream);
 
 } // namespace pattern_matching
 

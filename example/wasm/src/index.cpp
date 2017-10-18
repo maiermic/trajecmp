@@ -5,7 +5,7 @@
 
 #include <boost/geometry.hpp>
 
-#include "../../../src/trajecmp/util/boost_geometry_to_string.hpp"
+#include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "../../logging.hpp"
 
 #include "color.hpp"
@@ -14,7 +14,7 @@
 #include "model.hpp"
 #include "pattern_matching.hpp"
 
-#include "../../../src/trajecmp/util/subscribe_with_latest_from.hpp"
+#include "trajecmp/util/subscribe_with_latest_from.hpp"
 
 
 namespace bg = boost::geometry;
@@ -106,11 +106,17 @@ void subscribe_to_pattern_matching() {
                             trajecmp::transform::scale_to_const<visualization_size>(pm::normalized_size),
                             trajecmp::transform::translate_by(model::vector(visualization_size / 2, visualization_size / 2))
                     );
-                    const auto is_similar = distance < pattern_matching::normalized_size * 0.20;
+                    const auto is_similar = distance.real_distance < pattern_matching::normalized_size * 0.20;
                     draw_trajectory(renderer, transform_for_visualization(pattern_trajectory), color_code::yellow);
                     draw_trajectory(renderer,
                                     transform_for_visualization(input_trajectory),
                                     is_similar ? color_code::green : color_code::red);
+                    model::trajectory distance_trajectory {
+                            distance.projected_point1,
+                            distance.projected_point2,
+                    };
+                    draw_trajectory(renderer, transform_for_visualization(distance_trajectory), color_code::pink);
+                    std::cout << "distance: " << distance.real_distance << '\n';
                 },
                 pm::preprocessed_input_trajectory_stream,
                 pm::preprocessed_pattern_trajectory_stream

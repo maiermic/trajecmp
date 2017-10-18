@@ -13,6 +13,7 @@ cd ..
 # compile index.cpp using Emscripten (see https://github.com/juj/emsdk)
 emcc src/index.cpp \
   --shell-file src/shell.html \
+  -I../../src \
   -o public/index.html \
   @.conan/conanbuildinfo.gcc \
   -O2 \
