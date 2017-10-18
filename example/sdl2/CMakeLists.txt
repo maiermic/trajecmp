@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.5.1)
+project(trajecmp)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include(../../cmake/enable_cxx_compiler_flag_if_supported.cmake)
+enable_cxx_compiler_flag_if_supported("-Wall")
+enable_cxx_compiler_flag_if_supported("-Wextra")
+enable_cxx_compiler_flag_if_supported("-pedantic")
+enable_cxx_compiler_flag_if_supported("-g")
+
+include(../../.conan/conanbuildinfo.cmake)
+conan_basic_setup()
+
+find_package(SDL2 REQUIRED)
+set(SDL2_LIBRARIES "-L${SDL2_LIBDIR} -lSDL2") # fix https://stackoverflow.com/questions/45730098/cmake-leading-or-trailing-whitespace-policy-cmp0004#comment78421781_45730098
+include_directories(${SDL2_INCLUDE_DIRS})
+
+include_directories(include)
+
+add_executable(sdl2-line-example src/sdl2-line-example.cpp)
+target_include_directories(sdl2-line-example PUBLIC src)
+target_link_libraries(sdl2-line-example ${CONAN_LIBS} ${SDL2_LIBRARIES})

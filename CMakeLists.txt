@@ -29,6 +29,7 @@ add_executable(distance-info-example example/distance-info-example.cpp)
 target_include_directories(distance-info-example PUBLIC src)
 target_link_libraries(distance-info-example ${CONAN_LIBS})
 
+add_subdirectory(example/sdl2)
 
 set(TEST_FILES
         test/runner.cpp
