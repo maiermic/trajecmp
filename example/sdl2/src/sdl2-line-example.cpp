@@ -27,7 +27,7 @@ public:
         namespace bg = boost::geometry;
 
         pm::distance_stream
-        | subscribe_with_latest_from(
+        .with_latest_from(
                 [&](bg::distance_info_result<model::point> distance,
                     model::trajectory input_trajectory,
                     model::trajectory pattern_trajectory) {
@@ -48,10 +48,11 @@ public:
                     draw_trajectory(_renderer, transform_for_visualization(distance_trajectory), color_code::pink);
                     std::cout << "distance: " << distance.real_distance << '\n';
                     _is_rerender = false;
+                    return 0; // dummy value
                 },
                 pm::preprocessed_input_trajectory_stream,
                 pm::preprocessed_pattern_trajectory_stream
-        );
+        ).subscribe([](auto _) {});
 
         pm::pattern_trajectory_subject
                 .get_subscriber()
