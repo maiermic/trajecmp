@@ -22,7 +22,7 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2GFX_INCLUDE_DIR})
 
 include_directories(include)
 
-add_executable(sdl2-line-example src/sdl2-line-example.cpp src/sdl2_framework.cpp)
-target_include_directories(sdl2-line-example PUBLIC src)
-target_include_directories(sdl2-line-example PUBLIC ../../src)
-target_link_libraries(sdl2-line-example ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
+add_executable(sdl2-example src/sdl2-example.cpp src/sdl2_framework.cpp)
+target_include_directories(sdl2-example PUBLIC src)
+target_include_directories(sdl2-example PUBLIC ../../src)
+target_link_libraries(sdl2-example ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
