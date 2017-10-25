@@ -2,6 +2,9 @@
 #define TRAJECMP_GEOMETRY_POINT_HPP
 
 #include <functional>
+#include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/coordinate_dimension.hpp>
+#include "boost/geometry/core/coordinate_type.hpp"
 
 namespace trajecmp { namespace geometry {
 
