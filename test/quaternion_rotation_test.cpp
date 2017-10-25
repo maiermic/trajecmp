@@ -114,52 +114,40 @@ TEST_CASE("rotate using qvm", "[rotate]") {
 }
 
 TEST_CASE("rotate 2D", "[rotate]") {
-    SECTION("rotate 2D trajectory 90 degree") {
-        const trajectory2d input{
-                {1, 0},
-                {0, 1},
-                {1, 1},
-        };
-        using namespace trajecmp::transform;
-        trajectory2d rotated = trajecmp::transform::rotate(90)(input);
-
-        const trajectory2d expected{
-                {0, -1},
-                {1, 0},
-                {1, -1},
-        };
-        CHECK_THAT(rotated, TrajectoryEqualsApprox(expected));
+    const trajectory2d input{
+            {1, 0},
+            {0, 1},
+            {1, 1},
+    };
+    using namespace trajecmp::transform;
+    SECTION("rotate 2D trajectory 90 degree, where degree is used as default") {
+        CHECK_THAT(
+                rotate(90)(input),
+                TrajectoryEqualsApprox(trajectory2d {
+                        {0, -1},
+                        {1, 0},
+                        {1, -1},
+                })
+        );
     }
     SECTION("rotate 2D trajectory 180 degree") {
-        const trajectory2d input{
-                {1, 0},
-                {0, 1},
-                {1, 1},
-        };
-        using namespace trajecmp::transform;
-        trajectory2d rotated = trajecmp::transform::rotate<degree>(180)(input);
-
-        const trajectory2d expected{
-                {-1, 0},
-                {0, -1},
-                {-1, -1},
-        };
-        CHECK_THAT(rotated, TrajectoryEqualsApprox(expected));
+        CHECK_THAT(
+                rotate<degree>(180)(input),
+                TrajectoryEqualsApprox(trajectory2d {
+                        {-1, 0},
+                        {0,  -1},
+                        {-1, -1},
+                })
+        );
     }
     SECTION("rotate 2D trajectory 90 degree in radians") {
-        const trajectory2d input{
-                {1, 0},
-                {0, 1},
-                {1, 1},
-        };
-        using namespace trajecmp::transform;
-        trajectory2d rotated = rotate<radian>(M_PI / 2.0)(input);
-
-        const trajectory2d expected{
-                {0, -1},
-                {1, 0},
-                {1, -1},
-        };
-        CHECK_THAT(rotated, TrajectoryEqualsApprox(expected));
+        CHECK_THAT(
+                rotate<radian>(M_PI / 2.0)(input),
+                TrajectoryEqualsApprox(trajectory2d {
+                        {0, -1},
+                        {1, 0},
+                        {1, -1},
+                })
+        );
     }
 }
