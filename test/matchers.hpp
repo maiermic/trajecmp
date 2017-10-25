@@ -1,8 +1,11 @@
 #ifndef TRAJECMP_MATCHERS_HPP
 #define TRAJECMP_MATCHERS_HPP
 
+#include <algorithm>
 #include <vector>
 #include <functional>
+
+#include <trajecmp/geometry/point.hpp>
 
 template<typename T, typename Compare>
 struct CompareMatcher
@@ -41,6 +44,20 @@ Compare(const std::vector<T> &comparator, const C &compare) {
 inline auto EqualsApprox(const std::vector<double> &comparator) {
     return Compare(comparator, [=](double actual, double expected) {
         return actual == Approx(expected);
+    });
+}
+
+template <class Trajectory>
+auto TrajectoryEqualsApprox(const Trajectory &comparator) {
+    return Compare(comparator, [=](auto actual, auto expected) {
+        static const auto dimension = boost::geometry::dimension<Trajectory>::value;
+        for (int i = 0; i < dimension; ++i) {
+            if (trajecmp::geometry::get(i, actual) !=
+                Approx(trajecmp::geometry::get(i, expected))) {
+                return false;
+            }
+        }
+        return true;
     });
 }
 
