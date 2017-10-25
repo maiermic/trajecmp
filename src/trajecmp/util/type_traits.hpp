@@ -1,6 +1,8 @@
 #ifndef TRAJECMP_UTIL_TYPE_TRAITS_HPP
 #define TRAJECMP_UTIL_TYPE_TRAITS_HPP
 
+#include <type_traits>
+
 namespace trajecmp { namespace util {
 
     template<typename T>
