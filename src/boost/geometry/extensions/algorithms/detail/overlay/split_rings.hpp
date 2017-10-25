@@ -278,7 +278,7 @@ class range_split_rings
     typedef typename geometry::ring_type<Range>::type ring_type;
 
 
-    typedef typename strategy_intersection
+    typedef typename intersection_strategies
         <
             typename cs_tag<point_type>::type,
             point_type,
@@ -542,8 +542,8 @@ template
 >
 inline void split_rings(Geometry const& geometry, RingCollection& out)
 {
-    concept::check<Geometry const>();
-    concept::check<typename boost::range_value<RingCollection>::type>();
+    concepts::check<Geometry const>();
+    concepts::check<typename boost::range_value<RingCollection>::type>();
 
     dispatch::split_rings
     <

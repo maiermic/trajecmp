@@ -1,6 +1,7 @@
 [requires]
 Catch/latest@signal9/stable
 RxCpp/latest/maiermic/stable
+Boost/1.63.0/eliaskousk/stable
 
 [generators]
 cmake

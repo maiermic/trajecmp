@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014, 2015.
-// Modifications copyright (c) 2014-2015 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014, 2015, 2016.
+// Modifications copyright (c) 2014-2016 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -18,6 +18,8 @@
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/radian_access.hpp>
 #include <boost/geometry/core/radius.hpp>
+
+#include <boost/geometry/formulas/spherical.hpp>
 
 #include <boost/geometry/util/math.hpp>
 #include <boost/geometry/util/promote_floating_point.hpp>
@@ -46,7 +48,7 @@ namespace detail
 \tparam Model Reference model of coordinate system.
 \tparam CalculationType \tparam_calculation
  */
-template <template<typename, bool, bool> class InverseFormula,
+template <template<typename, bool, bool, bool, bool, bool> class InverseFormula,
           typename Model,
           typename CalculationType = void>
 class by_azimuth
@@ -68,45 +70,12 @@ public:
                     >::type
             >::type calc_t;
 
-        typedef InverseFormula<calc_t, false, true> inverse_formula;
+        typedef InverseFormula<calc_t, false, true, false, false, false> inverse_formula;
 
         calc_t a1p = azimuth<calc_t, inverse_formula>(p1, p, m_model);
         calc_t a12 = azimuth<calc_t, inverse_formula>(p1, p2, m_model);
 
-        calc_t const pi = math::pi<calc_t>();
-
-        // instead of the formula from XTD
-        //calc_t a_diff = asin(sin(a1p - a12));
-
-        calc_t a_diff = a1p - a12;
-        // normalize, angle in [-pi, pi]
-        while ( a_diff > pi )
-            a_diff -= calc_t(2) * pi;
-        while ( a_diff < -pi )
-            a_diff += calc_t(2) * pi;
-
-        // NOTE: in general it shouldn't be required to support the pi/-pi case
-        // because in non-cartesian systems it makes sense to check the side
-        // only "between" the endpoints.
-        // However currently the winding strategy calls the side strategy
-        // for vertical segments to check if the point is "between the endpoints.
-        // This could be avoided since the side strategy is not required for that
-        // because meridian is the shortest path. So a difference of
-        // longitudes would be sufficient (of course normalized to [-pi, pi]).
-
-        // NOTE: with the above said, the pi/-pi check is temporary
-        // however in case if this was required
-        // the geodesics on ellipsoid aren't "symmetrical"
-        // therefore instead of comparing a_diff to pi and -pi
-        // one should probably use inverse azimuths and compare
-        // the difference to 0 as well
-
-        // positive azimuth is on the right side
-        return math::equals(a_diff, 0)
-            || math::equals(a_diff, pi)
-            || math::equals(a_diff, -pi) ? 0
-             : a_diff > 0 ? -1 // right
-             : 1; // left
+        return formula::azimuth_side_value(a1p, a12);
     }
 
 private:
