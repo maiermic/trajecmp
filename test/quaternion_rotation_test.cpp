@@ -1,3 +1,5 @@
+#include <trajecmp/transform/rotate.hpp>
+
 #include <iostream>
 #include <vector>
 
@@ -8,6 +10,7 @@
 #include <boost/geometry.hpp>
 
 #include <boost/geometry/geometries/register/point.hpp>
+#include <boost/geometry/geometries/register/linestring.hpp>
 
 #include "matchers.hpp"
 
@@ -19,8 +22,13 @@ struct point3d {
     double y;
     double z;
 };
-
 BOOST_GEOMETRY_REGISTER_POINT_3D(point3d, double, boost::geometry::cs::cartesian, x, y, z);
+using point2d = boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>;
+
+using trajectory2d = std::vector<point2d>;
+using trajectory3d = std::vector<point3d>;
+BOOST_GEOMETRY_REGISTER_LINESTRING(trajectory2d);
+BOOST_GEOMETRY_REGISTER_LINESTRING(trajectory3d);
 
 namespace boost { namespace qvm {
     template<>
@@ -51,7 +59,25 @@ namespace boost { namespace qvm {
     };
 }}
 
-TEST_CASE("rotate using qvm", "[]") {
+namespace Catch {
+    template<>
+    struct StringMaker<point2d> {
+        static std::string convert(point2d const &p) {
+            return Catch::toString(std::vector<double> {
+                    boost::geometry::get<0>(p),
+                    boost::geometry::get<1>(p),
+            });
+        }
+    };
+    template<>
+    struct StringMaker<point3d> {
+        static std::string convert(point3d const &p) {
+            return Catch::toString(std::vector<double> {p.x, p.y, p.z});
+        }
+    };
+}
+
+TEST_CASE("rotate using qvm", "[rotate]") {
     SECTION("example") {
         using vec3 = boost::qvm::vec<double, 3>;
         using quat = boost::qvm::quat<double>;
@@ -84,5 +110,56 @@ TEST_CASE("rotate using qvm", "[]") {
 
         std::vector<double> expected{0.0, 0.0, -1.0};
         CHECK_THAT(rotatePos, EqualsApprox(expected));
+    }
+}
+
+TEST_CASE("rotate 2D", "[rotate]") {
+    SECTION("rotate 2D trajectory 90 degree") {
+        const trajectory2d input{
+                {1, 0},
+                {0, 1},
+                {1, 1},
+        };
+        using namespace trajecmp::transform;
+        trajectory2d rotated = trajecmp::transform::rotate(90)(input);
+
+        const trajectory2d expected{
+                {0, -1},
+                {1, 0},
+                {1, -1},
+        };
+        CHECK_THAT(rotated, TrajectoryEqualsApprox(expected));
+    }
+    SECTION("rotate 2D trajectory 180 degree") {
+        const trajectory2d input{
+                {1, 0},
+                {0, 1},
+                {1, 1},
+        };
+        using namespace trajecmp::transform;
+        trajectory2d rotated = trajecmp::transform::rotate<degree>(180)(input);
+
+        const trajectory2d expected{
+                {-1, 0},
+                {0, -1},
+                {-1, -1},
+        };
+        CHECK_THAT(rotated, TrajectoryEqualsApprox(expected));
+    }
+    SECTION("rotate 2D trajectory 90 degree in radians") {
+        const trajectory2d input{
+                {1, 0},
+                {0, 1},
+                {1, 1},
+        };
+        using namespace trajecmp::transform;
+        trajectory2d rotated = rotate<radian>(M_PI / 2.0)(input);
+
+        const trajectory2d expected{
+                {0, -1},
+                {1, 0},
+                {1, -1},
+        };
+        CHECK_THAT(rotated, TrajectoryEqualsApprox(expected));
     }
 }
