@@ -35,6 +35,7 @@ set(TEST_FILES
         test/runner.cpp
         test/distance_test.cpp
         test/find_local_extrema_test.cpp
+        test/matchers_test.cpp
         test/range_test.cpp
         )
 
