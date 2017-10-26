@@ -1,3 +1,4 @@
+#include <trajecmp/model/quaternion.hpp>
 #include <trajecmp/transform/rotate.hpp>
 
 #include <iostream>
@@ -226,11 +227,10 @@ TEST_CASE("rotate 3D trajectory", "[rotate]") {
     };
     using namespace trajecmp::transform;
     SECTION("90 degree in radians") {
-        using quat = boost::qvm::quat<double>;
         const point3d axis{0.0, 1.0, 0.0};
         const auto rotationAngle = (M_PI / 2.0);
 
-        const quaternion q = make_quaternion(axis, rotationAngle);
+        const auto q = trajecmp::model::quaternion(axis, rotationAngle);
         CHECK_THAT(
                 rotate_using_quaternion(q)(input),
                 TrajectoryEqualsApprox(trajectory3d {
