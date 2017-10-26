@@ -113,14 +113,14 @@ TEST_CASE("rotate using qvm", "[rotate]") {
     }
 }
 
-TEST_CASE("rotate 2D", "[rotate]") {
+TEST_CASE("rotate 2D trajectory", "[rotate]") {
     const trajectory2d input{
             {1, 0},
             {0, 1},
             {1, 1},
     };
     using namespace trajecmp::transform;
-    SECTION("rotate 2D trajectory 90 degree, where degree is used as default") {
+    SECTION("90 degree, where degree is used as default") {
         CHECK_THAT(
                 rotate(90)(input),
                 TrajectoryEqualsApprox(trajectory2d {
@@ -130,7 +130,7 @@ TEST_CASE("rotate 2D", "[rotate]") {
                 })
         );
     }
-    SECTION("rotate 2D trajectory 180 degree") {
+    SECTION("180 degree") {
         CHECK_THAT(
                 rotate<degree>(180)(input),
                 TrajectoryEqualsApprox(trajectory2d {
@@ -140,13 +140,45 @@ TEST_CASE("rotate 2D", "[rotate]") {
                 })
         );
     }
-    SECTION("rotate 2D trajectory 90 degree in radians") {
+    SECTION("90 degree in radians") {
         CHECK_THAT(
                 rotate<radian>(M_PI / 2.0)(input),
                 TrajectoryEqualsApprox(trajectory2d {
                         {0, -1},
                         {1, 0},
                         {1, -1},
+                })
+        );
+    }
+}
+
+TEST_CASE("rotate 3D trajectory", "[rotate]") {
+    const trajectory3d input{
+            {1, 0, 0},
+            {0, 1, 0},
+            {0, 0, 1},
+            {1, 1, 0},
+            {1, 0, 1},
+            {0, 1, 1},
+            {1, 1, 1},
+    };
+    using namespace trajecmp::transform;
+    SECTION("90 degree in radians") {
+        using quat = boost::qvm::quat<double>;
+        const point3d axis{0.0, 1.0, 0.0};
+        const auto rotationAngle = (M_PI / 2.0);
+
+        const quat q = boost::qvm::rot_quat(axis, rotationAngle);
+        CHECK_THAT(
+                rotate_using_quaternion(q)(input),
+                TrajectoryEqualsApprox(trajectory3d {
+                        {0, 0, -1},
+                        {0, 1, 0},
+                        {1, 0, 0},
+                        {0, 1, -1},
+                        {1, 0, -1},
+                        {1, 1, 0},
+                        {1, 1, -1},
                 })
         );
     }
