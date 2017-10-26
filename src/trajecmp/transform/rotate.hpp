@@ -9,6 +9,8 @@
 #include <boost/geometry/core/point_type.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
 
+#include <boost/qvm/quat_vec_operations.hpp>
+
 #include <trajecmp/util/type_traits.hpp>
 
 namespace trajecmp { namespace transform {
@@ -65,7 +67,7 @@ namespace trajecmp { namespace transform {
      * @return Functor that takes a 3D trajectory and returns a rotated copy of
      * it.
      */
-    template <typename Quaternion>
+    template<typename Quaternion>
     auto rotate_using_quaternion(const Quaternion &quaternion) {
         return [=](auto &&trajectory) {
             namespace bg = boost::geometry;
@@ -79,6 +81,10 @@ namespace trajecmp { namespace transform {
             bg::for_each_point(
                     trajectory,
                     [quaternion, &rotated](const Point &point) {
+                        static_assert(boost::qvm::is_quat<Quaternion>::value, "Quaternion should be is_quat");
+                        static_assert(boost::qvm::is_vec<Point>::value, "Point should be is_vec");
+                        static_assert(boost::qvm::vec_traits<Point>::dim==3, "Point should have dim 3");
+                        using boost::qvm::operator*;
                         Point rotated_point = quaternion * point;
                         bg::append(rotated, rotated_point);
                     }
