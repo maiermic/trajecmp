@@ -11,6 +11,7 @@
 
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/linestring.hpp>
+#include <boost/geometry/core/access.hpp>
 
 #include "matchers.hpp"
 
@@ -30,7 +31,43 @@ using trajectory3d = std::vector<point3d>;
 BOOST_GEOMETRY_REGISTER_LINESTRING(trajectory2d);
 BOOST_GEOMETRY_REGISTER_LINESTRING(trajectory3d);
 
+using quaternion = std::array<double, 4>;
+
+template<typename Point>
+quaternion make_quaternion(Point axis, double angle) {
+    namespace bg = boost::geometry;
+    using boost::qvm::scalar_traits;
+    using boost::qvm::zero_magnitude_error;
+    using boost::qvm::sqrt;
+    using boost::qvm::sin;
+    using boost::qvm::cos;
+    using Angle = double;
+    using scalar_type = double;
+    const scalar_type x = bg::get<0>(axis);
+    const scalar_type y = bg::get<1>(axis);
+    const scalar_type z = bg::get<2>(axis);
+    const scalar_type m2 = x * x + y * y + z * z;
+    if (m2 == scalar_traits<scalar_type>::value(0))
+        BOOST_QVM_THROW_EXCEPTION (zero_magnitude_error());
+    const scalar_type rm =
+            scalar_traits<scalar_type>::value(1) / sqrt<scalar_type>(m2);
+    angle /= 2;
+    const scalar_type s = sin<Angle>(angle);
+    return quaternion {
+            cos<Angle>(angle),
+            rm * x * s,
+            rm * y * s,
+            rm * z * s,
+    };
+}
+
 namespace boost { namespace qvm {
+
+    template<>
+    struct is_vec<point3d> {
+        static bool const value = true;
+    };
+
     template<>
     struct vec_traits<point3d> {
         static int const dim = 3;
@@ -57,6 +94,31 @@ namespace boost { namespace qvm {
             }
         }
     };
+
+    template<>
+    struct is_quat<quaternion> {
+        static bool const value = true;
+    };
+
+    template<>
+    struct quat_traits<quaternion> {
+        using scalar_type = double;
+
+        template<int I>
+        static inline scalar_type read_element(const quaternion &q) {
+            static_assert(I >= 0 && I <= 4,
+                          "Index has to be an integer between 0 and 4");
+            return q[I];
+        }
+
+        template<int I>
+        static inline scalar_type &write_element(quaternion &q) {
+            static_assert(I >= 0 && I <= 4,
+                          "Index has to be an integer between 0 and 4");
+            return q[I];
+        }
+    };
+
 }}
 
 namespace Catch {
@@ -168,7 +230,7 @@ TEST_CASE("rotate 3D trajectory", "[rotate]") {
         const point3d axis{0.0, 1.0, 0.0};
         const auto rotationAngle = (M_PI / 2.0);
 
-        const quat q = boost::qvm::rot_quat(axis, rotationAngle);
+        const quaternion q = make_quaternion(axis, rotationAngle);
         CHECK_THAT(
                 rotate_using_quaternion(q)(input),
                 TrajectoryEqualsApprox(trajectory3d {
