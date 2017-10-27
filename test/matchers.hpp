@@ -6,6 +6,7 @@
 #include <functional>
 
 #include <trajecmp/geometry/point.hpp>
+#include <boost/qvm/all.hpp>
 
 template<typename T, typename Compare>
 struct CompareMatcher
@@ -47,7 +48,17 @@ inline auto EqualsApprox(const std::vector<double> &comparator) {
     });
 }
 
-template <class Trajectory>
+template<typename T>
+std::vector<T> quat_to_vector(const boost::qvm::quat<T> &q) {
+    return {
+            boost::qvm::S(q),
+            boost::qvm::X(q),
+            boost::qvm::Y(q),
+            boost::qvm::Z(q),
+    };
+}
+
+template<class Trajectory>
 auto TrajectoryEqualsApprox(const Trajectory &comparator) {
     return Compare(comparator, [=](auto actual, auto expected) {
         static const auto dimension = boost::geometry::dimension<Trajectory>::value;

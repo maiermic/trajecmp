@@ -37,6 +37,7 @@ set(TEST_FILES
         test/find_local_extrema_test.cpp
         test/quaternion_rotation_test.cpp
         test/trajecmp/model/point_test.cpp
+        test/trajecmp/model/quaternion_test.cpp
         test/matchers_test.cpp
         test/range_test.cpp
         )
