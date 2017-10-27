@@ -15,7 +15,7 @@ namespace trajecmp { namespace trajectory {
 
     template<class Trajectory>
     class circle {
-        BOOST_CONCEPT_ASSERT( (boost::geometry::concept::Linestring<Trajectory>) );
+        BOOST_CONCEPT_ASSERT( (boost::geometry::concepts::Linestring<Trajectory>) );
 
         using Point = typename boost::geometry::point_type<Trajectory>::type;
         using Coordinate = typename boost::geometry::coordinate_type<Point>::type;
