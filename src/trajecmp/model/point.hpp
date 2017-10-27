@@ -2,6 +2,7 @@
 #define TRAJECMP_MODEL_POINT_HPP
 
 #include <array>
+#include <sstream>
 
 #include <boost/qvm/vec_traits.hpp>
 #include <boost/geometry/core/access.hpp>
@@ -38,6 +39,21 @@ namespace trajecmp { namespace model {
 
         bool operator!=(const point &rhs) const {
             return !(rhs == *this);
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, const point &point) {
+            std::ostringstream oss;
+            oss << "{ ";
+            auto first = point.begin();
+            auto last = point.end();
+            if (first != last) {
+                oss << (*first);
+                for (++first; first != last; ++first)
+                    oss << ", " << (*first);
+            }
+            oss << " }";
+            os << oss.str();
+            return os;
         }
     };
 
