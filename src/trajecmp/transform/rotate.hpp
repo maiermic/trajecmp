@@ -41,7 +41,7 @@ namespace trajecmp { namespace transform {
             using CoordinateType = typename bg::coordinate_type<Trajectory>::type;
             static const auto dimension = bg::dimension<Trajectory>::value;
             static_assert(dimension == 2,
-                          "quaternion rotation is only supported for 2D trajectories");
+                          "angle rotation is only supported for 2D trajectories");
             namespace trans = bg::strategy::transform;
             using rotate_transformer = trans::rotate_transformer<DegreeOrRadian, CoordinateType, 2, 2>;
             Trajectory rotated;
