@@ -87,7 +87,7 @@ namespace boost { namespace geometry {
 
         template<typename CoordinateType, std::size_t DimensionCount>
         struct dimension<trajecmp::model::point<CoordinateType, DimensionCount>>
-                : boost::mpl::int_<3> {
+                : boost::mpl::int_<DimensionCount> {
         };
 
         template<typename CoordinateType, std::size_t DimensionCount, std::size_t Dimension>
