@@ -9,6 +9,7 @@
 #include <boost/geometry/algorithms/append.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
 #include "trajecmp/util/boost_geometry_to_string.hpp"
+#include "trajecmp/trajectory/circle.hpp"
 #include "trajecmp/util/subscribe_with_latest_from.hpp"
 #include "../../logging.hpp"
 
@@ -56,7 +57,10 @@ public:
 
         pm::pattern_trajectory_subject
                 .get_subscriber()
-                .on_next(pattern::letter_L);
+                .on_next(
+                        trajecmp::trajectory::circle<model::trajectory>(1)
+                                .sample(0, -360, 10)
+                );
     }
 
     void display() override {
