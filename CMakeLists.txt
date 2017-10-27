@@ -33,13 +33,13 @@ add_subdirectory(example/sdl2)
 
 set(TEST_FILES
         test/runner.cpp
-        test/distance_test.cpp
-        test/find_local_extrema_test.cpp
-        test/quaternion_rotation_test.cpp
+        test/trajecmp/distance/modified_hausdorff_test.cpp
+        test/trajecmp/util/find_local_extrema_test.cpp
+        test/trajecmp/transform/rotate_test.cpp
         test/trajecmp/model/point_test.cpp
         test/trajecmp/model/quaternion_test.cpp
         test/matchers_test.cpp
-        test/range_test.cpp
+        test/trajecmp/range/range_test.cpp
         )
 
 add_executable(catch ${TEST_FILES})

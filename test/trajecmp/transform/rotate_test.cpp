@@ -10,7 +10,7 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/core/access.hpp>
 
-#include "matchers.hpp"
+#include "../../matchers.hpp"
 
 using trajecmp::model::point2d;
 using trajecmp::model::point3d;
