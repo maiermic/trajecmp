@@ -33,9 +33,12 @@ public:
                     model::trajectory input_trajectory,
                     model::trajectory pattern_trajectory) {
                     static const auto visualization_size = 300;
+                    static const auto center_x = visualization_size / 2;
+                    static const auto center_y = visualization_size / 2;
+                    const model::vector center(center_x, center_y);
                     const auto transform_for_visualization = trajecmp::functional::pipe(
                             trajecmp::transform::scale_to_const<visualization_size>(pm::normalized_size),
-                            trajecmp::transform::translate_by(model::vector(visualization_size / 2, visualization_size / 2))
+                            trajecmp::transform::translate_by(center)
                     );
                     const auto is_similar = distance.real_distance < pattern_matching::normalized_size * 0.20;
                     draw_trajectory(_renderer, transform_for_visualization(pattern_trajectory), color_code::yellow);
@@ -47,7 +50,9 @@ public:
                             distance.projected_point2,
                     };
                     draw_trajectory(_renderer, transform_for_visualization(distance_trajectory), color_code::pink);
+                    boxColor(_renderer, center_x - 5, center_y - 5, center_x + 5, center_y + 5, 0xFF0000FF);
                     std::cout << "distance: " << distance.real_distance << '\n';
+                    SDL_RenderPresent(_renderer);
                     _is_rerender = false;
                     return 0; // dummy value
                 },
