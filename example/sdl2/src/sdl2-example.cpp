@@ -47,6 +47,7 @@ public:
                     };
                     draw_trajectory(_renderer, transform_for_visualization(distance_trajectory), color_code::pink);
                     std::cout << "distance: " << distance.real_distance << '\n';
+                    SDL_RenderPresent(_renderer);
                     _is_rerender = false;
                     return 0; // dummy value
                 },
