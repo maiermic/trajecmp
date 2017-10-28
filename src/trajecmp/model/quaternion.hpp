@@ -11,34 +11,9 @@
 #include <boost/qvm/vec_operations.hpp>
 #include <boost/qvm/quat_operations.hpp>
 
+#include <trajecmp/trait/number_type_trait.hpp>
 
 namespace trajecmp { namespace model {
-
-    namespace detail {
-
-        template<typename LookupTypeT, typename Enable = void>
-        struct type_traits {
-        };
-
-        template<>
-        struct type_traits<double> {
-            static inline double get_default_eps() { return 1E-12; }
-
-            static inline double get_one_element() { return 1.0; }
-
-            static inline double get_zero_element() { return 0.0; }
-        };
-
-        template<>
-        struct type_traits<float> {
-            static inline float get_default_eps() { return 1E-30f; }
-
-            static inline float get_one_element() { return 1.0f; }
-
-            static inline float get_zero_element() { return 0.0f; }
-        };
-
-    } // namespace detail
 
     template<typename CalculationType>
     using quaternion_type = boost::qvm::quat<CalculationType>;
@@ -80,8 +55,8 @@ namespace trajecmp { namespace model {
                const Vector &rotateTo) {
         namespace bg = boost::geometry;
         using bg::math::sqrt;
-        using detail::type_traits;
         using Value = typename bg::coordinate_type<Vector>::type;
+        using ValueT = trajecmp::trait::number_type_trait<Value>;
         const Value pi = bg::math::pi<Value>();
         Vector from = rotateFrom;
         Vector to = rotateTo;
@@ -92,15 +67,15 @@ namespace trajecmp { namespace model {
         Value cost = bg::dot_product(from, to);
 
         // check for degeneracies
-        if (cost > (type_traits<Value>::get_one_element() -
-                    type_traits<Value>::get_default_eps())) {   // vectors are parallel
+        if (cost > (ValueT::get_one_element() -
+                    ValueT::get_default_eps())) {   // vectors are parallel
             // return identity
             Vector axis;
             // axis should not be (0, 0, 0)
-            bg::set<0>(axis, type_traits<Value>::get_one_element());
-            return quaternion(axis, type_traits<Value>::get_zero_element());
-        } else if (cost < (-type_traits<Value>::get_one_element() +
-                           type_traits<Value>::get_default_eps())) {
+            bg::set<0>(axis, ValueT::get_one_element());
+            return quaternion(axis, ValueT::get_zero_element());
+        } else if (cost < (-ValueT::get_one_element() +
+                           ValueT::get_default_eps())) {
             // vectors are opposite
             // find an axis to rotate around, which should be
             // perpendicular to the original axis
