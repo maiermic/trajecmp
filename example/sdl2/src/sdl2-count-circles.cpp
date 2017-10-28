@@ -50,7 +50,7 @@ public:
                             distance.projected_point2,
                     };
                     draw_trajectory(_renderer, transform_for_visualization(distance_trajectory), color_code::pink);
-                    boxColor(_renderer, center_x - 5, center_y - 5, center_x + 5, center_y + 5, 0xFF0000FF);
+                    draw_box(_renderer, center, 10, 0xFF0000FF);
                     std::cout << "distance: " << distance.real_distance << '\n';
                     SDL_RenderPresent(_renderer);
                     _is_rerender = false;

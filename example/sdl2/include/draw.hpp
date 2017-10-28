@@ -4,6 +4,7 @@
 #include "color.hpp"
 #include "model.hpp"
 
+#include <SDL_stdinc.h>
 
 void draw_trajectory(SDL_Renderer *renderer,
                      const model::trajectory &trajectory,
@@ -32,6 +33,14 @@ void draw_line(SDL_Renderer *renderer,
                        (int) boost::geometry::get<1>(start),
                        (int) boost::geometry::get<0>(end),
                        (int) boost::geometry::get<1>(end));
+}
+
+void draw_box(SDL_Renderer *renderer, const model::point &center, int size,
+              const Uint32 color) {
+    const auto x = boost::geometry::get<0>(center);
+    const auto y = boost::geometry::get<1>(center);
+    const auto offset = size / 2;
+    boxColor(renderer, x - offset, y - offset, x + offset, y + offset, color);
 }
 
 
