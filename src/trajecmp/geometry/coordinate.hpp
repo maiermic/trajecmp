@@ -2,7 +2,7 @@
 #define TRAJECMP_GEOMETRY_COORDINATE_HPP
 
 #include <functional>
-#include "point.hpp"
+#include "trajecmp/geometry/point/point.hpp"
 
 namespace trajecmp { namespace geometry {
 
@@ -27,11 +27,11 @@ namespace trajecmp { namespace geometry {
                 : m_point(point), m_pos(pos) {}
 
         inline value_type operator*() {
-            return get(m_pos, m_point);
+            return point::get(m_pos, m_point);
         }
 
         inline const value_type operator*() const {
-            return get(m_pos, m_point);
+            return point::get(m_pos, m_point);
         }
 
         inline self_t &operator++() {

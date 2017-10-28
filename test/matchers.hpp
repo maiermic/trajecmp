@@ -5,7 +5,7 @@
 #include <vector>
 #include <functional>
 
-#include <trajecmp/geometry/point.hpp>
+#include <trajecmp/geometry/point/point.hpp>
 #include <boost/qvm/all.hpp>
 
 template<typename T, typename Compare>
@@ -63,8 +63,8 @@ auto TrajectoryEqualsApprox(const Trajectory &comparator) {
     return Compare(comparator, [=](auto actual, auto expected) {
         static const auto dimension = boost::geometry::dimension<Trajectory>::value;
         for (int i = 0; i < dimension; ++i) {
-            if (trajecmp::geometry::get(i, actual) !=
-                Approx(trajecmp::geometry::get(i, expected))) {
+            if (trajecmp::geometry::point::get(i, actual) !=
+                Approx(trajecmp::geometry::point::get(i, expected))) {
                 return false;
             }
         }

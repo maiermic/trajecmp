@@ -6,7 +6,7 @@
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include "boost/geometry/core/coordinate_type.hpp"
 
-namespace trajecmp { namespace geometry {
+namespace trajecmp { namespace geometry { namespace point {
 
     namespace detail {
 
@@ -59,14 +59,17 @@ namespace trajecmp { namespace geometry {
     }
 
     template<class Point>
-    void set(std::size_t index, Point &point, typename boost::geometry::coordinate_type<Point>::type value) {
+    void set(std::size_t index, Point &point,
+             typename boost::geometry::coordinate_type<Point>::type value) {
         static std::size_t const size = boost::geometry::dimension<Point>::value;
-        return detail::set_imp(index, point, value, detail::int2type<size - 1>());
+        return detail::set_imp(index, point, value,
+                               detail::int2type<size - 1>());
     }
 
 
     template<class Point>
-    Point to_point(const typename boost::geometry::coordinate_type<Point>::type *point) {
+    Point to_point(
+            const typename boost::geometry::coordinate_type<Point>::type *point) {
         const auto dimension = boost::geometry::dimension<Point>::value;
         Point result;
         for (int i = 0; i < dimension; ++i, ++point) {
@@ -75,6 +78,6 @@ namespace trajecmp { namespace geometry {
         return result;
     }
 
-}}// namespace trajecmp::geometry
+}}}// namespace trajecmp::geometry
 
 #endif //TRAJECMP_GEOMETRY_POINT_HPP

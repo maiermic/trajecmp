@@ -7,7 +7,7 @@
 #include "../../Miniball.hpp"
 #include "coordinate.hpp"
 #include "hyper_sphere.hpp"
-#include "point.hpp"
+#include "trajecmp/geometry/point/point.hpp"
 
 namespace trajecmp { namespace geometry {
 
@@ -17,7 +17,7 @@ namespace trajecmp { namespace geometry {
         using Miniball = typename Miniball::Miniball<coordinate_accessor<Geometry>>;
         const Miniball miniball(boost::geometry::dimension<Geometry>::value, geometry.begin(), geometry.end());
         return hyper_sphere_of < Geometry > {
-                .center = to_point<Point>(miniball.center()),
+                .center = point::to_point<Point>(miniball.center()),
                 .radius = std::sqrt(miniball.squared_radius())
         };
     }
