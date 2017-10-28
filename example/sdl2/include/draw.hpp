@@ -20,7 +20,6 @@ void draw_trajectory(SDL_Renderer *renderer,
                            (int) boost::geometry::get<0>(previous),
                            (int) boost::geometry::get<1>(previous));
     }
-    SDL_RenderPresent(renderer);
 }
 
 void draw_line(SDL_Renderer *renderer,
@@ -33,7 +32,6 @@ void draw_line(SDL_Renderer *renderer,
                        (int) boost::geometry::get<1>(start),
                        (int) boost::geometry::get<0>(end),
                        (int) boost::geometry::get<1>(end));
-    SDL_RenderPresent(renderer);
 }
 
 
