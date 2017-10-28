@@ -11,7 +11,7 @@
 
 #include <boost/qvm/quat_vec_operations.hpp>
 
-#include <trajecmp/util/type_traits.hpp>
+#include <trajecmp/trait/type_qualifiers.hpp>
 
 namespace trajecmp { namespace transform {
 
@@ -36,7 +36,7 @@ namespace trajecmp { namespace transform {
     auto rotate(const Angle angle) {
         return [=](auto &&trajectory) {
             namespace bg = boost::geometry;
-            using Trajectory = typename trajecmp::util::remove_cv_ref<decltype(trajectory)>::type;
+            using Trajectory = typename trajecmp::trait::remove_cv_ref<decltype(trajectory)>::type;
             using Point = typename bg::point_type<Trajectory>::type;
             using CoordinateType = typename bg::coordinate_type<Trajectory>::type;
             static const auto dimension = bg::dimension<Trajectory>::value;
@@ -71,7 +71,7 @@ namespace trajecmp { namespace transform {
     auto rotate_using_quaternion(const Quaternion &quaternion) {
         return [=](auto &&trajectory) {
             namespace bg = boost::geometry;
-            using Trajectory = typename trajecmp::util::remove_cv_ref<decltype(trajectory)>::type;
+            using Trajectory = typename trajecmp::trait::remove_cv_ref<decltype(trajectory)>::type;
             using Point = typename bg::point_type<Trajectory>::type;
             using CoordinateType = typename bg::coordinate_type<Trajectory>::type;
             static const auto dimension = bg::dimension<Trajectory>::value;

@@ -1,9 +1,9 @@
-#ifndef TRAJECMP_UTIL_TYPE_TRAITS_HPP
-#define TRAJECMP_UTIL_TYPE_TRAITS_HPP
+#ifndef TRAJECMP_TRAIT_TYPE_TRAITS_HPP
+#define TRAJECMP_TRAIT_TYPE_TRAITS_HPP
 
 #include <type_traits>
 
-namespace trajecmp { namespace util {
+namespace trajecmp { namespace trait {
 
     template<typename T>
     struct remove_cv_ref {
@@ -12,4 +12,4 @@ namespace trajecmp { namespace util {
 
 }}
 
-#endif //TRAJECMP_UTIL_TYPE_TRAITS_HPP
+#endif //TRAJECMP_TRAIT_TYPE_TRAITS_HPP
