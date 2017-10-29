@@ -34,6 +34,7 @@ add_subdirectory(example/sdl2)
 set(TEST_FILES
         test/runner.cpp
         test/trajecmp/distance/modified_hausdorff_test.cpp
+        test/trajecmp/geometry/point/point_test.cpp
         test/trajecmp/util/find_local_extrema_test.cpp
         test/trajecmp/transform/rotate_test.cpp
         test/trajecmp/model/point_test.cpp
