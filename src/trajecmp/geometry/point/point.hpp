@@ -5,6 +5,7 @@
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include "boost/geometry/core/coordinate_type.hpp"
+#include <trajecmp/trait/number_type_trait.hpp>
 
 namespace trajecmp { namespace geometry { namespace point {
 
@@ -76,6 +77,22 @@ namespace trajecmp { namespace geometry { namespace point {
             set(i, result, *point);
         }
         return result;
+    }
+
+    template<class Point>
+    bool equals_approx(const Point &lhs, const Point &rhs) {
+        using CoordinateType = typename boost::geometry::coordinate_type<Point>::type;
+        const auto eps =
+                trajecmp::trait::number_type_trait<CoordinateType>::get_default_eps();
+        const auto DimensionCount = boost::geometry::dimension<Point>::value;
+        for(std::size_t i = 0; i < DimensionCount; i++) {
+            const auto coordinate_difference = get(i, lhs) - get(i, rhs);
+            if (coordinate_difference > eps ||
+                coordinate_difference < -eps) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }}}// namespace trajecmp::geometry
