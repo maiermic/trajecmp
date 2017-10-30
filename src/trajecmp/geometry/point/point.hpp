@@ -2,6 +2,7 @@
 #define TRAJECMP_GEOMETRY_POINT_HPP
 
 #include <functional>
+#include <boost/geometry/algorithms/assign.hpp>
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include "boost/geometry/core/coordinate_type.hpp"
@@ -93,6 +94,13 @@ namespace trajecmp { namespace geometry { namespace point {
             }
         }
         return true;
+    }
+
+    template<class Point>
+    Point zero() {
+        Point p;
+        boost::geometry::assign_zero(p);
+        return p;
     }
 
 }}}// namespace trajecmp::geometry

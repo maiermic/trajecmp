@@ -102,3 +102,13 @@ TEST_CASE("trajecmp::geometry::point::equals_approx", "[]") {
                             point3d(3.0, 10.0 + eps * 1.1, -5.0)));
     }
 }
+
+TEST_CASE("trajecmp::geometry::point::zero", "[]") {
+    using namespace trajecmp::geometry::point;
+    using trajecmp::model::point2d;
+    using trajecmp::model::point3d;
+    SECTION("returns zero point") {
+        CHECK(zero<point2d>() == point2d(0.0, 0.0));
+        CHECK(zero<point3d>() == point3d(0.0, 0.0, 0.0));
+    }
+}
