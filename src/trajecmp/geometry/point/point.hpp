@@ -103,6 +103,11 @@ namespace trajecmp { namespace geometry { namespace point {
         return p;
     }
 
+    template<class Point>
+    bool equals_approx_zero(const Point &p) {
+        return equals_approx(p, zero<Point>());
+    }
+
 }}}// namespace trajecmp::geometry
 
 #endif //TRAJECMP_GEOMETRY_POINT_HPP
