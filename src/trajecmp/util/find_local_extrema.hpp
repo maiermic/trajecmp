@@ -39,7 +39,7 @@ namespace trajecmp { namespace util {
      * @see https://github.com/balint42/diff.js#extrema-function
      */
     template<typename Value>
-    extrema find_local_extrema(const std::vector<Value> values, Value epsilon) {
+    extrema find_local_extrema(const std::vector<Value> &values, Value epsilon) {
         extrema extrema;
         auto s = 0;
         auto m = values.front();
