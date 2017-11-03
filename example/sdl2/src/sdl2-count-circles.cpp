@@ -1,4 +1,7 @@
 #include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <color.hpp>
@@ -7,10 +10,13 @@
 #include <pattern_matching.hpp>
 #include <sdl2_framework.hpp>
 #include <boost/geometry/algorithms/append.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
 #include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "trajecmp/trajectory/circle.hpp"
+#include "trajecmp/util/find_local_extrema.hpp"
 #include "trajecmp/util/subscribe_with_latest_from.hpp"
+#include "trajecmp/util/vector_ostream.hpp"
 #include "../../logging.hpp"
 
 class framework : public sdl2_framework {
@@ -42,8 +48,10 @@ public:
                     );
                     const auto is_similar = distance.real_distance < pattern_matching::normalized_size * 0.20;
                     draw_trajectory(_renderer, transform_for_visualization(pattern_trajectory), color_code::yellow);
+                    const model::trajectory visualization_input_trajectory =
+                            transform_for_visualization(input_trajectory);
                     draw_trajectory(_renderer,
-                                    transform_for_visualization(input_trajectory),
+                                    visualization_input_trajectory,
                                     is_similar ? color_code::green : color_code::red);
                     model::trajectory distance_trajectory {
                             distance.projected_point1,
@@ -52,6 +60,31 @@ public:
                     draw_trajectory(_renderer, transform_for_visualization(distance_trajectory), color_code::pink);
                     draw_box(_renderer, center, 10, color_code::gray);
                     std::cout << "distance: " << distance.real_distance << '\n';
+
+                    std::vector<float> distances_to_start;
+                    const model::point start =
+                            visualization_input_trajectory.front();
+                    std::transform(
+                            std::begin(visualization_input_trajectory),
+                            std::end(visualization_input_trajectory),
+                            std::back_inserter(distances_to_start),
+                            [&](const model::point &current) {
+                                return boost::geometry::distance(start, current);
+                            }
+                    );
+                    const auto extrema =
+                            trajecmp::util::find_local_extrema(distances_to_start, 10.0f); // TODO determine epsilon based on trajectory size (minimum bounding sphere radius
+                    LOG(extrema.maxima);
+                    for (auto i : extrema.maxima) {
+                        LOG(visualization_input_trajectory.at(i));
+                        draw_box(_renderer, visualization_input_trajectory.at(i), 10, color_code::purple);
+                    }
+                    LOG(extrema.minima);
+                    for (auto i : extrema.minima) {
+                        LOG(visualization_input_trajectory.at(i));
+                        draw_box(_renderer, visualization_input_trajectory.at(i), 10, color_code::blue);
+                    }
+
                     SDL_RenderPresent(_renderer);
                     _is_rerender = false;
                     return 0; // dummy value
@@ -111,6 +144,7 @@ public:
 };
 
 int main() {
+    logging::is_logging = true;
     framework().start();
     return 0;
 }
