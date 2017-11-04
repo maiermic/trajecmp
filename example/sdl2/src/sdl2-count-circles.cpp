@@ -12,6 +12,7 @@
 #include <boost/geometry/algorithms/append.hpp>
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
+#include "trajecmp/util/angle.hpp"
 #include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "trajecmp/trajectory/circle.hpp"
 #include "trajecmp/util/find_local_extrema.hpp"
@@ -47,7 +48,7 @@ public:
                             trajecmp::transform::translate_by(center)
                     );
                     const auto is_similar = distance.real_distance < pattern_matching::normalized_size * 0.20;
-                    draw_trajectory(_renderer, transform_for_visualization(pattern_trajectory), color_code::yellow);
+//                    draw_trajectory(_renderer, transform_for_visualization(pattern_trajectory), color_code::yellow);
                     const model::trajectory visualization_input_trajectory =
                             transform_for_visualization(input_trajectory);
                     draw_trajectory(_renderer,
@@ -84,6 +85,31 @@ public:
                         LOG(visualization_input_trajectory.at(i));
                         draw_box(_renderer, visualization_input_trajectory.at(i), 10, color_code::blue);
                     }
+                    using trajecmp::util::angle_clockwise;
+                    using trajecmp::util::angle_counterclockwise;
+                    using trajecmp::util::r2d;
+                    using model::operator-;
+                    const model::point x_achsis(1, 0);
+                    const auto start_angle = angle_clockwise(
+                            x_achsis,
+                            visualization_input_trajectory.front() - center
+                    );
+                    LOG(center);
+                    LOG(visualization_input_trajectory.front());
+                    LOG(visualization_input_trajectory.front() - center);
+                    const auto end_angle = angle_clockwise(
+                            x_achsis,
+                            visualization_input_trajectory.back() - center
+                    );
+                    LOG(visualization_input_trajectory.back() - center);
+                    LOG(r2d(start_angle));
+                    LOG(r2d(end_angle));
+                    draw_trajectory(_renderer,
+                                    trajecmp::transform::translate_by(center)(
+                                        trajecmp::trajectory::circle<model::trajectory>(150)
+                                                .sample(r2d(start_angle), r2d(end_angle), 10)
+                                    ),
+                                    color_code::yellow);
 
                     SDL_RenderPresent(_renderer);
                     _is_rerender = false;
