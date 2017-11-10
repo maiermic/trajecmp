@@ -13,23 +13,23 @@ namespace logging {
     logging::is_logging = true; \
     logging::text = _text; \
     std::cout << "==================================================\n"; \
-    std::cout << "BEGIN: " << _text << '\n'; \
+    std::cout << "BEGIN: " << _text << std::endl; \
     std::cout << "==================================================\n";
 
 #define STOP_LOGGING() \
     std::cout << "==================================================\n"; \
-    std::cout << "END: " << logging::text << '\n'; \
+    std::cout << "END: " << logging::text << std::endl; \
     std::cout << "==================================================\n"; \
     logging::is_logging = false;
 
 #define LOG(expr) \
     if (logging::is_logging) { \
-        std::cout << #expr << " := " << (expr) << '\n'; \
+        std::cout << #expr << " := " << (expr) << std::endl; \
     }
 
 #define LOG_TEXT(text) \
     if (logging::is_logging) { \
-        std::cout << text << '\n'; \
+        std::cout << text << std::endl; \
     }
 
 #define LOG_SEP() \
