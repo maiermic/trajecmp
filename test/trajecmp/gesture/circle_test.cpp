@@ -12,8 +12,9 @@ using circle_trajectory = trajecmp::trajectory::circle<trajectory2d>;
 using Angle = typename boost::geometry::coordinate_type<trajectory2d>::type;
 
 
-void check_circle_segment(Angle start_angle, Angle end_angle) {
-    static const auto radius = 100.0;
+void check_circle_segment(Angle start_angle,
+                          Angle end_angle,
+                          const double radius) {
     static const circle_trajectory circle_generator(radius);
     using namespace trajecmp::gesture;
     const auto circle_trajectory =
@@ -39,9 +40,19 @@ void check_circle_segment(Angle start_angle, Angle end_angle) {
 
 
 TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
-    SECTION("start angle of 0 and end angle between -1080 and 1080 with step size of 10") {
+    SECTION("radius of 100, start angle of 0 and end angle between -1080 and 1080 with step size of 10") {
         for (double end_angle = -1080.0; end_angle <= 1080.0; end_angle += 10.0) {
-            check_circle_segment(0.0, end_angle);
+            check_circle_segment(0.0, end_angle, 100.0);
+        }
+    }
+    SECTION("radius of 1000000, start angle of 0 and end angle between -1080 and 1080 with step size of 10") {
+        for (double end_angle = -1080.0; end_angle <= 1080.0; end_angle += 10.0) {
+            check_circle_segment(0.0, end_angle, 1000000.0);
+        }
+    }
+    SECTION("radius of 0.000001, start angle of 0 and end angle between -1080 and 1080 with step size of 10") {
+        for (double end_angle = -1080.0; end_angle <= 1080.0; end_angle += 10.0) {
+            check_circle_segment(0.0, end_angle, 0.000001);
         }
     }
 }
