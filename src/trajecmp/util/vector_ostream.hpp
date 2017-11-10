@@ -2,6 +2,8 @@
 #define TRAJECMP_UTIL_VECTOR_OSTREAM_HPP
 
 #include <ostream>
+#include <vector>
+#include <iterator>
 
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
