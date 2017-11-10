@@ -10,6 +10,7 @@
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/core/cs.hpp>
+#include <boost/geometry/arithmetic/arithmetic.hpp>
 
 
 namespace trajecmp { namespace model {
@@ -61,6 +62,13 @@ namespace trajecmp { namespace model {
     using point3d = point<double, 3>;
     using point2f = point<float, 2>;
     using point3f = point<float, 3>;
+
+    template <typename Vector>
+    Vector operator-(const Vector lhs, const Vector rhs) {
+        Vector result(lhs);
+        boost::geometry::subtract_point(result, rhs);
+        return result;
+    }
 
 }} // trajecmp::model
 
