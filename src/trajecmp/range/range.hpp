@@ -13,7 +13,7 @@ namespace trajecmp { namespace range {
      *
      * @tparam Value The type of the values to iterate.
      * @param from Start value (inclusive).
-     * @param to End value (exclusive).
+     * @param to End value (inclusive).
      * @param step_size The increment value.
      * @return Range of values.
      */
@@ -42,7 +42,7 @@ namespace trajecmp { namespace range {
      *
      * @tparam Value The type of the values to iterate.
      * @param from Start value (inclusive).
-     * @param to End value (exclusive).
+     * @param to End value (inclusive).
      * @return Range of values.
      */
     template <class Value>
