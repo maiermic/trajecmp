@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-#include <boost/range/irange.hpp>
-#include <boost/range/adaptor/transformed.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/transform.hpp>
 
 namespace trajecmp { namespace range {
 
@@ -31,8 +31,8 @@ namespace trajecmp { namespace range {
         if (size < 0) {
             throw invalid_argument("size is negative");
         }
-        return boost::irange(0, size + 1) |
-               boost::adaptors::transformed([=](int i) {
+        return ranges::view::iota(0, size + 1) |
+               ranges::view::transform([=](int i) {
                    return Value(from + i * step_size);
                });
     }
