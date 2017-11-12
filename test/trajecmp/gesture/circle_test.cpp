@@ -1,9 +1,17 @@
+#include <functional>
+
+#include <trajecmp/util/vector_ostream.hpp>
+#include "../../../example/logging.hpp"
 #include <trajecmp/gesture/circle.hpp>
 #include <trajecmp/transform/translate.hpp>
 #include <trajecmp/trajectory/circle.hpp>
 #include <trajecmp/model/trajectory.hpp>
 #include <trajecmp/range/range.hpp>
 #include <trajecmp/geometry/min_bounding_sphere.hpp>
+
+#include <range/v3/view/cartesian_product.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/utility/common_type.hpp>
 
 #include <catch.hpp>
 
@@ -70,10 +78,24 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
             translated_center,
             point2d(0.0, 0.0)
     };
+    const auto full_circle_angles = range(min_angle, max_angle, 360.0);
+    using namespace std::placeholders;
+    using ranges::view::cartesian_product;
+    using ranges::view::transform;
+    const auto angles_near_full_circle =
+            cartesian_product(full_circle_angles, range(-9.0, 9.0, 1.0)) |
+            transform(std::bind(ranges::tuple_apply, std::plus<double>(), _1));
     SECTION("generated parameters") {
         for (const point2d &center : center_points) {
             for (const double radius : radii) {
                 for (const double end_angle : range(min_angle, max_angle, angle_step_size)) {
+                    check_circle_segment(0.0, end_angle, radius, center);
+                }
+            }
+        }
+        for (const point2d &center : center_points) {
+            for (const double radius : radii) {
+                for (const double end_angle : angles_near_full_circle) {
                     check_circle_segment(0.0, end_angle, radius, center);
                 }
             }

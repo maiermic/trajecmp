@@ -42,11 +42,14 @@ namespace trajecmp { namespace gesture {
                 number_type_trait::get_one_element(),
                 number_type_trait::get_zero_element()
         );
-
+        const auto epsilon_distance = min_bounding_sphere.radius / 10;
         const auto distances_to_start =
                 trajecmp::distance::distances_to_start(trajectory);
         const auto extrema =
-                trajecmp::util::find_local_extrema(distances_to_start, min_bounding_sphere.radius / 10);
+                trajecmp::util::find_local_extrema(
+                        distances_to_start,
+                        epsilon_distance
+                );
 
         const auto winding_direction_reference_point_index =
                 extrema.maxima.size() > 0
@@ -78,7 +81,8 @@ namespace trajecmp { namespace gesture {
         int winding_number =
                 (extrema.maxima.size() + extrema.minima.size()) / 2;
         static const Angle eps = number_type_trait::get_default_eps();
-        if (extrema.minima.size() < extrema.maxima.size() && end_angle < eps) {
+        if (extrema.minima.size() < extrema.maxima.size() &&
+            end_angle <= d2r(Angle(45.0))) {
             ++winding_number;
         }
         return {
