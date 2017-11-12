@@ -1,5 +1,5 @@
 [requires]
-Catch/latest@signal9/stable
+Catch/1.9.6@bincrafters/stable
 RxCpp/latest/maiermic/stable
 Boost/1.63.0/eliaskousk/stable
 
