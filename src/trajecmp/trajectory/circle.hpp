@@ -1,8 +1,9 @@
 #ifndef TRAJECMP_TRAJECTORY_CIRCLE_HPP
 #define TRAJECMP_TRAJECTORY_CIRCLE_HPP
 
-#include <boost/range.hpp>
-#include <boost/range/adaptors.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/to_container.hpp>
+
 #include <boost/concept/assert.hpp>
 #include <boost/geometry/geometries/concepts/linestring_concept.hpp>
 #include <boost/geometry/arithmetic/arithmetic.hpp>
@@ -51,13 +52,13 @@ namespace trajecmp { namespace trajectory {
          */
         inline Trajectory
         sample(Angle startAngle, Angle endAngle, Angle angleStep) const {
-            using trajecmp::range::range;
-            using boost::adaptors::transformed;
-            return range(startAngle, endAngle, angleStep) |
-                   transformed([&](Angle angle) {
+            using trajecmp::range::range_bound_always_included;
+            using ranges::view::transform;
+            return range_bound_always_included(startAngle, endAngle, angleStep) |
+                   transform([&](Angle angle) {
                        return Point(x(angle), y(angle));
                    }) |
-                   trajecmp::range::to_trajectory<Trajectory>();
+                   ranges::to_<Trajectory>();
         }
 
     };
