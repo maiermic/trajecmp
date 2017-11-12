@@ -1,6 +1,7 @@
 [requires]
 Catch/1.9.6@bincrafters/stable
 RxCpp/latest/maiermic/stable
+range-v3/0.3.0@ericniebler/stable
 Boost/1.63.0/eliaskousk/stable
 
 [generators]
