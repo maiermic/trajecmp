@@ -31,3 +31,12 @@ add_executable(sdl2-count-circles src/sdl2-count-circles.cpp src/sdl2_framework.
 target_include_directories(sdl2-count-circles PUBLIC src)
 target_include_directories(sdl2-count-circles PUBLIC ../../src)
 target_link_libraries(sdl2-count-circles ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
+
+add_executable(
+        sdl2-estimate-center-of-circle-segment
+        src/sdl2-estimate-center-of-circle-segment.cpp
+        src/sdl2_framework.cpp
+)
+target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC src)
+target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC ../../src)
+target_link_libraries(sdl2-estimate-center-of-circle-segment ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
