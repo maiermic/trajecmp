@@ -108,6 +108,6 @@ namespace trajecmp { namespace geometry { namespace point {
         return equals_approx(p, zero<Point>());
     }
 
-}}}// namespace trajecmp::geometry
+}}}// namespace trajecmp::geometry::point
 
 #endif //TRAJECMP_GEOMETRY_POINT_HPP
