@@ -61,6 +61,41 @@ TEST_CASE("trajecmp::geometry::point::set", "[]") {
     }
 }
 
+TEST_CASE("trajecmp::geometry::point::x", "[]") {
+    using namespace trajecmp::geometry::point;
+    using trajecmp::model::point2d;
+    using trajecmp::model::point3d;
+    SECTION("returns first coordinate") {
+        point2d p2(0.0, 1.0);
+        CHECK(x(p2) == 0.0);
+
+        point3d p3(2.0, 3.1, 4.2);
+        CHECK(x(p3) == 2.0);
+    }
+}
+
+TEST_CASE("trajecmp::geometry::point::y", "[]") {
+    using namespace trajecmp::geometry::point;
+    using trajecmp::model::point2d;
+    using trajecmp::model::point3d;
+    SECTION("returns second coordinate") {
+        point2d p2(0.0, 1.0);
+        CHECK(y(p2) == 1.0);
+
+        point3d p3(2.0, 3.1, 4.2);
+        CHECK(y(p3) == 3.1);
+    }
+}
+
+TEST_CASE("trajecmp::geometry::point::z", "[]") {
+    using namespace trajecmp::geometry::point;
+    using trajecmp::model::point3d;
+    SECTION("returns third coordinate") {
+        point3d p3(2.0, 3.1, 4.2);
+        CHECK(z(p3) == 4.2);
+    }
+}
+
 TEST_CASE("trajecmp::geometry::point::to_point", "[]") {
     using namespace trajecmp::geometry::point;
     using trajecmp::model::point2d;

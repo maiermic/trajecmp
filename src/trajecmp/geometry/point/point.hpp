@@ -68,6 +68,23 @@ namespace trajecmp { namespace geometry { namespace point {
                                detail::int2type<size - 1>());
     }
 
+    template<class Point>
+    typename boost::geometry::coordinate_type<Point>::type
+    x(const Point &point) {
+      return boost::geometry::get<0>(point);
+    }
+
+    template<class Point>
+    typename boost::geometry::coordinate_type<Point>::type
+    y(const Point &point) {
+      return boost::geometry::get<1>(point);
+    }
+
+    template<class Point>
+    typename boost::geometry::coordinate_type<Point>::type
+    z(const Point &point) {
+      return boost::geometry::get<2>(point);
+    }
 
     template<class Point>
     Point to_point(
