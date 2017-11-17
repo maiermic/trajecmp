@@ -95,6 +95,31 @@ namespace trajecmp { namespace gesture {
         };
     }
 
+    template<typename Point>
+    Point estimate_circle_center(const Point &a,
+                                 const Point &b,
+                                 const Point &c) {
+        using Coordinate = typename boost::geometry::coordinate_type<Point>::type;
+        using number_type_trait = trajecmp::trait::number_type_trait<Coordinate>;
+        using trajecmp::geometry::point::x;
+        using trajecmp::geometry::point::y;
+
+        const Coordinate yDelta_a = y(b) - y(a);
+        const Coordinate xDelta_a = x(b) - x(a);
+        const Coordinate yDelta_b = y(c) - y(b);
+        const Coordinate xDelta_b = x(c) - x(b);
+
+        const Coordinate aSlope = yDelta_a/xDelta_a;
+        const Coordinate bSlope = yDelta_b/xDelta_b;
+        const Coordinate center_x =
+                (aSlope * bSlope * (y(a) - y(c)) + bSlope * (x(a) + x(b))
+                 - aSlope * (x(b) + x(c))) / (2 * (bSlope - aSlope));
+        const Coordinate center_y =
+                -1 * (center_x - (x(a) + x(b)) / 2) / aSlope + (y(a) + y(b)) / 2;
+
+        return Point(center_x, center_y);
+    }
+
 }} // namespace trajecmp::util
 
 

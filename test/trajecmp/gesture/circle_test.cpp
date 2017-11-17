@@ -102,3 +102,16 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
         }
     }
 }
+
+TEST_CASE("trajecmp::gesture::estimate_circle_center", "[]") {
+    using namespace trajecmp::gesture;
+    SECTION("example") {
+        using trajecmp::geometry::point::x;
+        using trajecmp::geometry::point::y;
+        const auto center = estimate_circle_center(point2d(-3.0, 4.0),
+                                                   point2d(4.0, 5.0),
+                                                   point2d(1.0, -4.0));
+        CHECK(x(center) == 1.0);
+        CHECK(y(center) == 1.0);
+    }
+}
