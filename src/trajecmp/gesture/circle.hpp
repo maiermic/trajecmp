@@ -4,6 +4,7 @@
 #include <trajecmp/distance/distances_to_start.hpp>
 #include <trajecmp/geometry/hyper_sphere.hpp>
 #include <trajecmp/util/angle.hpp>
+#include <trajecmp/util/approx.hpp>
 #include <trajecmp/util/find_local_extrema.hpp>
 #include <trajecmp/model/point.hpp>
 #include <trajecmp/trait/number_type_trait.hpp>
@@ -70,10 +71,13 @@ namespace trajecmp { namespace gesture {
                     ? angle_clockwise<Point>
                     : angle_counterclockwise<Point>;
 
-        const Angle start_angle = angle(
+        Angle start_angle = angle(
                 x_achsis,
                 trajectory.front() - min_bounding_sphere.center
         );
+        if (start_angle == trajecmp::util::approx(d2r(Angle(360)))) {
+            start_angle = number_type_trait::get_zero_element();
+        }
         const Angle end_angle = angle(
                 x_achsis,
                 trajectory.back() - min_bounding_sphere.center
