@@ -103,15 +103,73 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
     }
 }
 
+void check_circle_center(Angle start_angle,
+                          Angle end_angle,
+                          const double radius,
+                          const point2d center_position) {
+    const circle_trajectory circle_generator(radius);
+    using trajecmp::geometry::point::x;
+    using trajecmp::geometry::point::y;
+    using trajecmp::geometry::point::equals_approx;
+    using namespace trajecmp::gesture;
+    const trajectory2d circle_trajectory =
+            trajecmp::transform::translate_by(center_position)(
+                    circle_generator.sample(start_angle, end_angle, 5.0)
+            );
+    REQUIRE(circle_trajectory.size() >= 3);
+    const point2d estimated_center =
+            trajecmp::gesture::estimate_circle_center(
+                circle_trajectory.front(),
+                circle_trajectory.at(circle_trajectory.size() / 2),
+                circle_trajectory.back()
+            );
+    CAPTURE(start_angle);
+    CAPTURE(end_angle);
+    CAPTURE(radius);
+    CAPTURE(estimated_center);
+    CAPTURE(center_position);
+    CHECK(x(estimated_center) == Approx(x(center_position)));
+
+    CAPTURE(start_angle);
+    CAPTURE(end_angle);
+    CAPTURE(radius);
+    CAPTURE(estimated_center);
+    CAPTURE(center_position);
+    CHECK(y(estimated_center) == Approx(y(center_position)));
+}
+
 TEST_CASE("trajecmp::gesture::estimate_circle_center", "[]") {
     using namespace trajecmp::gesture;
+    const double angle_step_size = 10.0;
+    const double small_radius = 0.000001;
+    const double medium_radius = 100.0;
+    const double large_radius = 1000000.0;
+    const std::vector<double> radii {
+            small_radius,
+            medium_radius,
+            large_radius
+    };
+    const point2d translated_center(12.0, 34.0);
+    const std::vector<point2d> center_points{
+            translated_center,
+            point2d(0.0, 0.0)
+    };
     SECTION("example") {
         using trajecmp::geometry::point::x;
         using trajecmp::geometry::point::y;
         const auto center = estimate_circle_center(point2d(-3.0, 4.0),
                                                    point2d(4.0, 5.0),
                                                    point2d(1.0, -4.0));
-        CHECK(x(center) == 1.0);
-        CHECK(y(center) == 1.0);
+        CHECK(x(center) == Approx(1.0));
+        CHECK(y(center) == Approx(1.0));
+    }
+    SECTION("generated parameters") {
+        for (const point2d &center : center_points) {
+            for (const double radius : radii) {
+                for (const double end_angle : range(0.0 + angle_step_size, 360.0 - angle_step_size, angle_step_size)) {
+                    check_circle_center(0.0, end_angle, radius, center);
+                }
+            }
+        }
     }
 }
