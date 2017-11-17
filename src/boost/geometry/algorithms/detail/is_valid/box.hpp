@@ -20,7 +20,6 @@
 #include <boost/geometry/core/coordinate_dimension.hpp>
 
 #include <boost/geometry/algorithms/validity_failure_type.hpp>
-#include <boost/geometry/algorithms/detail/is_valid/has_invalid_coordinate.hpp>
 #include <boost/geometry/algorithms/dispatch/is_valid.hpp>
 
 
@@ -67,20 +66,6 @@ struct has_valid_corners<Box, 0>
     }
 };
 
-
-template <typename Box>
-struct is_valid_box
-{
-    template <typename VisitPolicy>
-    static inline bool apply(Box const& box, VisitPolicy& visitor)
-    {
-        return
-            ! has_invalid_coordinate<Box>::apply(box, visitor)
-            &&
-            has_valid_corners<Box, dimension<Box>::value>::apply(box, visitor);
-    }
-};
-
 }} // namespace detail::is_valid
 #endif // DOXYGEN_NO_DETAIL
 
@@ -100,7 +85,7 @@ namespace dispatch
 // Reference (for polygon validity): OGC 06-103r4 (6.1.11.1)
 template <typename Box>
 struct is_valid<Box, box_tag>
-    : detail::is_valid::is_valid_box<Box>
+    : detail::is_valid::has_valid_corners<Box, dimension<Box>::value>
 {};
 
 

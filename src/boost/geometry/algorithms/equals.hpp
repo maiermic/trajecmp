@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2015 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014, 2015, 2016.
-// Modifications copyright (c) 2014-2016 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014, 2015.
+// Modifications copyright (c) 2014-2015 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -161,13 +161,8 @@ struct equals_by_collection
                 double
             >::type calculation_type;
 
-        typedef geometry::collected_vector
-            <
-                calculation_type,
-                Geometry1
-            > collected_vector;
-
-        std::vector<collected_vector> c1, c2;
+        typedef std::vector<collected_vector<calculation_type> > v;
+        v c1, c2;
 
         geometry::collect_vectors(c1, geometry1);
         geometry::collect_vectors(c2, geometry2);
@@ -328,17 +323,6 @@ struct equals
     : detail::equals::equals_by_collection<detail::equals::area_check>
 {};
 
-template <typename MultiPolygon, typename Ring, bool Reverse>
-struct equals
-    <
-        MultiPolygon, Ring,
-        multi_polygon_tag, ring_tag,
-        2,
-        Reverse
-    >
-    : detail::equals::equals_by_collection<detail::equals::area_check>
-{};
-
 
 } // namespace dispatch
 #endif // DOXYGEN_NO_DISPATCH
@@ -352,7 +336,7 @@ struct equals
     static inline bool apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2)
     {
-        concepts::check_concepts_and_equal_dimensions
+        concept::check_concepts_and_equal_dimensions
         <
             Geometry1 const,
             Geometry2 const

@@ -96,7 +96,7 @@ public:
 #if !defined(BOOST_MSVC)
         BOOST_CONCEPT_ASSERT
             (
-                (concepts::PointSegmentDistanceStrategy
+                (concept::PointSegmentDistanceStrategy
                     <
                         Strategy, Point, typename point_type<Box>::type
                     >)
@@ -161,7 +161,7 @@ public:
             }
         }
 
-        // Otherwise determine which among the two medirian segments of the
+        // Otherwise determine which αμονγ the two medirian segments of the
         // box the point is closest to, and compute the distance of
         // the point to this closest segment
 

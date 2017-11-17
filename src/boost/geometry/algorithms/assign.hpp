@@ -24,6 +24,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/numeric/conversion/bounds.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/type_traits.hpp>
 
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
@@ -69,7 +70,7 @@ namespace boost { namespace geometry
 template <typename Geometry, typename Range>
 inline void assign_points(Geometry& geometry, Range const& range)
 {
-    concepts::check<Geometry>();
+    concept::check<Geometry>();
 
     clear(geometry);
     geometry::append(geometry, range, -1, 0);
@@ -96,7 +97,7 @@ collect the minimum bounding box of a geometry.
 template <typename Geometry>
 inline void assign_inverse(Geometry& geometry)
 {
-    concepts::check<Geometry>();
+    concept::check<Geometry>();
 
     dispatch::assign_inverse
         <
@@ -116,7 +117,7 @@ inline void assign_inverse(Geometry& geometry)
 template <typename Geometry>
 inline void assign_zero(Geometry& geometry)
 {
-    concepts::check<Geometry>();
+    concept::check<Geometry>();
 
     dispatch::assign_zero
         <
@@ -146,7 +147,7 @@ inline void assign_zero(Geometry& geometry)
 template <typename Geometry, typename Type>
 inline void assign_values(Geometry& geometry, Type const& c1, Type const& c2)
 {
-    concepts::check<Geometry>();
+    concept::check<Geometry>();
 
     dispatch::assign
         <
@@ -179,7 +180,7 @@ template <typename Geometry, typename Type>
 inline void assign_values(Geometry& geometry,
             Type const& c1, Type const& c2, Type const& c3)
 {
-    concepts::check<Geometry>();
+    concept::check<Geometry>();
 
     dispatch::assign
         <
@@ -206,7 +207,7 @@ template <typename Geometry, typename Type>
 inline void assign_values(Geometry& geometry,
                 Type const& c1, Type const& c2, Type const& c3, Type const& c4)
 {
-    concepts::check<Geometry>();
+    concept::check<Geometry>();
 
     dispatch::assign
         <
@@ -227,9 +228,9 @@ struct assign
     static inline void
     apply(Geometry1& geometry1, const Geometry2& geometry2)
     {
-        concepts::check<Geometry1>();
-        concepts::check<Geometry2 const>();
-        concepts::check_concepts_and_equal_dimensions<Geometry1, Geometry2 const>();
+        concept::check<Geometry1>();
+        concept::check<Geometry2 const>();
+        concept::check_concepts_and_equal_dimensions<Geometry1, Geometry2 const>();
             
         static bool const same_point_order
             = point_order<Geometry1>::value == point_order<Geometry2>::value;

@@ -24,6 +24,8 @@
 
 #include <boost/concept_check.hpp>
 #include <boost/core/ignore_unused.hpp>
+#include <boost/range.hpp>
+
 #include <boost/mpl/fold.hpp>
 #include <boost/mpl/greater.hpp>
 #include <boost/mpl/if.hpp>
@@ -32,10 +34,8 @@
 #include <boost/mpl/set.hpp>
 #include <boost/mpl/size.hpp>
 #include <boost/mpl/transform.hpp>
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
-#include <boost/range/iterator.hpp>
-#include <boost/range/value_type.hpp>
+#include <boost/type_traits.hpp>
+
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
 #include <boost/variant/variant_fwd.hpp>
@@ -251,7 +251,7 @@ template<typename Geometry>
 inline typename default_length_result<Geometry>::type
 length(Geometry const& geometry)
 {
-    concepts::check<Geometry const>();
+    concept::check<Geometry const>();
 
     // detail::throw_on_empty_input(geometry);
 
@@ -283,7 +283,7 @@ template<typename Geometry, typename Strategy>
 inline typename default_length_result<Geometry>::type
 length(Geometry const& geometry, Strategy const& strategy)
 {
-    concepts::check<Geometry const>();
+    concept::check<Geometry const>();
 
     // detail::throw_on_empty_input(geometry);
 

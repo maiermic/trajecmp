@@ -4,11 +4,10 @@
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2015, 2016.
-// Modifications copyright (c) 2015-2016, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015.
+// Modifications copyright (c) 2015, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -85,7 +84,6 @@ class compute_mbr_of_segment
 private:
     // computes the azimuths of the segment with endpoints (lon1, lat1)
     // and (lon2, lat2)
-    // radians
     template <typename CalculationType>
     static inline void azimuths(CalculationType const& lon1,
                                 CalculationType const& lat1,
@@ -94,7 +92,7 @@ private:
                                 CalculationType& a1,
                                 CalculationType& a2)
     {
-        BOOST_GEOMETRY_ASSERT(lon1 <= lon2);
+        BOOST_GEOMETRY_ASSERT(math::smaller(lon1, lon2));
 
         CalculationType dlon = lon2 - lon1;
         CalculationType sin_dlon = sin(dlon);
@@ -110,9 +108,8 @@ private:
         a2 = atan2(-sin_dlon * cos_lat1,
                    cos_lat2 * sin_lat1 - sin_lat2 * cos_lat1 * cos_dlon);
         a2 += math::pi<CalculationType>();
-    }
+   }
 
-    // degrees or radians
     template <typename CalculationType>
     static inline void swap(CalculationType& lon1,
                             CalculationType& lat1,
@@ -123,7 +120,6 @@ private:
         std::swap(lat1, lat2);
     }
 
-    // radians
     template <typename CalculationType>
     static inline bool contains_pi_half(CalculationType const& a1,
                                         CalculationType const& a2)
@@ -138,20 +134,13 @@ private:
             : (a1 > pi_half && pi_half > a2);
     }
 
-    // radians or degrees
-    template <typename Units, typename CoordinateType>
+    template <typename CoordinateType>
     static inline bool crosses_antimeridian(CoordinateType const& lon1,
                                             CoordinateType const& lon2)
     {
-        typedef math::detail::constants_on_spheroid
-            <
-                CoordinateType, Units
-            > constants;
-
-        return math::abs(lon1 - lon2) > constants::half_period(); // > pi
+        return math::larger(math::abs(lon1 - lon2), math::pi<CoordinateType>());
     }
 
-    // radians
     template <typename CalculationType>
     static inline CalculationType max_latitude(CalculationType const& azimuth,
                                                CalculationType const& latitude)
@@ -160,46 +149,39 @@ private:
         return acos( math::abs(cos(latitude) * sin(azimuth)) );
     }
 
-    // degrees or radians
-    template <typename Units, typename CalculationType>
+    template <typename CalculationType>
     static inline void compute_box_corners(CalculationType& lon1,
                                            CalculationType& lat1,
                                            CalculationType& lon2,
-                                           CalculationType& lat2)
+                                           CalculationType& lat2,
+                                           CalculationType const& a1,
+                                           CalculationType const& a2)
     {
         // coordinates are assumed to be in radians
-        BOOST_GEOMETRY_ASSERT(lon1 <= lon2);
-
-        CalculationType lon1_rad = math::as_radian<Units>(lon1);
-        CalculationType lat1_rad = math::as_radian<Units>(lat1);
-        CalculationType lon2_rad = math::as_radian<Units>(lon2);
-        CalculationType lat2_rad = math::as_radian<Units>(lat2);
-
-        CalculationType a1 = 0, a2 = 0;
-        azimuths(lon1_rad, lat1_rad, lon2_rad, lat2_rad, a1, a2);
-
-        if (lat1 > lat2)
-        {
-            std::swap(lat1, lat2);
-            std::swap(lat1_rad, lat2_rad);
-        }
+        BOOST_GEOMETRY_ASSERT(! math::larger(lon1, lon2));
 
         if (math::equals(a1, a2))
         {
-            // the segment must lie on the equator or is very short
+            // the segment must lie on the equator; nothing to do
+            BOOST_GEOMETRY_ASSERT(math::equals(lat1, CalculationType(0)));
+            BOOST_GEOMETRY_ASSERT(math::equals(lat2, CalculationType(0)));
             return;
+        }
+
+        if (math::larger(lat1, lat2))
+        {
+            std::swap(lat1, lat2);
         }
 
         if (contains_pi_half(a1, a2))
         {
-            CalculationType const mid_lat = lat1 + lat2;
+            CalculationType mid_lat = lat1 + lat2;
             if (mid_lat < 0)
             {
                 // update using min latitude
-                CalculationType const lat_min_rad = -max_latitude(a1, lat1_rad);
-                CalculationType const lat_min = math::from_radian<Units>(lat_min_rad);
+                CalculationType lat_min = -max_latitude(a1, lat1);
 
-                if (lat1 > lat_min)
+                if (math::larger(lat1, lat_min))
                 {
                     lat1 = lat_min;
                 }
@@ -207,10 +189,9 @@ private:
             else if (mid_lat > 0)
             {
                 // update using max latitude
-                CalculationType const lat_max_rad = max_latitude(a1, lat1_rad);
-                CalculationType const lat_max = math::from_radian<Units>(lat_max_rad);
+                CalculationType lat_max = max_latitude(a1, lat1);
 
-                if (lat2 < lat_max)
+                if (math::smaller(lat2, lat_max))
                 {
                     lat2 = lat_max;
                 }
@@ -218,27 +199,24 @@ private:
         }
     }
 
-    template <typename Units, typename CalculationType>
+    template <typename CalculationType>
     static inline void apply(CalculationType& lon1,
                              CalculationType& lat1,
                              CalculationType& lon2,
                              CalculationType& lat2)
     {
-        typedef math::detail::constants_on_spheroid
-            <
-                CalculationType, Units
-            > constants;
+        CalculationType const half_pi = math::half_pi<CalculationType>();
 
-        bool is_pole1 = math::equals(math::abs(lat1), constants::max_latitude());
-        bool is_pole2 = math::equals(math::abs(lat2), constants::max_latitude());
+        bool is_pole1 = math::equals(math::abs(lat1), half_pi);
+        bool is_pole2 = math::equals(math::abs(lat2), half_pi);
 
         if (is_pole1 && is_pole2)
         {
             // both points are poles; nothing more to do:
             // longitudes are already normalized to 0
-            // but just in case
-            lon1 = 0;
-            lon2 = 0;
+            BOOST_GEOMETRY_ASSERT(lon1 == CalculationType(0)
+                         &&
+                         lon2 == CalculationType(0));
         }
         else if (is_pole1 && !is_pole2)
         {
@@ -255,10 +233,10 @@ private:
             lon2 = lon1;
         }
 
-        if (lon1 == lon2)
+        if (math::equals(lon1, lon2))
         {
             // segment lies on a meridian
-            if (lat1 > lat2)
+            if (math::larger(lat1, lat2))
             {
                 std::swap(lat1, lat2);
             }
@@ -267,22 +245,25 @@ private:
 
         BOOST_GEOMETRY_ASSERT(!is_pole1 && !is_pole2);
 
-        if (lon1 > lon2)
+        if (math::larger(lon1, lon2))
         {
             swap(lon1, lat1, lon2, lat2);
         }
 
-        if (crosses_antimeridian<Units>(lon1, lon2))
+        if (crosses_antimeridian(lon1, lon2))
         {
-            lon1 += constants::period();
+            lon1 += math::two_pi<CalculationType>();
             swap(lon1, lat1, lon2, lat2);
         }
 
-        compute_box_corners<Units>(lon1, lat1, lon2, lat2);
+        CalculationType a1 = 0, a2 = 0;
+        azimuths(lon1, lat1, lon2, lat2, a1, a2);
+
+        compute_box_corners(lon1, lat1, lon2, lat2, a1, a2);
     }
 
 public:
-    template <typename Units, typename CalculationType, typename Box>
+    template <typename CalculationType, typename Box>
     static inline void apply(CalculationType lon1,
                              CalculationType lat1,
                              CalculationType lon2,
@@ -293,12 +274,12 @@ public:
 
         typedef typename helper_geometry
             <
-                Box, box_coordinate_type, Units
+                Box, box_coordinate_type, radian
             >::type helper_box_type;
 
         helper_box_type radian_mbr;
 
-        apply<Units>(lon1, lat1, lon2, lat2);
+        apply(lon1, lat1, lon2, lat2);
 
         geometry::set
             <
@@ -335,14 +316,11 @@ struct envelope_segment_on_sphere
         Point p1_normalized = detail::return_normalized<Point>(p1);
         Point p2_normalized = detail::return_normalized<Point>(p2);
 
-        typedef typename coordinate_system<Point>::type::units units_type;
-
-        compute_mbr_of_segment::template apply<units_type>(
-                    geometry::get<0>(p1_normalized),
-                    geometry::get<1>(p1_normalized),
-                    geometry::get<0>(p2_normalized),
-                    geometry::get<1>(p2_normalized),
-                    mbr);
+        compute_mbr_of_segment::apply(geometry::get_as_radian<0>(p1_normalized),
+                                      geometry::get_as_radian<1>(p1_normalized),
+                                      geometry::get_as_radian<0>(p2_normalized),
+                                      geometry::get_as_radian<1>(p2_normalized),
+                                      mbr);
 
         // now compute the envelope range for coordinates of
         // dimension 2 and higher

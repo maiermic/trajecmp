@@ -501,7 +501,7 @@ private:
 template <typename Geometry>
 inline wkt_manipulator<Geometry> wkt(Geometry const& geometry)
 {
-    concepts::check<Geometry const>();
+    concept::check<Geometry const>();
 
     return wkt_manipulator<Geometry>(geometry);
 }

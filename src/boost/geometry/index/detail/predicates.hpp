@@ -11,11 +11,7 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_PREDICATES_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_PREDICATES_HPP
 
-//#include <utility>
-
-#include <boost/mpl/assert.hpp>
-#include <boost/tuple/tuple.hpp>
-
+#include <boost/geometry/index/predicates.hpp>
 #include <boost/geometry/index/detail/tags.hpp>
 
 namespace boost { namespace geometry { namespace index { namespace detail {
@@ -302,7 +298,7 @@ struct predicate_check<predicates::satisfies<Fun, Negated>, bounds_tag>
 // NOT NEGATED
 // value_tag        bounds_tag
 // ---------------------------
-// contains(I,G)    covers(I,G)
+// contains(I,G)    contains(I,G)
 // covered_by(I,G)  intersects(I,G)
 // covers(I,G)      covers(I,G)
 // disjoint(I,G)    !covered_by(I,G)
@@ -333,7 +329,7 @@ struct predicate_check<predicates::spatial_predicate<Geometry, predicates::conta
     template <typename Value, typename Indexable>
     static inline bool apply(Pred const& p, Value const&, Indexable const& i)
     {
-        return spatial_predicate_call<predicates::covers_tag>::apply(i, p.geometry);
+        return spatial_predicate_call<predicates::contains_tag>::apply(i, p.geometry);
     }
 };
 

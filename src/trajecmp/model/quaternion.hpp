@@ -3,7 +3,7 @@
 
 #include <boost/geometry/algorithms/detail/normalize.hpp>
 #include <boost/geometry/arithmetic/dot_product.hpp>
-#include <boost/geometry/arithmetic/cross_product.hpp>
+#include <boost/geometry/extensions/arithmetic/cross_product.hpp>
 #include <boost/geometry/arithmetic/arithmetic.hpp>
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/coordinate_type.hpp>

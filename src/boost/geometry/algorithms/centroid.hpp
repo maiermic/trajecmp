@@ -220,22 +220,19 @@ struct centroid_range_state
         iterator_type it = boost::begin(view);
         iterator_type end = boost::end(view);
 
-        if (it != end)
+        typename PointTransformer::result_type
+            previous_pt = transformer.apply(*it);
+
+        for ( ++it ; it != end ; ++it)
         {
             typename PointTransformer::result_type
-                previous_pt = transformer.apply(*it);
+                pt = transformer.apply(*it);
 
-            for ( ++it ; it != end ; ++it)
-            {
-                typename PointTransformer::result_type
-                    pt = transformer.apply(*it);
-
-                strategy.apply(static_cast<point_type const&>(previous_pt),
-                               static_cast<point_type const&>(pt),
-                               state);
-
-                previous_pt = pt;
-            }
+            strategy.apply(static_cast<point_type const&>(previous_pt),
+                           static_cast<point_type const&>(pt),
+                           state);
+            
+            previous_pt = pt;
         }
     }
 };
@@ -545,7 +542,7 @@ struct centroid
     template <typename Point, typename Strategy>
     static inline void apply(Geometry const& geometry, Point& out, Strategy const& strategy)
     {
-        concepts::check_concepts_and_equal_dimensions<Point, Geometry const>();
+        concept::check_concepts_and_equal_dimensions<Point, Geometry const>();
         resolve_strategy::centroid<Geometry>::apply(geometry, out, strategy);
     }
 };

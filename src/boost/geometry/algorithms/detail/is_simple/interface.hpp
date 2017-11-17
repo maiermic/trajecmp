@@ -30,7 +30,7 @@ struct is_simple
 {
     static inline bool apply(Geometry const& geometry)
     {
-        concepts::check<Geometry const>();
+        concept::check<Geometry const>();
         return dispatch::is_simple<Geometry>::apply(geometry);
     }
 };

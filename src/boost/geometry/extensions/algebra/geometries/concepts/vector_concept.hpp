@@ -20,7 +20,7 @@
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include <boost/geometry/core/access.hpp>
 
-namespace boost { namespace geometry { namespace concepts {
+namespace boost { namespace geometry { namespace concept {
 
 template <typename Geometry>
 class Vector
@@ -107,6 +107,6 @@ public:
 #endif
 };
 
-}}} // namespace boost::geometry::concepts
+}}} // namespace boost::geometry::concept
 
 #endif // BOOST_GEOMETRY_EXTENSIONS_ALGEBRA_GEOMETRIES_CONCEPTS_VECTOR_CONCEPT_HPP

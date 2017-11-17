@@ -235,8 +235,7 @@ struct is_simple_linestring
     static inline bool apply(Linestring const& linestring)
     {
         simplicity_failure_policy policy;
-        return ! boost::empty(linestring)
-            && ! detail::is_valid::has_duplicates
+        return ! detail::is_valid::has_duplicates
                     <
                         Linestring, closed
                     >::apply(linestring, policy)
@@ -264,7 +263,7 @@ struct is_simple_multilinestring
                              typename boost::range_value<MultiLinestring>::type,
                              false // do not compute self-intersections
                          >,
-                     true // allow empty multilinestring
+                     false // do not allow empty multilinestring
                  >::apply(boost::begin(multilinestring),
                           boost::end(multilinestring))
              )

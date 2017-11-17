@@ -46,8 +46,8 @@ namespace detail
 template <std::size_t Index, typename Geometry, typename Point>
 inline void assign_point_to_index(Point const& point, Geometry& geometry)
 {
-    concepts::check<Point const>();
-    concepts::check<Geometry>();
+    concept::check<Point const>();
+    concept::check<Geometry>();
 
     detail::assign::assign_point_to_index
         <
@@ -74,8 +74,8 @@ inline void assign_point_to_index(Point const& point, Geometry& geometry)
 template <std::size_t Index, typename Point, typename Geometry>
 inline void assign_point_from_index(Geometry const& geometry, Point& point)
 {
-    concepts::check<Geometry const>();
-    concepts::check<Point>();
+    concept::check<Geometry const>();
+    concept::check<Point>();
 
     detail::assign::assign_point_from_index
         <

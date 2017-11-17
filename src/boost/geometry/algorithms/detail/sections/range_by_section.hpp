@@ -177,7 +177,7 @@ template <typename Geometry, typename Section>
 inline typename ring_return_type<Geometry const>::type
             range_by_section(Geometry const& geometry, Section const& section)
 {
-    concepts::check<Geometry const>();
+    concept::check<Geometry const>();
 
     return dispatch::range_by_section
         <

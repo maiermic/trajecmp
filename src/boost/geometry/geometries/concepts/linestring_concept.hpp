@@ -28,7 +28,7 @@
 
 
 
-namespace boost { namespace geometry { namespace concepts
+namespace boost { namespace geometry { namespace concept
 {
 
 
@@ -76,7 +76,7 @@ class Linestring
 #ifndef DOXYGEN_NO_CONCEPT_MEMBERS
     typedef typename point_type<Geometry>::type point_type;
 
-    BOOST_CONCEPT_ASSERT( (concepts::Point<point_type>) );
+    BOOST_CONCEPT_ASSERT( (concept::Point<point_type>) );
     BOOST_CONCEPT_ASSERT( (boost::RandomAccessRangeConcept<Geometry>) );
 
 public :
@@ -105,7 +105,7 @@ class ConstLinestring
 #ifndef DOXYGEN_NO_CONCEPT_MEMBERS
     typedef typename point_type<Geometry>::type point_type;
 
-    BOOST_CONCEPT_ASSERT( (concepts::ConstPoint<point_type>) );
+    BOOST_CONCEPT_ASSERT( (concept::ConstPoint<point_type>) );
     //BOOST_CONCEPT_ASSERT( (boost::RandomAccessRangeConcept<Geometry>) );
     // Relaxed the concept.
     BOOST_CONCEPT_ASSERT( (boost::ForwardRangeConcept<Geometry>) );
@@ -119,7 +119,7 @@ public :
 #endif
 };
 
-}}} // namespace boost::geometry::concepts
+}}} // namespace boost::geometry::concept
 
 
 #endif // BOOST_GEOMETRY_GEOMETRIES_CONCEPTS_LINESTRING_CONCEPT_HPP

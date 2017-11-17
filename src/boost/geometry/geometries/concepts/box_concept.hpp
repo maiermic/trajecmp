@@ -26,7 +26,7 @@
 #include <boost/geometry/core/point_type.hpp>
 
 
-namespace boost { namespace geometry { namespace concepts
+namespace boost { namespace geometry { namespace concept
 {
 
 
@@ -130,7 +130,7 @@ public :
 #endif
 };
 
-}}} // namespace boost::geometry::concepts
+}}} // namespace boost::geometry::concept
 
 
 #endif // BOOST_GEOMETRY_GEOMETRIES_CONCEPTS_BOX_CONCEPT_HPP

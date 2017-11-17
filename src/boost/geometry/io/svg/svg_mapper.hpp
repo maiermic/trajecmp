@@ -2,11 +2,10 @@
 
 // Copyright (c) 2009-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2015, 2016.
-// Modifications copyright (c) 2015-2016, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015.
+// Modifications copyright (c) 2015, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
@@ -43,14 +42,21 @@
 #include <boost/geometry/strategies/transform/map_transformer.hpp>
 #include <boost/geometry/views/segment_view.hpp>
 
-#include <boost/geometry/io/svg/write.hpp>
+#include <boost/geometry/io/svg/write_svg.hpp>
 
-// Helper geometries (all points are transformed to svg-points)
+// Helper geometries (all points are transformed to integer-points)
 #include <boost/geometry/geometries/geometries.hpp>
 
 
 namespace boost { namespace geometry
 {
+
+#ifndef DOXYGEN_NO_DETAIL
+namespace detail { namespace svg
+{
+    typedef model::point<int, 2, cs::cartesian> svg_point_type;
+}}
+#endif
 
 
 #ifndef DOXYGEN_NO_DISPATCH
@@ -58,7 +64,8 @@ namespace dispatch
 {
 
 
-template <typename GeometryTag, typename Geometry, typename SvgPoint>
+
+template <typename GeometryTag, typename Geometry>
 struct svg_map
 {
     BOOST_MPL_ASSERT_MSG
@@ -69,57 +76,47 @@ struct svg_map
 };
 
 
-template <typename Point, typename SvgPoint>
-struct svg_map<point_tag, Point, SvgPoint>
+template <typename Point>
+struct svg_map<point_tag, Point>
 {
     template <typename TransformStrategy>
     static inline void apply(std::ostream& stream,
-                    std::string const& style, double size,
+                    std::string const& style, int size,
                     Point const& point, TransformStrategy const& strategy)
     {
-        SvgPoint ipoint;
+        detail::svg::svg_point_type ipoint;
         geometry::transform(point, ipoint, strategy);
         stream << geometry::svg(ipoint, style, size) << std::endl;
     }
 };
 
-template <typename BoxSeg1, typename BoxSeg2, typename SvgPoint>
-struct svg_map_box_seg
+template <typename Box>
+struct svg_map<box_tag, Box>
 {
     template <typename TransformStrategy>
     static inline void apply(std::ostream& stream,
-                    std::string const& style, double size,
-                    BoxSeg1 const& box_seg, TransformStrategy const& strategy)
+                    std::string const& style, int size,
+                    Box const& box, TransformStrategy const& strategy)
     {
-        BoxSeg2 ibox_seg;
+        model::box<detail::svg::svg_point_type> ibox;
 
-        // Fix bug in gcc compiler warning for possible uninitialization
+        // Fix bug in gcc compiler warning for possible uninitialation
 #if defined(BOOST_GCC)
-        geometry::assign_zero(ibox_seg);
+        geometry::assign_zero(ibox);
 #endif
-        geometry::transform(box_seg, ibox_seg, strategy);
+        geometry::transform(box, ibox, strategy);
 
-        stream << geometry::svg(ibox_seg, style, size) << std::endl;
+        stream << geometry::svg(ibox, style, size) << std::endl;
     }
 };
 
-template <typename Box, typename SvgPoint>
-struct svg_map<box_tag, Box, SvgPoint>
-    : svg_map_box_seg<Box, model::box<SvgPoint>, SvgPoint>
-{};
 
-template <typename Segment, typename SvgPoint>
-struct svg_map<segment_tag, Segment, SvgPoint>
-    : svg_map_box_seg<Segment, model::segment<SvgPoint>, SvgPoint>
-{};
-
-
-template <typename Range1, typename Range2, typename SvgPoint>
+template <typename Range1, typename Range2>
 struct svg_map_range
 {
     template <typename TransformStrategy>
     static inline void apply(std::ostream& stream,
-                std::string const& style, double size,
+                std::string const& style, int size,
                 Range1 const& range, TransformStrategy const& strategy)
     {
         Range2 irange;
@@ -128,35 +125,54 @@ struct svg_map_range
     }
 };
 
-template <typename Ring, typename SvgPoint>
-struct svg_map<ring_tag, Ring, SvgPoint>
-    : svg_map_range<Ring, model::ring<SvgPoint>, SvgPoint>
-{};
-
-
-template <typename Linestring, typename SvgPoint>
-struct svg_map<linestring_tag, Linestring, SvgPoint>
-    : svg_map_range<Linestring, model::linestring<SvgPoint>, SvgPoint>
-{};
-
-
-template <typename Polygon, typename SvgPoint>
-struct svg_map<polygon_tag, Polygon, SvgPoint>
+template <typename Segment>
+struct svg_map<segment_tag, Segment>
 {
     template <typename TransformStrategy>
     static inline void apply(std::ostream& stream,
-                    std::string const& style, double size,
+                    std::string const& style, int size,
+                    Segment const& segment, TransformStrategy const& strategy)
+    {
+        typedef segment_view<Segment> view_type;
+        view_type range(segment);
+        svg_map_range
+            <
+                view_type,
+                model::linestring<detail::svg::svg_point_type>
+            >::apply(stream, style, size, range, strategy);
+    }
+};
+
+
+template <typename Ring>
+struct svg_map<ring_tag, Ring>
+    : svg_map_range<Ring, model::ring<detail::svg::svg_point_type> >
+{};
+
+
+template <typename Linestring>
+struct svg_map<linestring_tag, Linestring>
+    : svg_map_range<Linestring, model::linestring<detail::svg::svg_point_type> >
+{};
+
+
+template <typename Polygon>
+struct svg_map<polygon_tag, Polygon>
+{
+    template <typename TransformStrategy>
+    static inline void apply(std::ostream& stream,
+                    std::string const& style, int size,
                     Polygon const& polygon, TransformStrategy const& strategy)
     {
-        model::polygon<SvgPoint> ipoly;
+        model::polygon<detail::svg::svg_point_type> ipoly;
         geometry::transform(polygon, ipoly, strategy);
         stream << geometry::svg(ipoly, style, size) << std::endl;
     }
 };
 
 
-template <typename Multi, typename SvgPoint>
-struct svg_map<multi_tag, Multi, SvgPoint>
+template <typename Multi>
+struct svg_map<multi_tag, Multi>
 {
     typedef typename single_tag_of
       <
@@ -165,7 +181,7 @@ struct svg_map<multi_tag, Multi, SvgPoint>
 
     template <typename TransformStrategy>
     static inline void apply(std::ostream& stream,
-                    std::string const& style, double size,
+                    std::string const& style, int size,
                     Multi const& multi, TransformStrategy const& strategy)
     {
         for (typename boost::range_iterator<Multi const>::type it
@@ -176,73 +192,9 @@ struct svg_map<multi_tag, Multi, SvgPoint>
             svg_map
                 <
                     stag,
-                    typename boost::range_value<Multi>::type,
-                    SvgPoint
+                    typename boost::range_value<Multi>::type
                 >::apply(stream, style, size, *it, strategy);
         }
-    }
-};
-
-
-template <typename SvgPoint, typename Geometry>
-struct devarianted_svg_map
-{
-    template <typename TransformStrategy>
-    static inline void apply(std::ostream& stream,
-                             std::string const& style,
-                             double size,
-                             Geometry const& geometry,
-                             TransformStrategy const& strategy)
-    {
-        svg_map
-            <
-                typename tag_cast
-                    <
-                        typename tag<Geometry>::type,
-                        multi_tag
-                    >::type,
-                typename boost::remove_const<Geometry>::type,
-                SvgPoint
-            >::apply(stream, style, size, geometry, strategy);
-    }
-};
-
-template <typename SvgPoint, BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct devarianted_svg_map<SvgPoint, variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
-{
-    template <typename TransformStrategy>
-    struct visitor: static_visitor<void>
-    {
-        std::ostream& m_os;
-        std::string const& m_style;
-        double m_size;
-        TransformStrategy const& m_strategy;
-
-        visitor(std::ostream& os,
-                std::string const& style,
-                double size,
-                TransformStrategy const& strategy)
-            : m_os(os)
-            , m_style(style)
-            , m_size(size)
-            , m_strategy(strategy)
-        {}
-
-        template <typename Geometry>
-        inline void operator()(Geometry const& geometry) const
-        {
-            devarianted_svg_map<SvgPoint, Geometry>::apply(m_os, m_style, m_size, geometry, m_strategy);
-        }
-    };
-
-    template <typename TransformStrategy>
-    static inline void apply(std::ostream& stream,
-                             std::string const& style,
-                             double size,
-                             variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry,
-                             TransformStrategy const& strategy)
-    {
-        boost::apply_visitor(visitor<TransformStrategy>(stream, style, size, strategy), geometry);
     }
 };
 
@@ -251,13 +203,20 @@ struct devarianted_svg_map<SvgPoint, variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 #endif
 
 
-template <typename SvgPoint, typename Geometry, typename TransformStrategy>
+template <typename Geometry, typename TransformStrategy>
 inline void svg_map(std::ostream& stream,
-            std::string const& style, double size,
+            std::string const& style, int size,
             Geometry const& geometry, TransformStrategy const& strategy)
 {
-    dispatch::devarianted_svg_map<SvgPoint, Geometry>::apply(stream,
-            style, size, geometry, strategy);
+    dispatch::svg_map
+        <
+            typename tag_cast
+                <
+                    typename tag<Geometry>::type,
+                    multi_tag
+                >::type,
+            typename boost::remove_const<Geometry>::type
+        >::apply(stream, style, size, geometry, strategy);
 }
 
 
@@ -266,22 +225,13 @@ inline void svg_map(std::ostream& stream,
 \tparam Point Point type, for input geometries.
 \tparam SameScale Boolean flag indicating if horizontal and vertical scale should
     be the same. The default value is true
-\tparam SvgCoordinateType Coordinate type of SVG points. SVG is capable to
-    use floating point coordinates. Therefore the default value is double
 \ingroup svg
 
 \qbk{[include reference/io/svg.qbk]}
 */
-template
-<
-    typename Point,
-    bool SameScale = true,
-    typename SvgCoordinateType = double
->
+template <typename Point, bool SameScale = true>
 class svg_mapper : boost::noncopyable
 {
-    typedef model::point<SvgCoordinateType, 2, cs::cartesian> svg_point_type;
-
     typedef typename geometry::select_most_precise
         <
             typename coordinate_type<Point>::type,
@@ -300,7 +250,7 @@ class svg_mapper : boost::noncopyable
     model::box<Point> m_bounding_box;
     boost::scoped_ptr<transformer_type> m_matrix;
     std::ostream& m_stream;
-    SvgCoordinateType m_width, m_height;
+    int m_width, m_height;
     std::string m_width_height; // for <svg> tag only, defaults to 2x 100%
 
     void init_matrix()
@@ -337,9 +287,7 @@ public :
     \param height Height of the SVG map (in SVG pixels)
     \param width_height Optional information to increase width and/or height
     */
-    svg_mapper(std::ostream& stream
-        , SvgCoordinateType width
-        , SvgCoordinateType height
+    explicit svg_mapper(std::ostream& stream, int width, int height
         , std::string const& width_height = "width=\"100%\" height=\"100%\"")
         : m_stream(stream)
         , m_width(width)
@@ -386,10 +334,10 @@ public :
     */
     template <typename Geometry>
     void map(Geometry const& geometry, std::string const& style,
-                double size = -1.0)
+                int size = -1)
     {
         init_matrix();
-        svg_map<svg_point_type>(m_stream, style, size, geometry, *m_matrix);
+        svg_map(m_stream, style, size, geometry, *m_matrix);
     }
 
     /*!
@@ -405,11 +353,10 @@ public :
     template <typename TextPoint>
     void text(TextPoint const& point, std::string const& s,
                 std::string const& style,
-                double offset_x = 0.0, double offset_y = 0.0,
-                double lineheight = 10.0)
+                int offset_x = 0, int offset_y = 0, int lineheight = 10)
     {
         init_matrix();
-        svg_point_type map_point;
+        detail::svg::svg_point_type map_point;
         transform(point, map_point, *m_matrix);
         m_stream
             << "<text style=\"" << style << "\""

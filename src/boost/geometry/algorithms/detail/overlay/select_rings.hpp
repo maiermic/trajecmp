@@ -35,11 +35,13 @@ namespace detail { namespace overlay
 
 struct ring_turn_info
 {
+    bool has_uu_turn;
     bool has_normal_turn;
     bool within_other;
 
     ring_turn_info()
-        : has_normal_turn(false)
+        : has_uu_turn(false)
+        , has_normal_turn(false)
         , within_other(false)
     {}
 };
@@ -165,18 +167,20 @@ namespace dispatch
 
 template<overlay_type OverlayType>
 struct decide
+{};
+
+template<>
+struct decide<overlay_union>
 {
-    // Default implementation (union, inflate, deflate, dissolve)
     static bool include(ring_identifier const& , ring_turn_info const& info)
     {
-        return ! info.within_other;
+        return info.has_uu_turn || ! info.within_other;
     }
 
     static bool reversed(ring_identifier const& , ring_turn_info const& )
     {
         return false;
     }
-
 };
 
 template<>
@@ -186,16 +190,19 @@ struct decide<overlay_difference>
     {
         // Difference: A - B
 
-        // If this is A (source_index=0), then the ring is inside B
-        // If this is B (source_index=1), then the ring is NOT inside A
+        // If this is A (source_index=0) and there is only a u/u turn,
+        // then the ring is inside B
+        // If this is B (source_index=1) and there is only a u/u turn,
+        // then the ring is NOT inside A
 
         // If this is A and the ring is within the other geometry,
         // then we should NOT include it.
         // If this is B then we SHOULD include it.
 
-        return id.source_index == 0
-            ? ! info.within_other
-            : info.within_other;
+        bool const is_first = id.source_index == 0;
+        bool const within_other = info.within_other
+            || (is_first && info.has_uu_turn);
+        return is_first ? ! within_other : within_other;
     }
 
     static bool reversed(ring_identifier const& id, ring_turn_info const& info)
@@ -212,7 +219,7 @@ struct decide<overlay_intersection>
 {
     static bool include(ring_identifier const& , ring_turn_info const& info)
     {
-        return info.within_other;
+        return ! info.has_uu_turn && info.within_other;
     }
 
     static bool reversed(ring_identifier const& , ring_turn_info const& )
@@ -259,16 +266,19 @@ inline void update_ring_selection(Geometry1 const& geometry1,
             continue;
         }
 
-        // Check if the ring is within the other geometry, by taking
-        // a point lying on the ring
-        switch(id.source_index)
+        if (! info.has_uu_turn)
         {
-            case 0 :
-                info.within_other = geometry::within(it->second.point, geometry2);
-                break;
-            case 1 :
-                info.within_other = geometry::within(it->second.point, geometry1);
-                break;
+            // Check if the ring is within the other geometry, by taking
+            // a point lying on the ring
+            switch(id.source_index)
+            {
+                case 0 :
+                    info.within_other = geometry::within(it->second.point, geometry2);
+                    break;
+                case 1 :
+                    info.within_other = geometry::within(it->second.point, geometry1);
+                    break;
+            }
         }
 
         if (decide<OverlayType>::include(id, info))

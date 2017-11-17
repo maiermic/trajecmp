@@ -286,8 +286,8 @@ inline bool point_on_border(Point& point,
             Geometry const& geometry,
             bool midpoint = false)
 {
-    concepts::check<Point>();
-    concepts::check<Geometry const>();
+    concept::check<Point>();
+    concept::check<Geometry const>();
 
     return dispatch::point_on_border
             <

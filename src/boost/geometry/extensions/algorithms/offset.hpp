@@ -81,7 +81,7 @@ struct offset_range
                 distance_strategy, side_strategy, join_strategy, end_strategy, robust_policy,
                 first_p1, first_p2, last_p1, last_p2);
         }
-        collection.finish_ring(strategy::buffer::result_normal);
+        collection.finish_ring();
     }
 };
 
@@ -140,8 +140,8 @@ inline void offset(Geometry const& geometry, GeometryOut& out,
             JoinStrategy const& join_strategy,
             Distance const& distance)
 {
-    concepts::check<Geometry const>();
-    concepts::check<GeometryOut>();
+    concept::check<Geometry const>();
+    concept::check<GeometryOut>();
 
     typedef typename geometry::point_type<Geometry>::type point_type;
 

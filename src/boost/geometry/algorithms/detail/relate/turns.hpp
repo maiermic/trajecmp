@@ -128,8 +128,8 @@ struct get_turns
 template <int N = 0, int U = 1, int I = 2, int B = 3, int C = 4, int O = 0>
 struct op_to_int
 {
-    template <typename Operation>
-    inline int operator()(Operation const& op) const
+    template <typename SegmentRatio>
+    inline int operator()(detail::overlay::turn_operation<SegmentRatio> const& op) const
     {
         switch(op.operation)
         {
@@ -271,14 +271,9 @@ struct less
     {
         static LessOp less_op;
 
-        return
-            geometry::math::equals(left.operations[OpId].fraction,
-                                   right.operations[OpId].fraction)
-            ?
-            less_op(left, right)
-            :
-            (left.operations[OpId].fraction < right.operations[OpId].fraction)
-            ;
+        return left.operations[OpId].fraction < right.operations[OpId].fraction
+            || ( left.operations[OpId].fraction == right.operations[OpId].fraction
+              && less_op(left, right) );
     }
 
     template <typename Turn>

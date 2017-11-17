@@ -14,6 +14,7 @@
 #ifndef BOOST_GEOMETRY_CORE_TAG_HPP
 #define BOOST_GEOMETRY_CORE_TAG_HPP
 
+#include <boost/mpl/assert.hpp>
 
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/util/bare_type.hpp>

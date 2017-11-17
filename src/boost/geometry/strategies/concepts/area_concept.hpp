@@ -18,7 +18,7 @@
 #include <boost/concept_check.hpp>
 
 
-namespace boost { namespace geometry { namespace concepts
+namespace boost { namespace geometry { namespace concept
 {
 
 
@@ -69,7 +69,7 @@ public :
 };
 
 
-}}} // namespace boost::geometry::concepts
+}}} // namespace boost::geometry::concept
 
 
 #endif // BOOST_GEOMETRY_STRATEGIES_CONCEPTS_AREA_CONCEPT_HPP

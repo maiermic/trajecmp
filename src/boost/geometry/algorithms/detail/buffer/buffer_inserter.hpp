@@ -31,7 +31,6 @@
 #include <boost/geometry/algorithms/detail/buffer/line_line_intersection.hpp>
 #include <boost/geometry/algorithms/detail/buffer/parallel_continue.hpp>
 
-#include <boost/geometry/algorithms/assign.hpp>
 #include <boost/geometry/algorithms/num_interior_rings.hpp>
 #include <boost/geometry/algorithms/simplify.hpp>
 
@@ -136,7 +135,6 @@ struct buffer_range
             RobustPolicy const& )
     {
         output_point_type intersection_point;
-        geometry::assign_zero(intersection_point);
 
         strategy::buffer::join_selector join
                 = get_join_type(penultimate_input, previous_input, input);
@@ -394,7 +392,7 @@ inline void buffer_point(Point const& point, Collection& collection,
     point_strategy.apply(point, distance_strategy, range_out);
     collection.add_piece(strategy::buffer::buffered_point, range_out, false);
     collection.set_piece_center(point);
-    collection.finish_ring(strategy::buffer::result_normal);
+    collection.finish_ring();
 }
 
 
@@ -514,7 +512,7 @@ struct buffer_inserter<ring_tag, RingInput, RingOutput>
         typename PointStrategy,
         typename RobustPolicy
     >
-    static inline strategy::buffer::result_code apply(RingInput const& ring,
+    static inline void apply(RingInput const& ring,
             Collection& collection,
             DistanceStrategy const& distance,
             SideStrategy const& side_strategy,
@@ -561,7 +559,6 @@ struct buffer_inserter<ring_tag, RingInput, RingOutput>
                     collection, distance, point_strategy
                 );
         }
-        return code;
     }
 };
 
@@ -651,7 +648,7 @@ struct buffer_inserter<linestring_tag, Linestring, Polygon>
         typename PointStrategy,
         typename RobustPolicy
     >
-    static inline strategy::buffer::result_code apply(Linestring const& linestring, Collection& collection,
+    static inline void apply(Linestring const& linestring, Collection& collection,
             DistanceStrategy const& distance,
             SideStrategy const& side_strategy,
             JoinStrategy const& join_strategy,
@@ -682,7 +679,7 @@ struct buffer_inserter<linestring_tag, Linestring, Polygon>
                         distance, side_strategy, join_strategy, end_strategy, robust_policy,
                         first_p1);
             }
-            collection.finish_ring(code);
+            collection.finish_ring();
         }
         if (code == strategy::buffer::result_no_output && n >= 1)
         {
@@ -693,7 +690,6 @@ struct buffer_inserter<linestring_tag, Linestring, Polygon>
                     collection, distance, point_strategy
                 );
         }
-        return code;
     }
 };
 
@@ -737,12 +733,10 @@ private:
         for (Iterator it = begin; it != end; ++it)
         {
             collection.start_new_ring();
-            strategy::buffer::result_code const code
-                    = policy::apply(*it, collection, distance, side_strategy,
+            policy::apply(*it, collection, distance, side_strategy,
                     join_strategy, end_strategy, point_strategy,
                     robust_policy);
-
-            collection.finish_ring(code, is_interior);
+            collection.finish_ring(is_interior);
         }
     }
 
@@ -795,15 +789,11 @@ public:
     {
         {
             collection.start_new_ring();
-
-            strategy::buffer::result_code const code
-                = policy::apply(exterior_ring(polygon), collection,
+            policy::apply(exterior_ring(polygon), collection,
                     distance, side_strategy,
                     join_strategy, end_strategy, point_strategy,
                     robust_policy);
-
-            collection.finish_ring(code, false,
-                    geometry::num_interior_rings(polygon) > 0u);
+            collection.finish_ring(false, geometry::num_interior_rings(polygon) > 0u);
         }
 
         apply_interior_rings(interior_rings(polygon),
@@ -918,10 +908,6 @@ inline void buffer_inserter(GeometryInput const& geometry_input, OutputIterator 
     collection.discard_rings();
     collection.block_turns();
     collection.enrich();
-
-    // phase 1: turns (after enrichment/clustering)
-    visit_pieces_policy.apply(const_collection, 1);
-
     collection.traverse();
 
     // Reverse all offsetted rings / traversed rings if:
@@ -947,8 +933,8 @@ inline void buffer_inserter(GeometryInput const& geometry_input, OutputIterator 
     collection.template assign<GeometryOutput>(out);
 
     // Visit collection again
-    // phase 2: rings (after traversing)
-    visit_pieces_policy.apply(const_collection, 2);
+    // phase 1: rings (after discarding and traversing)
+    visit_pieces_policy.apply(const_collection, 1);
 }
 
 template

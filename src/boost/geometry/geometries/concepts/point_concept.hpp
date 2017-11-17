@@ -30,7 +30,7 @@
 
 
 
-namespace boost { namespace geometry { namespace concepts
+namespace boost { namespace geometry { namespace concept
 {
 
 /*!
@@ -165,7 +165,7 @@ class ConstPoint
         {
             const P* p = 0;
             ctype coord(geometry::get<Dimension>(*p));
-            boost::ignore_unused(p, coord);
+            boost::ignore_unused(coord);
             dimension_checker<P, Dimension+1, DimensionCount>::apply();
         }
     };
@@ -187,6 +187,6 @@ public:
 #endif
 };
 
-}}} // namespace boost::geometry::concepts
+}}} // namespace boost::geometry::concept
 
 #endif // BOOST_GEOMETRY_GEOMETRIES_CONCEPTS_POINT_CONCEPT_HPP

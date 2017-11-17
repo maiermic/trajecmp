@@ -24,7 +24,7 @@
 #include <boost/geometry/strategies/concepts/distance_concept.hpp>
 
 
-namespace boost { namespace geometry { namespace concepts
+namespace boost { namespace geometry { namespace concept
 {
 
 
@@ -63,7 +63,7 @@ private :
 
             BOOST_CONCEPT_ASSERT
                 (
-                    (concepts::PointSegmentDistanceStrategy<ds_type, Point, Point>)
+                    (concept::PointSegmentDistanceStrategy<ds_type, Point, Point>)
                 );
 
             Strategy *str = 0;
@@ -91,6 +91,6 @@ public :
 
 
 
-}}} // namespace boost::geometry::concepts
+}}} // namespace boost::geometry::concept
 
 #endif // BOOST_GEOMETRY_STRATEGIES_CONCEPTS_SIMPLIFY_CONCEPT_HPP

@@ -47,7 +47,7 @@ struct read<format_wkt, Geometry>
 template <typename Format, typename Geometry>
 inline void read(Geometry& geometry, std::string const& wkt)
 {
-    geometry::concepts::check<Geometry>();
+    geometry::concept::check<Geometry>();
     dispatch::read<Format, Geometry>::apply(geometry, wkt);
 }
 

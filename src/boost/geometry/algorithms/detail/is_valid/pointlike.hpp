@@ -17,7 +17,6 @@
 #include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/algorithms/validity_failure_type.hpp>
-#include <boost/geometry/algorithms/detail/is_valid/has_invalid_coordinate.hpp>
 #include <boost/geometry/algorithms/dispatch/is_valid.hpp>
 
 #include <boost/geometry/util/condition.hpp>
@@ -37,13 +36,10 @@ template <typename Point>
 struct is_valid<Point, point_tag>
 {
     template <typename VisitPolicy>
-    static inline bool apply(Point const& point, VisitPolicy& visitor)
+    static inline bool apply(Point const&, VisitPolicy& visitor)
     {
         boost::ignore_unused(visitor);
-        return ! detail::is_valid::has_invalid_coordinate
-            <
-                Point
-            >::apply(point, visitor);
+        return visitor.template apply<no_failure>();
     }
 };
 
@@ -67,10 +63,7 @@ struct is_valid<MultiPoint, multi_point_tag, AllowEmptyMultiGeometries>
         {
             // we allow empty multi-geometries, so an empty multipoint
             // is considered valid
-            return ! detail::is_valid::has_invalid_coordinate
-                <
-                    MultiPoint
-                >::apply(multipoint, visitor);
+            return visitor.template apply<no_failure>();
         }
         else
         {

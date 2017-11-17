@@ -90,7 +90,7 @@ struct num_geometries
 {
     static inline std::size_t apply(Geometry const& geometry)
     {
-        concepts::check<Geometry const>();
+        concept::check<Geometry const>();
 
         return dispatch::num_geometries<Geometry>::apply(geometry);
     }

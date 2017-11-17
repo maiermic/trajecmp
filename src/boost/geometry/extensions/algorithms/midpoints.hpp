@@ -116,7 +116,7 @@ template<typename Geometry, typename Iterator>
 inline void midpoints(Geometry const& geometry,
         bool start_and_end, Iterator out)
 {
-    concepts::check<Geometry const>();
+    concept::check<Geometry const>();
 
     dispatch::midpoints
         <

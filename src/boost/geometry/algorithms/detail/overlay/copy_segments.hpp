@@ -349,7 +349,7 @@ inline void copy_segments(Geometry const& geometry,
             RobustPolicy const& robust_policy,
             RangeOut& range_out)
 {
-    concepts::check<Geometry const>();
+    concept::check<Geometry const>();
 
     dispatch::copy_segments
         <

@@ -142,7 +142,7 @@ struct perimeter
     static inline typename default_length_result<Geometry>::type
     apply(Geometry const& geometry, Strategy const& strategy)
     {
-        concepts::check<Geometry const>();
+        concept::check<Geometry const>();
         return resolve_strategy::perimeter::apply(geometry, strategy);
     }
 };

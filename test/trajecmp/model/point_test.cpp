@@ -9,10 +9,10 @@
 TEST_CASE("point model", "[rotate]") {
     using namespace trajecmp::model;
     SECTION("fulfills Boost Geometry point concept") {
-        BOOST_CONCEPT_ASSERT((boost::geometry::concepts::Point<point2d>));
-        BOOST_CONCEPT_ASSERT((boost::geometry::concepts::Point<point3d>));
-        BOOST_CONCEPT_ASSERT((boost::geometry::concepts::Point<point2f>));
-        BOOST_CONCEPT_ASSERT((boost::geometry::concepts::Point<point3f>));
+        BOOST_CONCEPT_ASSERT((boost::geometry::concept::Point<point2d>));
+        BOOST_CONCEPT_ASSERT((boost::geometry::concept::Point<point3d>));
+        BOOST_CONCEPT_ASSERT((boost::geometry::concept::Point<point2f>));
+        BOOST_CONCEPT_ASSERT((boost::geometry::concept::Point<point3f>));
     }
     SECTION("fulfills Boost qvm point concept") {
         CHECK(boost::qvm::mag(point2d {2.0, 0.0}) == Approx(2.0));

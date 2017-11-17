@@ -32,7 +32,6 @@ namespace boost { namespace geometry
 */
 class exception : public std::exception
 {
-public:
     virtual char const* what() const throw()
     {
         return "Boost.Geometry exception";

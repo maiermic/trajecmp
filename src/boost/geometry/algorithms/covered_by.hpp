@@ -260,15 +260,15 @@ struct covered_by
                              Geometry2 const& geometry2,
                              Strategy const& strategy)
     {
-        concepts::within::check
+        concept::within::check
             <
                 typename tag<Geometry1>::type,
                 typename tag<Geometry2>::type,
                 typename tag_cast<typename tag<Geometry2>::type, areal_tag>::type,
                 Strategy
             >();
-        concepts::check<Geometry1 const>();
-        concepts::check<Geometry2 const>();
+        concept::check<Geometry1 const>();
+        concept::check<Geometry2 const>();
         assert_dimension_equal<Geometry1, Geometry2>();
 
         return dispatch::covered_by<Geometry1, Geometry2>::apply(geometry1,

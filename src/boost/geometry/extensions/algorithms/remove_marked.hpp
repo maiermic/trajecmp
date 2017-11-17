@@ -203,7 +203,7 @@ template <typename Geometry, typename MarkMap>
 inline void remove_marked(Geometry const& geometry_in, Geometry& geometry_out,
             MarkMap const& mark_map)
 {
-    concepts::check<Geometry>();
+    concept::check<Geometry>();
 
     ring_identifier id;
     dispatch::remove_marked

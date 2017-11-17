@@ -17,10 +17,9 @@
 
 #include <cstddef>
 
-#include <boost/core/ignore_unused.hpp>
 #include <boost/mpl/assert.hpp>
+#include <boost/concept_check.hpp>
 #include <boost/type_traits/is_pointer.hpp>
-#include <boost/type_traits/remove_pointer.hpp>
 
 #include <boost/geometry/core/coordinate_type.hpp>
 #include <boost/geometry/core/point_type.hpp>
@@ -272,7 +271,7 @@ inline typename coordinate_type<Geometry>::type get(Geometry const& geometry
 #endif
         )
 {
-    boost::ignore_unused(dummy);
+    boost::ignore_unused_variable_warning(dummy);
 
     typedef core_dispatch::access
         <
@@ -307,7 +306,7 @@ inline void set(Geometry& geometry
 #endif
         )
 {
-    boost::ignore_unused(dummy);
+    boost::ignore_unused_variable_warning(dummy);
 
     typedef core_dispatch::access
         <
@@ -342,7 +341,7 @@ inline typename coordinate_type<Geometry>::type get(Geometry const& geometry
 #endif
         )
 {
-    boost::ignore_unused(dummy);
+    boost::ignore_unused_variable_warning(dummy);
 
     typedef core_dispatch::indexed_access
         <
@@ -379,7 +378,7 @@ inline void set(Geometry& geometry
 #endif
         )
 {
-    boost::ignore_unused(dummy);
+    boost::ignore_unused_variable_warning(dummy);
 
     typedef core_dispatch::indexed_access
         <

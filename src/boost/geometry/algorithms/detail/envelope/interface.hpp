@@ -40,8 +40,8 @@ struct envelope
     template <typename Box>
     static inline void apply(Geometry const& geometry, Box& box)
     {
-        concepts::check<Geometry const>();
-        concepts::check<Box>();
+        concept::check<Geometry const>();
+        concept::check<Box>();
 
         dispatch::envelope<Geometry>::apply(geometry, box);
     }

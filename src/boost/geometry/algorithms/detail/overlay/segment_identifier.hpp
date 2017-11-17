@@ -38,7 +38,6 @@ struct segment_identifier
         , multi_index(-1)
         , ring_index(-1)
         , segment_index(-1)
-        , piece_index(-1)
     {}
 
     inline segment_identifier(signed_size_type src,
@@ -49,7 +48,6 @@ struct segment_identifier
         , multi_index(mul)
         , ring_index(rin)
         , segment_index(seg)
-        , piece_index(-1)
     {}
 
     inline bool operator<(segment_identifier const& other) const
@@ -87,9 +85,6 @@ struct segment_identifier
     signed_size_type multi_index;
     signed_size_type ring_index;
     signed_size_type segment_index;
-
-    // For buffer - todo: move this to buffer-only
-    signed_size_type piece_index;
 };
 
 

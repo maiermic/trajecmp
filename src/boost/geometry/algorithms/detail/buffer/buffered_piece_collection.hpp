@@ -2,10 +2,6 @@
 
 // Copyright (c) 2012-2014 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2016.
-// Modifications copyright (c) 2016 Oracle and/or its affiliates.
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
-
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -35,7 +31,6 @@
 
 #include <boost/geometry/algorithms/detail/buffer/buffered_ring.hpp>
 #include <boost/geometry/algorithms/detail/buffer/buffer_policies.hpp>
-#include <boost/geometry/algorithms/detail/overlay/cluster_info.hpp>
 #include <boost/geometry/algorithms/detail/buffer/get_piece_turns.hpp>
 #include <boost/geometry/algorithms/detail/buffer/turn_in_piece_visitor.hpp>
 #include <boost/geometry/algorithms/detail/buffer/turn_in_original_visitor.hpp>
@@ -260,11 +255,8 @@ struct buffered_piece_collection
         {
             geometry::envelope(m_ring, m_box);
 
-            // create monotonic sections in x-dimension
-            // The dimension is critical because the direction is later used
-            // in the optimization for within checks using winding strategy
-            // and this strategy is scanning in x direction.
-            typedef boost::mpl::vector_c<std::size_t, 0> dimensions;
+            // create monotonic sections in y-dimension
+            typedef boost::mpl::vector_c<std::size_t, 1> dimensions;
             geometry::sectionalize<false, dimensions>(m_ring,
                     detail::no_rescale_policy(), m_sections);
         }
@@ -293,15 +285,6 @@ struct buffered_piece_collection
     // but also for large joins with many points
     typedef geometry::sections<robust_box_type, 2> sections_type;
     sections_type monotonic_sections;
-
-    // Define the clusters, mapping cluster_id -> turns
-    typedef std::map
-        <
-            signed_size_type,
-            detail::overlay::cluster_info
-        > cluster_type;
-
-    cluster_type m_clusters;
 
 
     RobustPolicy const& m_robust_policy;
@@ -496,8 +479,7 @@ struct buffered_piece_collection
                 // Within can have in rare cases a rounding issue. We don't discard this
                 // point, so it can be used to continue started rings in traversal. But
                 // will never start a new ring from this type of points.
-                it->operations[0].enriched.startable = false;
-                it->operations[1].enriched.startable = false;
+                it->selectable_start = false;
             }
 #endif
         }
@@ -817,29 +799,6 @@ struct buffered_piece_collection
         m_first_piece_index = static_cast<signed_size_type>(boost::size(m_pieces));
     }
 
-    inline void abort_ring()
-    {
-        // Remove all created pieces for this ring, sections, last offsetted
-        while (! m_pieces.empty()
-               && m_pieces.back().first_seg_id.multi_index
-               == current_segment_id.multi_index)
-        {
-            m_pieces.erase(m_pieces.end() - 1);
-        }
-
-        while (! monotonic_sections.empty()
-               && monotonic_sections.back().ring_id.multi_index
-               == current_segment_id.multi_index)
-        {
-            monotonic_sections.erase(monotonic_sections.end() - 1);
-        }
-
-        offsetted_rings.erase(offsetted_rings.end() - 1);
-        current_robust_ring.clear();
-
-        m_first_piece_index = -1;
-    }
-
     inline void update_closing_point()
     {
         BOOST_GEOMETRY_ASSERT(! offsetted_rings.empty());
@@ -878,15 +837,8 @@ struct buffered_piece_collection
                 m_robust_policy);
     }
 
-    inline void finish_ring(strategy::buffer::result_code code,
-                            bool is_interior = false, bool has_interiors = false)
+    inline void finish_ring(bool is_interior = false, bool has_interiors = false)
     {
-        if (code == strategy::buffer::result_error_numerical)
-        {
-            abort_ring();
-            return;
-        }
-
         if (m_first_piece_index == -1)
         {
             return;
@@ -949,11 +901,7 @@ struct buffered_piece_collection
         piece pc;
         pc.type = type;
         pc.index = static_cast<signed_size_type>(boost::size(m_pieces));
-
-        current_segment_id.piece_index = pc.index;
-
         pc.first_seg_id = current_segment_id;
-
 
         // Assign left/right (for first/last piece per ring they will be re-assigned later)
         pc.left_index = pc.index - 1;
@@ -1217,8 +1165,9 @@ struct buffered_piece_collection
             typename cs_tag<Ring>::type
         >::type side_strategy_type;
 
-        enrich_intersection_points<false, false, overlay_buffer>(m_turns,
-                    m_clusters, offsetted_rings, offsetted_rings,
+        enrich_intersection_points<false, false>(m_turns,
+                    detail::overlay::operation_union,
+                    offsetted_rings, offsetted_rings,
                     m_robust_policy, side_strategy_type());
     }
 
@@ -1234,7 +1183,7 @@ struct buffered_piece_collection
                 offsetted_rings[it->operations[0].seg_id.multi_index].has_discarded_intersections = true;
                 offsetted_rings[it->operations[1].seg_id.multi_index].has_discarded_intersections = true;
             }
-            else
+            else if (! it->both(detail::overlay::operation_union))
             {
                 offsetted_rings[it->operations[0].seg_id.multi_index].has_accepted_intersections = true;
                 offsetted_rings[it->operations[1].seg_id.multi_index].has_accepted_intersections = true;
@@ -1330,12 +1279,17 @@ struct buffered_piece_collection
         for (typename boost::range_iterator<turn_vector_type>::type it =
             boost::begin(m_turns); it != boost::end(m_turns); ++it)
         {
-            buffer_turn_info_type& turn = *it;
-            if (turn.location != location_ok)
+            if (it->location != location_ok)
             {
-                // Discard this turn (don't set it to blocked to avoid colocated
-                // clusters being discarded afterwards
-                turn.discarded = true;
+                // Set it to blocked. They should not be discarded, to avoid
+                // generating rings over these turns
+                // Performance goes down a tiny bit from 161 s to 173 because there
+                // are sometimes much more turns.
+                // We might speed it up a bit by keeping only one blocked
+                // intersection per segment, but that is complex to program
+                // because each turn involves two segments
+                it->operations[0].operation = detail::overlay::operation_blocked;
+                it->operations[1].operation = detail::overlay::operation_blocked;
             }
         }
     }
@@ -1347,15 +1301,13 @@ struct buffered_piece_collection
                 false, false,
                 buffered_ring_collection<buffered_ring<Ring> >,
                 buffered_ring_collection<buffered_ring<Ring > >,
-                overlay_buffer,
                 backtrack_for_buffer
             > traverser;
 
         traversed_rings.clear();
-        buffer_overlay_visitor visitor;
         traverser::apply(offsetted_rings, offsetted_rings,
-                        m_robust_policy, m_turns, traversed_rings,
-                        m_clusters, visitor);
+                        detail::overlay::operation_union,
+                        m_robust_policy, m_turns, traversed_rings);
     }
 
     inline void reverse()

@@ -492,15 +492,15 @@ struct extreme_points<MultiPolygon, Dimension, multi_polygon_tag>
 template <std::size_t Edge, typename Geometry, typename Extremes, typename Intruders>
 inline bool extreme_points(Geometry const& geometry, Extremes& extremes, Intruders& intruders)
 {
-    concepts::check<Geometry const>();
+    concept::check<Geometry const>();
 
     // Extremes is not required to follow a geometry concept (but it should support an output iterator),
     // but its elements should fulfil the point-concept
-    concepts::check<typename boost::range_value<Extremes>::type>();
+    concept::check<typename boost::range_value<Extremes>::type>();
 
     // Intruders should contain collections which value type is point-concept
     // Extremes might be anything (supporting an output iterator), but its elements should fulfil the point-concept
-    concepts::check
+    concept::check
         <
             typename boost::range_value
                 <
