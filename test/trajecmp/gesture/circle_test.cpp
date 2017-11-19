@@ -29,7 +29,7 @@ void check_circle_segment(Angle start_angle,
                           Angle end_angle,
                           const double radius,
                           const point2d center) {
-    static const circle_trajectory circle_generator(radius);
+    const circle_trajectory circle_generator(radius);
     using namespace trajecmp::gesture;
     const trajectory2d circle_trajectory =
             trajecmp::transform::translate_by(center)(
@@ -70,6 +70,16 @@ void check_circle_segment(Angle start_angle,
     CAPTURE(center);
     CAPTURE(c.center == center);
     CHECK(point_equals_approx(c.center, center));
+
+    INFO(c.center << " == " << center);
+    CAPTURE(start_angle);
+    CAPTURE(end_angle);
+    CAPTURE(min_bounding_sphere);
+    CAPTURE(c.radius);
+    CAPTURE(c.center);
+    CAPTURE(center);
+    CAPTURE(c.center == center);
+    CHECK(c.radius == Approx(radius));
 }
 
 

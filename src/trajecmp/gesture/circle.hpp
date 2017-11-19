@@ -40,11 +40,16 @@ namespace trajecmp { namespace gesture {
         return Point(center_x, center_y);
     }
 
-    template<typename Angle, typename Point>
+    template<
+            typename Angle,
+            typename Point,
+            typename Radius = typename boost::geometry::coordinate_type<Point>::type
+    >
     struct circle_segment_info {
         Angle start_angle;
         Angle end_angle;
         Point center;
+        Radius radius;
     };
 
     /**
@@ -56,7 +61,8 @@ namespace trajecmp { namespace gesture {
     template <
             typename Trajectory,
             typename Point = typename boost::geometry::point_type<Trajectory>::type,
-            typename Angle = typename boost::geometry::coordinate_type<Trajectory>::type
+            typename Angle = typename boost::geometry::coordinate_type<Trajectory>::type,
+            typename Radius = typename boost::geometry::coordinate_type<Point>::type
     >
     circle_segment_info<Angle, Point>
     estimate_circle_segment(const Trajectory &trajectory,
@@ -125,10 +131,12 @@ namespace trajecmp { namespace gesture {
             end_angle <= d2r(Angle(45.0))) {
             ++winding_number;
         }
+        const Radius radius = boost::geometry::distance(center, trajectory.front());
         return {
                 start_angle,
                 end_angle * winding_direction + d2r(Angle(360 * winding_number * winding_direction)),
                 center,
+                radius,
         };
     }
 
