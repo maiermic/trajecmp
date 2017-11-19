@@ -139,14 +139,7 @@ void check_circle_center(Angle start_angle,
     CAPTURE(radius);
     CAPTURE(estimated_center);
     CAPTURE(center_position);
-    CHECK(x(estimated_center) == Approx(x(center_position)));
-
-    CAPTURE(start_angle);
-    CAPTURE(end_angle);
-    CAPTURE(radius);
-    CAPTURE(estimated_center);
-    CAPTURE(center_position);
-    CHECK(y(estimated_center) == Approx(y(center_position)));
+    CHECK(point_equals_approx(estimated_center, center_position));
 }
 
 TEST_CASE("trajecmp::gesture::estimate_circle_center", "[]") {
@@ -171,8 +164,8 @@ TEST_CASE("trajecmp::gesture::estimate_circle_center", "[]") {
         const auto center = estimate_circle_center(point2d(-3.0, 4.0),
                                                    point2d(4.0, 5.0),
                                                    point2d(1.0, -4.0));
-        CHECK(x(center) == Approx(1.0));
-        CHECK(y(center) == Approx(1.0));
+        CAPTURE(center);
+        CHECK(point_equals_approx(center, point2d(1.0, 1.0)));
     }
     SECTION("generated parameters") {
         for (const point2d &center : center_points) {
