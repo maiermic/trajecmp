@@ -80,7 +80,14 @@ namespace trajecmp { namespace gesture {
                         distances_to_start,
                         epsilon_distance
                 );
-        const Point center = min_bounding_sphere.center;
+        const Point center =
+                extrema.maxima.size() == 0
+                ? estimate_circle_center(
+                        trajectory.front(),
+                        trajectory.at(trajectory.size() / 2),
+                        trajectory.back()
+                )
+                : min_bounding_sphere.center;
         const auto winding_direction_reference_point_index =
                 extrema.maxima.size() > 0
                 ? extrema.maxima.front() / 2

@@ -33,11 +33,11 @@ void check_circle_segment(Angle start_angle,
     using namespace trajecmp::gesture;
     const trajectory2d circle_trajectory =
             trajecmp::transform::translate_by(center)(
-                    circle_generator.sample(start_angle, end_angle, 10.0)
+                    circle_generator.sample(start_angle, end_angle, 1.0)
             );
-    auto min_bounding_sphere =
+    if (circle_trajectory.size() < 3) return; // requires more than 3 points
+    const auto min_bounding_sphere =
             trajecmp::geometry::min_bounding_sphere(circle_trajectory);
-    min_bounding_sphere.center = center;
     const circle_segment_info<Angle, point2d> c =
             estimate_circle_segment(
                     circle_trajectory,
@@ -68,6 +68,7 @@ void check_circle_segment(Angle start_angle,
     CAPTURE(min_bounding_sphere);
     CAPTURE(c.center);
     CAPTURE(center);
+    CAPTURE(c.center == center);
     CHECK(point_equals_approx(c.center, center));
 }
 
@@ -76,7 +77,7 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
     const double min_angle = -1080.0;
     const double max_angle = 1080.0;
     const double angle_step_size = 10.0;
-    const double small_radius = 0.000001;
+    const double small_radius = 0.001;
     const double medium_radius = 100.0;
     const double large_radius = 1000000.0;
     const std::vector<double> radii {
