@@ -14,6 +14,7 @@
 #include <range/v3/utility/common_type.hpp>
 
 #include <catch.hpp>
+#include "../../matchers.hpp"
 
 using trajecmp::util::r2d;
 using trajecmp::util::d2r;
@@ -27,17 +28,17 @@ using Angle = typename boost::geometry::coordinate_type<trajectory2d>::type;
 void check_circle_segment(Angle start_angle,
                           Angle end_angle,
                           const double radius,
-                          const point2d center_position) {
+                          const point2d center) {
     static const circle_trajectory circle_generator(radius);
     using namespace trajecmp::gesture;
     const trajectory2d circle_trajectory =
-            trajecmp::transform::translate_by(center_position)(
+            trajecmp::transform::translate_by(center)(
                     circle_generator.sample(start_angle, end_angle, 10.0)
             );
     auto min_bounding_sphere =
             trajecmp::geometry::min_bounding_sphere(circle_trajectory);
-    min_bounding_sphere.center = center_position;
-    const circle_segment_info<Angle> c =
+    min_bounding_sphere.center = center;
+    const circle_segment_info<Angle, point2d> c =
             estimate_circle_segment(
                     circle_trajectory,
                     min_bounding_sphere
@@ -48,7 +49,8 @@ void check_circle_segment(Angle start_angle,
     CAPTURE(start_angle);
     CAPTURE(end_angle);
     CAPTURE(min_bounding_sphere);
-    CAPTURE(center_position);
+    CAPTURE(c.center);
+    CAPTURE(center);
     CHECK(c.start_angle == Approx(d2r(start_angle)));
 
     INFO(r2d(c.end_angle) << " == " << end_angle);
@@ -56,8 +58,17 @@ void check_circle_segment(Angle start_angle,
     CAPTURE(start_angle);
     CAPTURE(end_angle);
     CAPTURE(min_bounding_sphere);
-    CAPTURE(center_position);
+    CAPTURE(c.center);
+    CAPTURE(center);
     CHECK(c.end_angle == Approx(d2r(end_angle)));
+
+    INFO(c.center << " == " << center);
+    CAPTURE(start_angle);
+    CAPTURE(end_angle);
+    CAPTURE(min_bounding_sphere);
+    CAPTURE(c.center);
+    CAPTURE(center);
+    CHECK(point_equals_approx(c.center, center));
 }
 
 

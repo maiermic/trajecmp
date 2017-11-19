@@ -2,6 +2,7 @@
 #define TRAJECMP_GESTURE_CIRCLE_HPP
 
 #include <trajecmp/distance/distances_to_start.hpp>
+#include <trajecmp/distance/modified_hausdorff.hpp>
 #include <trajecmp/geometry/hyper_sphere.hpp>
 #include <trajecmp/util/angle.hpp>
 #include <trajecmp/util/approx.hpp>
@@ -39,10 +40,11 @@ namespace trajecmp { namespace gesture {
         return Point(center_x, center_y);
     }
 
-    template <typename Angle>
+    template<typename Angle, typename Point>
     struct circle_segment_info {
         Angle start_angle;
         Angle end_angle;
+        Point center;
     };
 
     /**
@@ -56,7 +58,7 @@ namespace trajecmp { namespace gesture {
             typename Point = typename boost::geometry::point_type<Trajectory>::type,
             typename Angle = typename boost::geometry::coordinate_type<Trajectory>::type
     >
-    circle_segment_info<Angle>
+    circle_segment_info<Angle, Point>
     estimate_circle_segment(const Trajectory &trajectory,
                             const trajecmp::geometry::hyper_sphere_of<Trajectory> &min_bounding_sphere) {
         using Coordinate = typename boost::geometry::coordinate_type<Trajectory>::type;
@@ -78,7 +80,7 @@ namespace trajecmp { namespace gesture {
                         distances_to_start,
                         epsilon_distance
                 );
-
+        const Point center = min_bounding_sphere.center;
         const auto winding_direction_reference_point_index =
                 extrema.maxima.size() > 0
                 ? extrema.maxima.front() / 2
@@ -87,7 +89,7 @@ namespace trajecmp { namespace gesture {
                 trajectory[winding_direction_reference_point_index];
         const Angle winding_direction_reference_point_angle = angle_clockwise(
                 x_achsis,
-                winding_direction_reference_point - min_bounding_sphere.center
+                winding_direction_reference_point - center
         );
 
         const bool is_clockwise_winding_direction =
@@ -100,14 +102,14 @@ namespace trajecmp { namespace gesture {
 
         Angle start_angle = angle(
                 x_achsis,
-                trajectory.front() - min_bounding_sphere.center
+                trajectory.front() - center
         );
         if (start_angle == trajecmp::util::approx(d2r(Angle(360)))) {
             start_angle = number_type_trait::get_zero_element();
         }
         const Angle end_angle = angle(
                 x_achsis,
-                trajectory.back() - min_bounding_sphere.center
+                trajectory.back() - center
         );
         int winding_number =
                 (extrema.maxima.size() + extrema.minima.size()) / 2;
@@ -119,6 +121,7 @@ namespace trajecmp { namespace gesture {
         return {
                 start_angle,
                 end_angle * winding_direction + d2r(Angle(360 * winding_number * winding_direction)),
+                center,
         };
     }
 
