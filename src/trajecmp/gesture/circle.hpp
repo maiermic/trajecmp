@@ -12,6 +12,33 @@
 
 namespace trajecmp { namespace gesture {
 
+    template<typename Point>
+    Point estimate_circle_center(const Point &a,
+                                 const Point &b,
+                                 const Point &c) {
+        using Coordinate = typename boost::geometry::coordinate_type<Point>::type;
+        using trajecmp::geometry::point::x;
+        using trajecmp::geometry::point::y;
+
+        // solution based on: https://stackoverflow.com/a/4103418/1065654
+        const Coordinate offset = std::pow(x(b), 2) + std::pow(y(b), 2);
+        const Coordinate bc =
+                (std::pow(x(a), 2) + std::pow(y(a), 2) - offset) / 2.0;
+        const Coordinate cd =
+                (offset - std::pow(x(c), 2) - std::pow(y(c), 2)) / 2.0;
+        const Coordinate det =
+                (x(a) - x(b)) * (y(b) - y(c)) - (x(b) - x(c)) * (y(a) - y(b));
+
+        const Coordinate idet = 1 / det;
+
+        const Coordinate center_x =
+                (bc * (y(b) - y(c)) - cd * (y(a) - y(b))) * idet;
+        const Coordinate center_y =
+                (cd * (x(a) - x(b)) - bc * (x(b) - x(c))) * idet;
+
+        return Point(center_x, center_y);
+    }
+
     template <typename Angle>
     struct circle_segment_info {
         Angle start_angle;
@@ -93,33 +120,6 @@ namespace trajecmp { namespace gesture {
                 start_angle,
                 end_angle * winding_direction + d2r(Angle(360 * winding_number * winding_direction)),
         };
-    }
-
-    template<typename Point>
-    Point estimate_circle_center(const Point &a,
-                                 const Point &b,
-                                 const Point &c) {
-        using Coordinate = typename boost::geometry::coordinate_type<Point>::type;
-        using trajecmp::geometry::point::x;
-        using trajecmp::geometry::point::y;
-
-        // solution based on: https://stackoverflow.com/a/4103418/1065654
-        const Coordinate offset = std::pow(x(b), 2) + std::pow(y(b), 2);
-        const Coordinate bc =
-                (std::pow(x(a), 2) + std::pow(y(a), 2) - offset) / 2.0;
-        const Coordinate cd =
-                (offset - std::pow(x(c), 2) - std::pow(y(c), 2)) / 2.0;
-        const Coordinate det =
-                (x(a) - x(b)) * (y(b) - y(c)) - (x(b) - x(c)) * (y(a) - y(b));
-
-        const Coordinate idet = 1 / det;
-
-        const Coordinate center_x =
-                (bc * (y(b) - y(c)) - cd * (y(a) - y(b))) * idet;
-        const Coordinate center_y =
-                (cd * (x(a) - x(b)) - bc * (x(b) - x(c))) * idet;
-
-        return Point(center_x, center_y);
     }
 
 }} // namespace trajecmp::util
