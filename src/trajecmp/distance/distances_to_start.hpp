@@ -1,5 +1,5 @@
-#ifndef TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP
-#define TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP
+#ifndef TRAJECMP_DISTANCE_DISTANCE_TO_START_HPP
+#define TRAJECMP_DISTANCE_DISTANCE_TO_START_HPP
 
 #include <algorithm>
 #include <iterator>
@@ -36,4 +36,4 @@ namespace trajecmp { namespace distance {
 
 }} // namespace trajecmp::distance
 
-#endif //TRAJECMP_DISTANCE_MODIFIED_HAUSDORFF_HPP
+#endif //TRAJECMP_DISTANCE_DISTANCE_TO_START_HPP
