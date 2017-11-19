@@ -58,18 +58,22 @@ std::vector<T> quat_to_vector(const boost::qvm::quat<T> &q) {
     };
 }
 
+template<typename Point>
+bool point_equals_approx(const Point &actual, const Point &expected) {
+    static const auto dimension = boost::geometry::dimension<Point>::value;
+    for (int i = 0; i < dimension; ++i) {
+        if (trajecmp::geometry::point::get(i, actual) !=
+            Approx(trajecmp::geometry::point::get(i, expected))) {
+            return false;
+        }
+    }
+    return true;
+}
+
 template<class Trajectory>
 auto TrajectoryEqualsApprox(const Trajectory &comparator) {
-    return Compare(comparator, [=](auto actual, auto expected) {
-        static const auto dimension = boost::geometry::dimension<Trajectory>::value;
-        for (int i = 0; i < dimension; ++i) {
-            if (trajecmp::geometry::point::get(i, actual) !=
-                Approx(trajecmp::geometry::point::get(i, expected))) {
-                return false;
-            }
-        }
-        return true;
-    });
+    using Point = typename boost::geometry::point_type<Trajectory>::type;
+    return Compare(comparator, point_equals_approx<Point>);
 }
 
 #endif //TRAJECMP_MATCHERS_HPP
