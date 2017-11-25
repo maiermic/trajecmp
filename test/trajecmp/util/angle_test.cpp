@@ -112,8 +112,8 @@ TEST_CASE("trajecmp::util::angle_clockwise", "[]") {
         CHECK(angle_clockwise(zero, zero) == 0.0);
     }
     SECTION("is zero if vectors are equal") {
-        CHECK(angle(x_axis, x_axis) == 0.0);
-        CHECK(angle(y_axis, y_axis) == 0.0);
+        CHECK(angle_clockwise(x_axis, x_axis) == 0.0);
+        CHECK(angle_clockwise(y_axis, y_axis) == 0.0);
     }
     SECTION("45 degree") {
         CHECK(angle_clockwise(y_axis, point2d(1.0, 1.0)) ==
@@ -147,8 +147,8 @@ TEST_CASE("trajecmp::util::angle_counterclockwise", "[]") {
         CHECK(angle_counterclockwise(zero, zero) == 0.0);
     }
     SECTION("is zero if vectors are equal") {
-        CHECK(angle(x_axis, x_axis) == 0.0);
-        CHECK(angle(y_axis, y_axis) == 0.0);
+        CHECK(angle_counterclockwise(x_axis, x_axis) == 0.0);
+        CHECK(angle_counterclockwise(y_axis, y_axis) == 0.0);
     }
     SECTION("45 degree") {
         CHECK(angle_counterclockwise(point2d(1.0, 1.0), y_axis) ==
