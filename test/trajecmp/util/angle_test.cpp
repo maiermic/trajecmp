@@ -17,6 +17,9 @@ TEST_CASE("trajecmp::util::enclosed_angle", "[]") {
             CHECK(enclosed_angle(x_axis, zero) == 0.0);
             CHECK(enclosed_angle(zero, zero) == 0.0);
         }
+        SECTION("is approx zero if vectors are approx parallel") {
+            CHECK(enclosed_angle(x_axis, point2d(100.0, 6.39488e-14)) == 0.0);
+        }
         SECTION("45 degree") {
             CHECK(enclosed_angle(x_axis, point2d(1.0, 1.0)) == Approx(d2r(45.0)));
         }
@@ -38,6 +41,9 @@ TEST_CASE("trajecmp::util::enclosed_angle", "[]") {
             CHECK(enclosed_angle(zero, y_axis) == 0.0);
             CHECK(enclosed_angle(x_axis, zero) == 0.0);
             CHECK(enclosed_angle(zero, zero) == 0.0);
+        }
+        SECTION("is approx zero if vectors are approx parallel") {
+            CHECK(enclosed_angle(x_axis, point3d(100.0, 6.39488e-14, 0.0)) == 0.0);
         }
         SECTION("45 degree") {
             CHECK(enclosed_angle(x_axis, point3d(1.0, 1.0, 0.0)) == Approx(d2r(45.0)));
@@ -69,6 +75,9 @@ TEST_CASE("trajecmp::util::angle", "[]") {
     SECTION("is zero if vectors are equal") {
         CHECK(angle(x_axis, x_axis) == 0.0);
         CHECK(angle(y_axis, y_axis) == 0.0);
+    }
+    SECTION("is approx zero if vectors are approx parallel") {
+        CHECK(angle(x_axis, point2d(100.0, 6.39488e-14)) == Approx(0.0));
     }
     SECTION("45 degree") {
         CHECK(angle(y_axis, point2d(1.0, 1.0)) ==
@@ -115,6 +124,9 @@ TEST_CASE("trajecmp::util::angle_clockwise", "[]") {
         CHECK(angle_clockwise(x_axis, x_axis) == 0.0);
         CHECK(angle_clockwise(y_axis, y_axis) == 0.0);
     }
+    SECTION("is approx zero if vectors are approx parallel") {
+        CHECK(angle_clockwise(x_axis, point2d(100.0, 6.39488e-14)) == Approx(0.0));
+    }
     SECTION("45 degree") {
         CHECK(angle_clockwise(y_axis, point2d(1.0, 1.0)) ==
               Approx(d2r(45.0)));
@@ -149,6 +161,9 @@ TEST_CASE("trajecmp::util::angle_counterclockwise", "[]") {
     SECTION("is zero if vectors are equal") {
         CHECK(angle_counterclockwise(x_axis, x_axis) == 0.0);
         CHECK(angle_counterclockwise(y_axis, y_axis) == 0.0);
+    }
+    SECTION("is approx zero if vectors are approx parallel") {
+        CHECK(angle_counterclockwise(x_axis, point2d(100.0, 6.39488e-14)) == Approx(0.0));
     }
     SECTION("45 degree") {
         CHECK(angle_counterclockwise(point2d(1.0, 1.0), y_axis) ==
