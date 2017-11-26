@@ -8,6 +8,7 @@
 
 #include <trajecmp/trait/number_type_trait.hpp>
 #include <trajecmp/geometry/point/point.hpp>
+#include "approx.hpp"
 
 namespace trajecmp { namespace util {
 
@@ -94,7 +95,10 @@ namespace trajecmp { namespace util {
         namespace bg = boost::geometry;
         using Value = typename bg::coordinate_type<Vector>::type;
         const auto a = angle(v1, v2);
-        return a < 0 ? d2r<Value>(Value(360)) + a : a;
+        return a == approx(Value(0))
+               ? Value(0)
+               : a < 0 ?
+                 d2r<Value>(Value(360)) + a : a;
     }
 
     /**
