@@ -118,7 +118,9 @@ namespace trajecmp { namespace util {
         namespace bg = boost::geometry;
         using Value = typename bg::coordinate_type<Vector>::type;
         const auto a = angle(v1, v2);
-        return a <= 0 ? std::abs(a) : d2r<Value>(Value(360)) - a;
+        return a <= approx(Value(0))
+               ? std::abs(a)
+               : d2r<Value>(Value(360)) - a;
     }
 
 }}

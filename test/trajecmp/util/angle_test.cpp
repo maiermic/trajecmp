@@ -163,7 +163,7 @@ TEST_CASE("trajecmp::util::angle_counterclockwise", "[]") {
         CHECK(angle_counterclockwise(y_axis, y_axis) == 0.0);
     }
     SECTION("is approx zero if vectors are approx parallel") {
-        CHECK(angle_counterclockwise(x_axis, point2d(100.0, 6.39488e-14)) == Approx(0.0));
+        CHECK(angle_counterclockwise(x_axis, point2d(100.0, -6.39488e-14)) == Approx(0.0));
     }
     SECTION("45 degree") {
         CHECK(angle_counterclockwise(point2d(1.0, 1.0), y_axis) ==
