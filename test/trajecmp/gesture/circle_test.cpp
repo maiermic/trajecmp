@@ -25,8 +25,8 @@ using circle_trajectory = trajecmp::trajectory::circle<trajectory2d>;
 using Angle = typename boost::geometry::coordinate_type<trajectory2d>::type;
 
 
-void check_circle_segment(Angle start_angle,
-                          Angle end_angle,
+void check_circle_segment(const Angle start_angle,
+                          const Angle end_angle,
                           const double radius,
                           const point2d center) {
     const circle_trajectory circle_generator(radius);
@@ -95,7 +95,7 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
             medium_radius,
             large_radius
     };
-    static const point2d translated_center(12.0, 34.0);
+    const point2d translated_center(12.0, 34.0);
     const std::vector<point2d> center_points{
             translated_center,
             point2d(0.0, 0.0)
@@ -107,6 +107,35 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
     const auto angles_near_full_circle =
             cartesian_product(full_circle_angles, range(-9.0, 9.0, 1.0)) |
             transform(std::bind(ranges::tuple_apply, std::plus<double>(), _1));
+    SECTION("start_angle < 0 < end_angle, clockwise winding direction") {
+        for (const point2d &center : center_points) {
+            for (const double radius : radii) {
+                check_circle_segment(-20.0, 10.0, radius, center);
+            }
+        }
+    }
+    SECTION("start_angle < 0 = end_angle, clockwise winding direction") {
+        check_circle_segment(-20.0, 0.0, small_radius, translated_center);
+        for (const point2d &center : center_points) {
+            for (const double radius : radii) {
+                check_circle_segment(-20.0, 0.0, radius, center);
+            }
+        }
+    }
+    SECTION("start_angle > 0 > end_angle, counterclockwise winding direction") {
+        for (const point2d &center : center_points) {
+            for (const double radius : radii) {
+                check_circle_segment(10.0, -20.0, radius, center);
+            }
+        }
+    }
+    SECTION("start_angle = 0 < end_angle, counterclockwise winding direction") {
+        for (const point2d &center : center_points) {
+            for (const double radius : radii) {
+                check_circle_segment(0.0, -20.0, radius, center);
+            }
+        }
+    }
     SECTION("generated parameters") {
         for (const point2d &center : center_points) {
             for (const double radius : radii) {
@@ -125,10 +154,10 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
     }
 }
 
-void check_circle_center(Angle start_angle,
-                          Angle end_angle,
-                          const double radius,
-                          const point2d center_position) {
+void check_circle_center(const Angle start_angle,
+                         const Angle end_angle,
+                         const double radius,
+                         const point2d center_position) {
     const circle_trajectory circle_generator(radius);
     using trajecmp::geometry::point::x;
     using trajecmp::geometry::point::y;

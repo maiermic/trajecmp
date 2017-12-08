@@ -71,9 +71,13 @@ namespace trajecmp { namespace gesture {
         using number_type_trait = trajecmp::trait::number_type_trait<Coordinate>;
         using trajecmp::util::angle_clockwise;
         using trajecmp::util::angle_counterclockwise;
+        using trajecmp::util::approx;
         using trajecmp::util::r2d;
         using trajecmp::util::d2r;
         using trajecmp::model::operator-;
+        const Angle r_45 = d2r(Angle(45.0));
+        const Angle r_180 = d2r(Angle(180.0));
+        const Angle r_360 = d2r(Angle(360.0));
         const Point x_achsis(
                 number_type_trait::get_one_element(),
                 number_type_trait::get_zero_element()
@@ -94,50 +98,137 @@ namespace trajecmp { namespace gesture {
                         trajectory.back()
                 )
                 : min_bounding_sphere.center;
-        const auto winding_direction_reference_point_index =
-                extrema.maxima.size() > 0
-                ? extrema.maxima.front() / 2
-                : trajectory.size() / 2;
-        const auto winding_direction_reference_point =
-                trajectory[winding_direction_reference_point_index];
-        const Angle winding_direction_reference_point_angle = angle_clockwise(
-                x_achsis,
-                winding_direction_reference_point - center
-        );
-
-        const bool is_clockwise_winding_direction =
-                winding_direction_reference_point_angle < d2r(Angle(180.0));
-        const int winding_direction = is_clockwise_winding_direction ? 1 : -1;
-        const auto angle =
-                is_clockwise_winding_direction
-                    ? angle_clockwise<Point>
-                    : angle_counterclockwise<Point>;
-
-        Angle start_angle = angle(
+        const Angle start_angle_clockwise = angle_clockwise(
                 x_achsis,
                 trajectory.front() - center
         );
-        if (start_angle == trajecmp::util::approx(d2r(Angle(360)))) {
-            start_angle = number_type_trait::get_zero_element();
-        }
-        const Angle end_angle = angle(
+        const Angle start_angle_counterclockwise = angle_counterclockwise(
+                x_achsis,
+                trajectory.front() - center
+        );
+        const Angle end_angle_clockwise = angle_clockwise(
                 x_achsis,
                 trajectory.back() - center
         );
-        int winding_number =
+        const Angle end_angle_counterclockwise = angle_counterclockwise(
+                x_achsis,
+                trajectory.back() - center
+        );
+        // estimate winding direction using two points w and w2
+        const auto w_index =
+                extrema.maxima.size() > 0
+                ? extrema.maxima.front() / 2
+                : trajectory.size() / 2;
+        // TODO prevent std::out_of_range exception
+        const auto w = trajectory.at(w_index);
+        const Angle w_angle_clockwise = angle_clockwise(x_achsis, w - center);
+        const auto w2_index =
+                extrema.maxima.size() > 0
+                ? extrema.maxima.front()
+                : trajectory.size() - 1;
+        // TODO prevent std::out_of_range exception
+        const auto w2 = trajectory.at(w2_index);
+        const Angle w2_angle_clockwise = angle_clockwise(x_achsis, w2 - center);
+        // TODO share conditions with if-else branches at the end of this function
+        const bool is_clockwise_winding_direction =
+                start_angle_clockwise < w2_angle_clockwise
+                ? start_angle_clockwise < w_angle_clockwise
+                  ? w2_angle_clockwise > w_angle_clockwise
+                  : false
+                : (start_angle_clockwise < w2_angle_clockwise ||
+                   w2_angle_clockwise < w_angle_clockwise);
+        // estimate number of complete circles
+        const int winding_number_unfixed =
                 (extrema.maxima.size() + extrema.minima.size()) / 2;
-        static const Angle eps = number_type_trait::get_default_eps();
-        if (extrema.minima.size() < extrema.maxima.size() &&
-            end_angle <= d2r(Angle(45.0))) {
-            ++winding_number;
-        }
+        const auto winding_number =
+                (extrema.minima.size() < extrema.maxima.size() &&
+                 (is_clockwise_winding_direction
+                  ? end_angle_clockwise <= start_angle_clockwise + r_45
+                  : end_angle_counterclockwise <= start_angle_counterclockwise + r_45))
+                ? winding_number_unfixed + 1
+                : winding_number_unfixed;
+        // TODO use multiple points to estimate radius (e.g. average distance to center)
         const Radius radius = boost::geometry::distance(center, trajectory.front());
-        return {
-                start_angle,
-                end_angle * winding_direction + d2r(Angle(360 * winding_number * winding_direction)),
-                center,
-                radius,
-        };
+        // angle of complete windings
+        const auto winding_angle = r_360 * winding_number;
+        // In each case-branch of the nested if statement is a comment
+        // that shows a representation of the relation of the angles
+        // using the abbreviations:
+        //   s = start_angle_clockwise
+        //   w = w_angle_clockwise
+        //   w2 = w2_angle_clockwise
+        // Further, it contains example of the trajectory flow of the case:
+        //   s -> w -> w2
+        if (start_angle_clockwise < w2_angle_clockwise) {
+            if (start_angle_clockwise < w_angle_clockwise) {
+                if (w2_angle_clockwise < w_angle_clockwise) {
+                    // s < w2 < w
+                    // 0 -> 270 -> 180
+                    // counterclockwise
+                    return {
+                            start_angle_clockwise,
+                            -end_angle_counterclockwise - winding_angle,
+                            center,
+                            radius,
+                    };
+                } else {
+                    // s < w < w2
+                    // 0 -> 45 -> 90
+                    // clockwise
+                    return {
+                            start_angle_clockwise,
+                            end_angle_clockwise + winding_angle,
+                            center,
+                            radius,
+                    };
+                }
+            } else {
+                // w < s < w2
+                // 90 -> 0 -> 270
+                // counterclockwise
+                return {
+                        start_angle_counterclockwise,
+                        -end_angle_counterclockwise - winding_angle,
+                        center,
+                        radius,
+                };
+            }
+        } else {
+            if (start_angle_clockwise < w2_angle_clockwise) {
+                // w2 < s < w
+                // 270 -> 315 -> 0
+                // clockwise
+                return {
+                        -start_angle_counterclockwise,
+                        end_angle_clockwise + winding_angle,
+                        center,
+                        radius,
+                };
+            } else {
+                if (w2_angle_clockwise < w_angle_clockwise) {
+                    // w2 < w < s
+                    // 340 -> 0 -> 20
+                    // 350 -> 10 -> 30
+                    // clockwise
+                    return {
+                            -start_angle_counterclockwise,
+                            end_angle_clockwise + winding_angle,
+                            center,
+                            radius,
+                    };
+                } else {
+                    // w < w2 < s
+                    // 180 -> 90 -> 0
+                    // counterclockwise
+                    return {
+                            start_angle_counterclockwise,
+                            -end_angle_counterclockwise - winding_angle,
+                            center,
+                            radius,
+                    };
+                }
+            }
+        }
     }
 
 }} // namespace trajecmp::util
