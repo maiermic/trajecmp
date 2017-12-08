@@ -143,8 +143,8 @@ namespace trajecmp { namespace gesture {
         const auto winding_number =
                 (extrema.minima.size() < extrema.maxima.size() &&
                  (is_clockwise_winding_direction
-                  ? end_angle_clockwise <= start_angle_clockwise + r_45
-                  : end_angle_counterclockwise <= start_angle_counterclockwise + r_45))
+                  ? end_angle_clockwise <= std::fmod(start_angle_clockwise + r_45, r_360)
+                  : end_angle_counterclockwise <= std::fmod(start_angle_counterclockwise + r_45, r_360)))
                 ? winding_number_unfixed + 1
                 : winding_number_unfixed;
         // TODO use multiple points to estimate radius (e.g. average distance to center)

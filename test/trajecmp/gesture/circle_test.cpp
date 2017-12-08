@@ -113,6 +113,7 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
                 check_circle_segment(-20.0, 10.0, radius, center);
                 check_circle_segment(-20.0, 360.0, radius, center);
                 check_circle_segment(-20.0, 370.0, radius, center);
+                check_circle_segment(-20.0, 270.0, radius, center);
             }
         }
     }
