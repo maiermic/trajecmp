@@ -135,8 +135,8 @@ namespace trajecmp { namespace gesture {
                 ? start_angle_clockwise < w_angle_clockwise
                   ? w2_angle_clockwise > w_angle_clockwise
                   : false
-                : (start_angle_clockwise < w2_angle_clockwise ||
-                   w2_angle_clockwise < w_angle_clockwise);
+                : (start_angle_clockwise < w_angle_clockwise ||
+                   !(w2_angle_clockwise < w_angle_clockwise));
         // estimate number of complete circles
         const int winding_number_unfixed =
                 (extrema.maxima.size() + extrema.minima.size()) / 2;
@@ -194,7 +194,7 @@ namespace trajecmp { namespace gesture {
                 };
             }
         } else {
-            if (start_angle_clockwise < w2_angle_clockwise) {
+            if (start_angle_clockwise < w_angle_clockwise) {
                 // w2 < s < w
                 // 270 -> 315 -> 0
                 // clockwise
@@ -207,22 +207,23 @@ namespace trajecmp { namespace gesture {
             } else {
                 if (w2_angle_clockwise < w_angle_clockwise) {
                     // w2 < w < s
+                    // 180 -> 90 -> 0
+                    // 340 -> 355 -> 10
+                    // counterclockwise
+                    return {
+                            start_angle_counterclockwise,
+                            -end_angle_counterclockwise - winding_angle,
+                            center,
+                            radius,
+                    };
+                } else {
+                    // w < w2 < s
                     // 340 -> 0 -> 20
                     // 350 -> 10 -> 30
                     // clockwise
                     return {
                             -start_angle_counterclockwise,
                             end_angle_clockwise + winding_angle,
-                            center,
-                            radius,
-                    };
-                } else {
-                    // w < w2 < s
-                    // 180 -> 90 -> 0
-                    // counterclockwise
-                    return {
-                            start_angle_counterclockwise,
-                            -end_angle_counterclockwise - winding_angle,
                             center,
                             radius,
                     };
