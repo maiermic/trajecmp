@@ -90,8 +90,10 @@ public:
                     const bg::distance_info_result<model::point> &distance =
                             data.distance;
                     static const auto visualization_size = 300;
-                    static const auto center_x = visualization_size / 2;
-                    static const auto center_y = visualization_size / 2;
+                    int w, h;
+                    SDL_GetRendererOutputSize(_renderer, &w, &h);
+                    const int center_x = w / 2;
+                    const int center_y = h / 2;
                     const model::vector center(center_x, center_y);
                     const auto transform_for_visualization = trajecmp::functional::pipe(
                             trajecmp::transform::scale_to_const<visualization_size>(
