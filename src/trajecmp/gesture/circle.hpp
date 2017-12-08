@@ -208,10 +208,10 @@ namespace trajecmp { namespace gesture {
                 if (w2_angle_clockwise < w_angle_clockwise) {
                     // w2 < w < s
                     // 180 -> 90 -> 0
-                    // 340 -> 355 -> 10
+                    // 330 -> 240 -> 150
                     // counterclockwise
                     return {
-                            start_angle_counterclockwise,
+                            -start_angle_counterclockwise,
                             -end_angle_counterclockwise - winding_angle,
                             center,
                             radius,
