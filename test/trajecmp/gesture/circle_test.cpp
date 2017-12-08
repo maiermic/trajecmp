@@ -29,6 +29,7 @@ void check_circle_segment(const Angle start_angle,
                           const Angle end_angle,
                           const double radius,
                           const point2d center) {
+    logging::is_logging = true;
     const circle_trajectory circle_generator(radius);
     using namespace trajecmp::gesture;
     const trajectory2d circle_trajectory =
@@ -43,6 +44,11 @@ void check_circle_segment(const Angle start_angle,
                     circle_trajectory,
                     min_bounding_sphere
             );
+    LOG(r2d(c.start_angle));
+    LOG(start_angle);
+    LOG(r2d(c.end_angle));
+    LOG(end_angle);
+
     INFO(r2d(c.start_angle) << " == " << start_angle);
     INFO(c.start_angle << " == " << d2r(start_angle));
     CAPTURE(c.start_angle);
@@ -80,6 +86,7 @@ void check_circle_segment(const Angle start_angle,
     CAPTURE(center);
     CAPTURE(c.center == center);
     CHECK(c.radius == Approx(radius));
+    LOG_SEP();
 }
 
 
