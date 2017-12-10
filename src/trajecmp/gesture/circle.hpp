@@ -50,6 +50,7 @@ namespace trajecmp { namespace gesture {
         Angle end_angle;
         Point center;
         Radius radius;
+        int winding_number;
     };
 
     /**
@@ -170,6 +171,7 @@ namespace trajecmp { namespace gesture {
                             -end_angle_counterclockwise - winding_angle,
                             center,
                             radius,
+                            winding_number,
                     };
                 } else {
                     // s < w < w2
@@ -180,6 +182,7 @@ namespace trajecmp { namespace gesture {
                             end_angle_clockwise + winding_angle,
                             center,
                             radius,
+                            winding_number,
                     };
                 }
             } else {
@@ -191,6 +194,7 @@ namespace trajecmp { namespace gesture {
                         -end_angle_counterclockwise - winding_angle,
                         center,
                         radius,
+                        winding_number,
                 };
             }
         } else {
@@ -203,6 +207,7 @@ namespace trajecmp { namespace gesture {
                         end_angle_clockwise + winding_angle,
                         center,
                         radius,
+                        winding_number,
                 };
             } else {
                 if (w2_angle_clockwise < w_angle_clockwise) {
@@ -215,6 +220,7 @@ namespace trajecmp { namespace gesture {
                             -end_angle_counterclockwise - winding_angle,
                             center,
                             radius,
+                            winding_number,
                     };
                 } else {
                     // w < w2 < s
@@ -226,6 +232,7 @@ namespace trajecmp { namespace gesture {
                             end_angle_clockwise + winding_angle,
                             center,
                             radius,
+                            winding_number,
                     };
                 }
             }
