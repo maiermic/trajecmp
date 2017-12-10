@@ -51,6 +51,7 @@ namespace trajecmp { namespace gesture {
         Point center;
         Radius radius;
         int winding_number;
+        bool is_clockwise_winding_direction;
     };
 
     /**
@@ -172,6 +173,7 @@ namespace trajecmp { namespace gesture {
                             center,
                             radius,
                             winding_number,
+                            is_clockwise_winding_direction,
                     };
                 } else {
                     // s < w < w2
@@ -183,6 +185,7 @@ namespace trajecmp { namespace gesture {
                             center,
                             radius,
                             winding_number,
+                            is_clockwise_winding_direction,
                     };
                 }
             } else {
@@ -195,6 +198,7 @@ namespace trajecmp { namespace gesture {
                         center,
                         radius,
                         winding_number,
+                        is_clockwise_winding_direction,
                 };
             }
         } else {
@@ -208,6 +212,7 @@ namespace trajecmp { namespace gesture {
                         center,
                         radius,
                         winding_number,
+                        is_clockwise_winding_direction,
                 };
             } else {
                 if (w2_angle_clockwise < w_angle_clockwise) {
@@ -221,6 +226,7 @@ namespace trajecmp { namespace gesture {
                             center,
                             radius,
                             winding_number,
+                            is_clockwise_winding_direction,
                     };
                 } else {
                     // w < w2 < s
@@ -233,6 +239,7 @@ namespace trajecmp { namespace gesture {
                             center,
                             radius,
                             winding_number,
+                            is_clockwise_winding_direction,
                     };
                 }
             }
