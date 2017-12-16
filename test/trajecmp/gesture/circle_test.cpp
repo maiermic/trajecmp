@@ -121,6 +121,8 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
                 check_circle_segment(-20.0, 360.0, radius, center);
                 check_circle_segment(-20.0, 370.0, radius, center);
                 check_circle_segment(-20.0, 270.0, radius, center);
+                check_circle_segment(-300.0, 40.0, radius, center);
+                check_circle_segment(-300.0, 400.0, radius, center);
             }
         }
     }
@@ -137,6 +139,8 @@ TEST_CASE("trajecmp::gesture::estimate_circle_segment", "[]") {
             for (const double radius : radii) {
                 check_circle_segment(10.0, -20.0, radius, center);
                 check_circle_segment(10.0, -380.0, radius, center);
+                check_circle_segment(62.0, -270.0, radius, center);
+                check_circle_segment(270.0, -60.0, radius, center);
             }
         }
     }
