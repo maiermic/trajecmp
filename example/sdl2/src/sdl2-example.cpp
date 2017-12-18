@@ -91,7 +91,7 @@ public:
                 _is_rerender = false;
                 _is_recording_trajectory = false;
 
-                std::cout << "emit trajectory" << _trajectory << '\n';
+                std::cout << "emit trajectory" << _trajectory << std::endl;
                 pattern_matching::input_trajectory_subject
                         .get_subscriber()
                         .on_next(_trajectory);
