@@ -57,7 +57,7 @@ public:
 
         pm::pattern_trajectory_subject
                 .get_subscriber()
-                .on_next(pattern::letter_L);
+                .on_next(pattern::square);
     }
 
     void display() override {
