@@ -39,7 +39,7 @@ get_circle_comparison_data(const model::trajectory &input_trajectory) {
     LOG(r2d(c.end_angle));
     LOG_SEP();
     const auto pattern_trajectory =
-            trajecmp::trajectory::circle<model::trajectory>(c.radius)
+            trajecmp::trajectory::circle<model::trajectory>(pm::normalized_size / 2)
                     .sample(r2d(c.start_angle), r2d(c.end_angle), 5.0f);
     const auto preprocess_input = [&](model::trajectory trajectory) {
         return trajecmp::transform::scale_to_const<pm::normalized_size>(mbs.radius * 2)(
@@ -47,19 +47,14 @@ get_circle_comparison_data(const model::trajectory &input_trajectory) {
                         trajectory)
         );
     };
-    const auto preprocess_pattern = [&](model::trajectory trajectory) {
-        return trajecmp::transform::scale_to_const<pm::normalized_size>(mbs.radius * 2)(trajectory);
-    };
     const model::trajectory preprocessed_input_trajectory =
             preprocess_input(input_trajectory);
-    const model::trajectory preprocessed_pattern_trajectory =
-            preprocess_pattern(pattern_trajectory);
     return {
             preprocessed_input_trajectory,
-            preprocessed_pattern_trajectory,
+            pattern_trajectory,
             pm::modified_hausdorff_info(
                     preprocessed_input_trajectory,
-                    preprocessed_pattern_trajectory
+                    pattern_trajectory
             ),
     };
 }
