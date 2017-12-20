@@ -40,3 +40,12 @@ add_executable(
 target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC src)
 target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC ../../src)
 target_link_libraries(sdl2-estimate-center-of-circle-segment ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
+
+add_executable(
+        sdl2-rectangle
+        src/sdl2-rectangle.cpp
+        src/sdl2_framework.cpp
+)
+target_include_directories(sdl2-rectangle PUBLIC src)
+target_include_directories(sdl2-rectangle PUBLIC ../../src)
+target_link_libraries(sdl2-rectangle ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
