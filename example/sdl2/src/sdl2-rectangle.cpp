@@ -37,18 +37,11 @@ get_rectangle_comparison_data(const model::trajectory &input_trajectory) {
     namespace bg = boost::geometry;
     using box = bg::model::box<model::point>;
     const auto mbs = trajecmp::geometry::min_bounding_sphere(input_trajectory);
-    const auto c = trajecmp::gesture::estimate_circle_segment(input_trajectory, mbs);
-    const auto pattern_trajectory =
-            trajecmp::trajectory::circle<model::trajectory>(c.radius)
-                    .sample(r2d(c.start_angle), r2d(c.end_angle), 5.0f);
     const auto preprocess_input = [&](model::trajectory trajectory) {
         return trajecmp::transform::scale_to_const<pm::normalized_size>(mbs.radius * 2)(
-                trajecmp::transform::translate_by(trajecmp::geometry::negative_vector_of(c.center))(
+                trajecmp::transform::translate_by(trajecmp::geometry::negative_vector_of(mbs.center))(
                         trajectory)
         );
-    };
-    const auto preprocess_pattern = [&](model::trajectory trajectory) {
-        return trajecmp::transform::scale_to_const<pm::normalized_size>(mbs.radius * 2)(trajectory);
     };
     const model::trajectory preprocessed_input_trajectory =
             preprocess_input(input_trajectory);
