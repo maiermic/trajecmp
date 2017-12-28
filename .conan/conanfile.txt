@@ -1,6 +1,6 @@
 [requires]
 Catch/1.9.6@bincrafters/stable
-rxcpp/4.0.0@bincrafters/stable
+RxCpp/4.0.0@maiermic/stable
 range-v3/0.3.0@ericniebler/stable
 Boost/1.60.0/lasote/stable
 
