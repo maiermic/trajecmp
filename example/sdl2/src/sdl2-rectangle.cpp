@@ -13,6 +13,7 @@
 #include <boost/geometry/algorithms/append.hpp>
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
+#include <trajecmp/transform/close.hpp>
 #include "trajecmp/util/angle.hpp"
 #include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "trajecmp/trajectory/circle.hpp"
@@ -87,6 +88,7 @@ public:
         pm::input_trajectory_stream
                 .map(trajecmp::transform::douglas_peucker(3))
                 .filter(trajecmp::predicate::has_min_num_points(4))
+                .map(trajecmp::transform::close())
                 .map(get_rectangle_comparison_data)
                 .subscribe([&](const rectangle_comparison_data &data) {
                     const model::trajectory &input_trajectory =
