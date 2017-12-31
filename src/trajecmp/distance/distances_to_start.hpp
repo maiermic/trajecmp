@@ -6,6 +6,7 @@
 
 #include <boost/geometry/core/coordinate_type.hpp>
 #include <boost/geometry/algorithms/distance.hpp>
+#include "distances_to_point.hpp"
 
 namespace trajecmp { namespace distance {
 
@@ -19,19 +20,8 @@ namespace trajecmp { namespace distance {
             typename Distances = std::vector<DistanceType>
     >
     Distances distances_to_start(const Trajectory &trajectory) {
-        using Point = typename boost::geometry::point_type<Trajectory>::type;
-        Distances distances;
-        const Point start =
-                trajectory.front();
-        std::transform(
-                std::begin(trajectory),
-                std::end(trajectory),
-                std::back_inserter(distances),
-                [&](const Point &current) {
-                    return boost::geometry::distance(start, current);
-                }
-        );
-        return distances;
+        return trajecmp::distance::distances_to_point(trajectory.front(),
+                                                      trajectory);
     }
 
 }} // namespace trajecmp::distance
