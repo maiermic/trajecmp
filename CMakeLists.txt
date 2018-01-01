@@ -37,6 +37,7 @@ set(TEST_FILES
         test/trajecmp/algorithm/minmax_index_test.cpp
         test/trajecmp/distance/modified_hausdorff_test.cpp
         test/trajecmp/gesture/circle_test.cpp
+        test/trajecmp/gesture/rectangle_test.cpp
         test/trajecmp/geometry/point/point_test.cpp
         test/trajecmp/util/angle_test.cpp
         test/trajecmp/util/find_local_extrema_test.cpp
