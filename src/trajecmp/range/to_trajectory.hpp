@@ -1,8 +1,7 @@
 #ifndef TRAJECMP_RANGE_TO_TRAJECTORY_HPP
 #define TRAJECMP_RANGE_TO_TRAJECTORY_HPP
 
-#include <boost/range/algorithm.hpp>
-#include <boost/range/algorithm_ext.hpp>
+#include <range/v3/action/insert.hpp>
 
 namespace trajecmp { namespace range {
 
@@ -17,7 +16,7 @@ namespace trajecmp { namespace range {
         template<class Range>
         Trajectory operator()(const Range &values) const {
             Trajectory result;
-            boost::range::insert(result, result.begin(), values);
+            ranges::action::insert(result, result.begin(), values);
             return result;
         }
     };
