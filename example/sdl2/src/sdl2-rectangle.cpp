@@ -14,60 +14,57 @@
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
 #include <trajecmp/transform/close.hpp>
+#include <trajecmp/trajectory/rectangle.hpp>
 #include "trajecmp/util/angle.hpp"
 #include "trajecmp/util/boost_geometry_to_string.hpp"
-#include "trajecmp/trajectory/circle.hpp"
-#include "trajecmp/util/find_local_extrema.hpp"
 #include "trajecmp/util/subscribe_with_latest_from.hpp"
 #include "trajecmp/util/vector_ostream.hpp"
-#include "trajecmp/gesture/circle.hpp"
-#include "trajecmp/trajectory/circle.hpp"
+#include "trajecmp/gesture/rectangle.hpp"
 #include "trajecmp/transform/douglas_peucker.hpp"
 #include "../../logging.hpp"
 
+template<
+        class Trajectory,
+        class Point = typename boost::geometry::point_type<Trajectory>::type,
+        class Index = typename Trajectory::difference_type
+>
 struct rectangle_comparison_data {
-    model::trajectory preprocessed_input_trajectory;
-    model::trajectory preprocessed_pattern_trajectory;
-    boost::geometry::distance_info_result<model::point> distance;
+    Trajectory preprocessed_input_trajectory;
+    Trajectory preprocessed_pattern_trajectory;
+    boost::geometry::distance_info_result<Point> distance;
+    trajecmp::gesture::rectangle_corner_indices<Index> preprocessed_input_corner_indices;
+    boost::geometry::model::box<Point> preprocessed_pattern_corners;
 };
 
-rectangle_comparison_data
-get_rectangle_comparison_data(const model::trajectory &input_trajectory) {
-    using trajecmp::util::r2d;
-    namespace pm = pattern_matching;
+template<
+        class Trajectory,
+        class Point = typename boost::geometry::point_type<Trajectory>::type,
+        class Index = typename Trajectory::difference_type
+>
+rectangle_comparison_data<Trajectory, Point, Index>
+get_rectangle_comparison_data(const Trajectory &input_trajectory) {
     namespace bg = boost::geometry;
-    using box = bg::model::box<model::point>;
-    const auto mbs = trajecmp::geometry::min_bounding_sphere(input_trajectory);
-    const auto preprocess_input = [&](model::trajectory trajectory) {
-        return trajecmp::transform::scale_to_const<pm::normalized_size>(mbs.radius * 2)(
-                trajecmp::transform::translate_by(trajecmp::geometry::negative_vector_of(mbs.center))(
-                        trajectory)
-        );
-    };
-    const model::trajectory preprocessed_input_trajectory =
-            preprocess_input(input_trajectory);
+    using box = bg::model::box<Point>;
     const box min_bounding_rectangle =
-            bg::return_envelope<box>(preprocessed_input_trajectory);
-    const model::point min_corner = min_bounding_rectangle.min_corner();
-    const auto min_coner_x = bg::get<0>(min_corner);
-    const auto min_coner_y = bg::get<1>(min_corner);
-    const model::point max_corner = min_bounding_rectangle.max_corner();
-    const auto max_coner_x = bg::get<0>(max_corner);
-    const auto max_coner_y = bg::get<1>(max_corner);
-    const model::trajectory preprocessed_pattern_trajectory {
-            min_corner,
-            model::point(min_coner_x, max_coner_y),
-            max_corner,
-            model::point(max_coner_x, min_coner_y),
-            min_corner,
-    };
+            bg::return_envelope<box>(input_trajectory);
+    using trajecmp::gesture::estimate_rectangle_corners;
+    const auto corners = estimate_rectangle_corners(min_bounding_rectangle,
+                                                    input_trajectory);
+    const Trajectory preprocessed_input_trajectory =
+            trajecmp::gesture::get_normalized_rectangle_trajectory(
+                    corners, input_trajectory);
+    const Trajectory preprocessed_pattern_trajectory =
+            trajecmp::trajectory::rectangle<Trajectory>(min_bounding_rectangle);
     return {
             preprocessed_input_trajectory,
             preprocessed_pattern_trajectory,
-            pm::modified_hausdorff_info(
+            pattern_matching::modified_hausdorff_info(
                     preprocessed_input_trajectory,
                     preprocessed_pattern_trajectory
             ),
+            estimate_rectangle_corners(min_bounding_rectangle,
+                                       preprocessed_input_trajectory),
+            min_bounding_rectangle,
     };
 }
 
@@ -85,12 +82,11 @@ public:
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
 
-        pm::input_trajectory_stream
-                .map(trajecmp::transform::douglas_peucker(3))
+        pm::preprocessed_input_trajectory_stream
                 .filter(trajecmp::predicate::has_min_num_points(4))
                 .map(trajecmp::transform::close())
-                .map(get_rectangle_comparison_data)
-                .subscribe([&](const rectangle_comparison_data &data) {
+                .map(get_rectangle_comparison_data<model::trajectory>)
+                .subscribe([&](const rectangle_comparison_data<model::trajectory> &data) {
                     const model::trajectory &input_trajectory =
                             data.preprocessed_input_trajectory;
                     const model::trajectory &pattern_trajectory =
@@ -128,6 +124,19 @@ public:
                             distance_trajectory), color_code::pink);
                     draw_box(_renderer, center, 10, color_code::gray);
                     LOG(distance.real_distance);
+
+                    LOG(data.preprocessed_input_corner_indices.min_corner);
+                    LOG(data.preprocessed_input_corner_indices.max_corner);
+                    draw_box(_renderer,
+                             visualization_input_trajectory.at(
+                                     data.preprocessed_input_corner_indices.min_corner),
+                             10,
+                             color_code::pink);
+                    draw_box(_renderer,
+                             visualization_input_trajectory.at(
+                                     data.preprocessed_input_corner_indices.max_corner),
+                             10,
+                             color_code::cyan);
 
                     SDL_RenderPresent(_renderer);
                     _is_rerender = false;
