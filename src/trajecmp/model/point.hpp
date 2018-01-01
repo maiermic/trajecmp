@@ -63,9 +63,11 @@ namespace trajecmp { namespace model {
     using point2f = point<float, 2>;
     using point3f = point<float, 3>;
 
-    template <typename Vector>
-    Vector operator-(const Vector lhs, const Vector rhs) {
-        Vector result(lhs);
+    template<typename CoordinateType, std::size_t DimensionCount>
+    point<CoordinateType, DimensionCount>
+    operator-(const point<CoordinateType, DimensionCount> lhs,
+              const point<CoordinateType, DimensionCount> rhs) {
+        point<CoordinateType, DimensionCount> result(lhs);
         boost::geometry::subtract_point(result, rhs);
         return result;
     }
