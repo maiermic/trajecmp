@@ -2,6 +2,7 @@
 
 ## Eine geschlossene Trajektorie (Anfangspunkt = Endpunkt) soll an einem beliebigen Punkt angefangen werden können.
 Vorgehensweise:
+
 1. Berechne Indizes der Punkte mit minimalem Abstand zu Punkten des Patterns
 2. Zeichenrichtung herausfinden
    1. Sortiere die Indizes
