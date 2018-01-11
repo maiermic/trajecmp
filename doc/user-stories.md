@@ -1,16 +1,50 @@
 # User Stories
 
 ## Eine geschlossene Trajektorie (Anfangspunkt = Endpunkt) soll an einem beliebigen Punkt angefangen werden können.
-Vorgehensweise:
+Nehmen wir als Beispiel-Pattern ein Quadrat, das in der linken oberen Ecke
+beginnt und im Uhrzeigersinn gezeichnet wird:  
+![pattern](img/algorithm/begin-closed-trajectory-at-any-point/pattern.png)  
+Wir möchten dem Nutzer erlauben, dass Quadrat an einem beliebigen Punkt zu
+beginnen.
+Außerdem soll er es auch gegen den Uhrzeigersinn zeichnen dürfen.
+Die Eingabe-Trajektorie im folgenden Beispiel soll als ähnlich angesehen werden: 
+![initial](img/algorithm/begin-closed-trajectory-at-any-point/0-initial.png)  
 
 1. Berechne Indizes der Punkte mit minimalem Abstand zu Punkten des Patterns
+   ![min points](img/algorithm/begin-closed-trajectory-at-any-point/1-min-points.png)  
+   Im Beispiel hat der Punkt `2` der Eingabe-Trajektorie den kleinsten Abstand
+   zum ersten Punkt des Patterns.
+   Punkt `4` der Eingabe-Trajektorie hat den
+   kleinsten Abstand zum zweiten Punkt des Patterns.
+   Insgesamt erhält man `[2, 4, 5, 1]`.
 2. Zeichenrichtung herausfinden
-   1. Sortiere die Indizes
+   1. Sortiere die Indizes: `[1, 2, 4, 5]`
    2. Prüfe anhand der Indizes, ob der Punkt nach dem Startpunkt des Patterns
-      auf den Startpunkt folgt (=> gleiche Zeichenrichtung wie Pattern)
-3. Teile die Eingabetrajektorie am Index des Startpunkts des Patterns
+      auf den Startpunkt folgt (=> gleiche Zeichenrichtung wie Pattern).
+      
+      Punkt `2` der Eingabe-Trajektorie ist am ähnlichsten zum Startpunkt des
+      Patterns.
+      Punkt `4` der Eingabe-Trajektorie ist am ähnlichsten zum zweiten Punkt des
+      Patterns.
+      In den sortierten Indizes muss folglich auf `2` die `4` folgen.
+      Dies ist im Beispiel der Fall.
+      
+      **Bemerkung:** Wäre die Eingabe-Trajektorie gegen den Uhrzeigersinn
+      gezeichnet worden, hätte man die Indizes `[4, 2, 1, 5]` erhalten.  
+      ![min points counterclockwise](img/algorithm/begin-closed-trajectory-at-any-point/1-min-points-counterclockwise.png)  
+      Dann wäre Punkt `4` der Eingabe-Trajektorie am ähnlichsten zum Startpunkt
+      des Patterns.
+      Punkt `2` der Eingabe-Trajektorie wäre am ähnlichsten zum zweiten Punkt
+      des Patterns.
+      In den sortierten Indizes `[1, 2, 4, 5]` müsste auf `4` die `2` folgen.
+      Da dies nicht der Fall ist, ist die Eingabe-Trajektorie in umgekehrter
+      Richtung zum Pattern gezeichnet worden.
+
+3. Teile die Eingabetrajektorie am Index des Startpunkts des Patterns  
+   ![split input trajectory](img/algorithm/begin-closed-trajectory-at-any-point/3-split.png)
 4. Füge Teile unter Berücksichtigung der Zeichenrichtung zusammen, um für die
-   Eingabetrajektorie die gleiche Punktabfolge wie beim Pattern zu erreichen
+   Eingabetrajektorie die gleiche Punktabfolge wie beim Pattern zu erreichen  
+   ![join input trajectory parts](img/algorithm/begin-closed-trajectory-at-any-point/4-join.png)
 5. Regulärer Vergleich (wie bei nicht geschlossener Trajektorie)
 
 **Bemerkung:** Sollte das Pattern ähnliche Punkte bzw. mehrmals den gleichen
