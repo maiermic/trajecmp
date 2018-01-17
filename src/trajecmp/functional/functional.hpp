@@ -2,6 +2,7 @@
 #define TRAJECMP_FUNCTIONAL_FUNCTIONAL_HPP
 
 #include <functional>
+#include <trajecmp/util/inline_variable.hpp>
 
 namespace trajecmp { namespace functional {
     namespace detail {
@@ -69,10 +70,10 @@ namespace trajecmp { namespace functional {
         };
     }
 
-    detail::compose compose;
-    detail::pipe pipe;
-    detail::mem_fn mem_fn;
-    const auto nested_mem_fn = map_function_arguments(mem_fn, pipe);
+    TRAJECMP_INLINE_VARIABLE(detail::compose, compose);
+    TRAJECMP_INLINE_VARIABLE(detail::pipe, pipe);
+    TRAJECMP_INLINE_VARIABLE(detail::mem_fn, mem_fn);
+//    const auto nested_mem_fn = map_function_arguments(mem_fn, pipe);
 
     template<typename L, typename R>
     auto operator|(L l, R r) {
