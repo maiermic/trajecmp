@@ -8,11 +8,7 @@ namespace model {
     using trajectory = boost::geometry::model::linestring<point>;
     using vector = point;
 
-    vector operator-(const vector lhs, const vector rhs) {
-        vector result(lhs);
-        boost::geometry::subtract_point(result, rhs);
-        return result;
-    }
+    vector operator-(const vector lhs, const vector rhs);
 
 } // namespace model
 

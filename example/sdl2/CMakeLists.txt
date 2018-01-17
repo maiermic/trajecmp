@@ -27,6 +27,7 @@ add_executable(
         src/sdl2-example.cpp
         src/sdl2_framework.cpp
         src/draw.cpp
+        src/model.cpp
 )
 target_include_directories(sdl2-example PUBLIC src)
 target_include_directories(sdl2-example PUBLIC ../../src)
@@ -51,6 +52,7 @@ add_executable(
         src/sdl2-rectangle.cpp
         src/sdl2_framework.cpp
         src/draw.cpp
+        src/model.cpp
 )
 target_include_directories(sdl2-rectangle PUBLIC src)
 target_include_directories(sdl2-rectangle PUBLIC ../../src)
