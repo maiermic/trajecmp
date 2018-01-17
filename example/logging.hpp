@@ -5,8 +5,10 @@
 #include <iostream>
 
 namespace logging {
-    bool is_logging = false;
-    std::string text = "";
+    inline namespace {
+        bool is_logging = false;
+        std::string text = "";
+    }
 } // namespace logging
 
 #define START_LOGGING(_text) \
