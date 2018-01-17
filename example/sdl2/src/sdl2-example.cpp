@@ -9,19 +9,18 @@
 #include <boost/geometry/algorithms/append.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
 #include <record_trajectory_sdl2_framework.hpp>
+#include <trajecmp/transform/translate_and_scale.hpp>
 #include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "trajecmp/util/subscribe_with_latest_from.hpp"
 #include "../../logging.hpp"
 
 void translate_and_scale(model::trajectory &trajectory) {
-    namespace pm = pattern_matching;
-    using trajecmp::transform::translate_by;
-    using trajecmp::geometry::negative_vector_of;
-    using trajecmp::transform::scale_to_const;
-
     const auto mbs = trajecmp::geometry::min_bounding_sphere(trajectory);
-    trajectory = translate_by(negative_vector_of(mbs.center))(trajectory);
-    trajectory = scale_to_const<pm::normalized_size>(mbs.radius * 2)(trajectory);
+    trajecmp::transform::translate_and_scale(
+            trajecmp::geometry::negative_vector_of(mbs.center),
+            pattern_matching::normalized_size / (mbs.radius * 2),
+            trajectory
+    );
 }
 
 class framework : public record_trajectory_sdl2_framework {
