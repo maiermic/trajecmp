@@ -4,7 +4,7 @@
 
 namespace trajecmp { namespace predicate {
 
-    auto has_min_num_points(std::size_t min) {
+    inline auto has_min_num_points(std::size_t min) {
         return [=](const auto &trajectory) {
             return boost::geometry::num_points(trajectory) >= min;
         };
