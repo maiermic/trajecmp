@@ -51,6 +51,7 @@ add_executable(
         sdl2-rectangle
         src/sdl2-rectangle.cpp
         src/sdl2_framework.cpp
+        src/record_trajectory_sdl2_framework.cpp
         src/draw.cpp
         src/model.cpp
 )

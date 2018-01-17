@@ -22,6 +22,7 @@
 #include "trajecmp/gesture/rectangle.hpp"
 #include "trajecmp/transform/douglas_peucker.hpp"
 #include "../../logging.hpp"
+#include "record_trajectory_sdl2_framework.hpp"
 
 template<
         class Trajectory,
@@ -68,13 +69,9 @@ get_rectangle_comparison_data(const Trajectory &input_trajectory) {
     };
 }
 
-class framework : public sdl2_framework {
-    bool _is_rerender = true;
-    bool _is_recording_trajectory = false;
-    model::trajectory _trajectory;
-public:
+struct framework : public record_trajectory_sdl2_framework {
 
-    void handle_input_trajectory() {
+    void handle_input_trajectory(model::trajectory input) {
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
@@ -82,7 +79,6 @@ public:
         using trajecmp::geometry::negative_vector_of;
         using trajecmp::transform::scale_to_const;
 
-        model::trajectory &input = _trajectory;
         input = douglas_peucker(3)(input);
         if (bg::num_points(input) < 5) return;
         const auto mbs = trajecmp::geometry::min_bounding_sphere(input);
@@ -147,47 +143,9 @@ public:
                  color_code::cyan);
 
         SDL_RenderPresent(_renderer);
-        _is_rerender = false;
+        is_rerender(false);
     }
 
-    void display() override {
-        if (!_is_rerender) {
-            return;
-        }
-        SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-        SDL_RenderClear(_renderer);
-
-        draw_trajectory(_renderer, _trajectory);
-
-        SDL_RenderPresent(_renderer);
-    }
-
-    void handle_event(const SDL_Event &event) override {
-        namespace bg = boost::geometry;
-        sdl2_framework::handle_event(event);
-        switch (event.type) {
-            case SDL_MOUSEBUTTONDOWN:
-                _is_rerender = true;
-                _is_recording_trajectory = true;
-                bg::append(_trajectory, model::point(event.motion.x, event.motion.y));
-                break;
-            case SDL_MOUSEMOTION:
-                if (_is_recording_trajectory) {
-                    _is_rerender = true;
-                    bg::append(_trajectory, model::point(event.motion.x, event.motion.y));
-                }
-                break;
-            case SDL_MOUSEBUTTONUP:
-                _is_rerender = false;
-                _is_recording_trajectory = false;
-
-                std::cout << "emit trajectory" << _trajectory << '\n';
-                handle_input_trajectory();
-
-                bg::clear(_trajectory);
-                break;
-        }
-    }
 };
 
 int main() {
