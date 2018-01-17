@@ -7,7 +7,7 @@
 #include "../../logging.hpp"
 #include "model.hpp"
 
-auto debug(std::string description) {
+inline auto debug(std::string description) {
     return [=](auto &&observable) {
         using Value = typename rxcpp::util::value_type_from<decltype(observable)>::type;
         return observable.tap([=](Value value) {
