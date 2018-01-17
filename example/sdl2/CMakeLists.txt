@@ -26,6 +26,7 @@ add_executable(
         sdl2-example
         src/sdl2-example.cpp
         src/sdl2_framework.cpp
+        src/record_trajectory_sdl2_framework.cpp
         src/draw.cpp
         src/model.cpp
 )
