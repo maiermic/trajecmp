@@ -35,7 +35,7 @@ namespace pattern_matching {
 
     static const auto normalized_size = 100;
 
-    auto preprocess(rxcpp::observable<model::trajectory> trajectory_stream,
+    inline auto preprocess(rxcpp::observable<model::trajectory> trajectory_stream,
                     std::string trajectory_name) {
         return trajectory_stream
                 .filter([=](auto trajectory) {
