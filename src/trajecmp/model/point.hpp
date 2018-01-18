@@ -11,6 +11,7 @@
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/arithmetic/arithmetic.hpp>
+#include <trajecmp/trait/concept.hpp>
 
 
 namespace trajecmp { namespace model {
@@ -63,11 +64,12 @@ namespace trajecmp { namespace model {
     using point2f = point<float, 2>;
     using point3f = point<float, 3>;
 
-    template<typename CoordinateType, std::size_t DimensionCount>
-    point<CoordinateType, DimensionCount>
-    operator-(const point<CoordinateType, DimensionCount> lhs,
-              const point<CoordinateType, DimensionCount> rhs) {
-        point<CoordinateType, DimensionCount> result(lhs);
+    template<
+            typename Point,
+            typename = std::enable_if_t<trajecmp::trait::is_point<Point>>
+    >
+    Point operator-(const Point lhs, const Point rhs) {
+        Point result(lhs);
         boost::geometry::subtract_point(result, rhs);
         return result;
     }
