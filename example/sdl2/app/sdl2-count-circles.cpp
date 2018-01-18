@@ -22,6 +22,7 @@
 #include "trajecmp/trajectory/circle.hpp"
 #include "trajecmp/transform/douglas_peucker.hpp"
 #include "../../logging.hpp"
+#include "record_trajectory_sdl2_framework.hpp"
 
 struct circle_comparison_data {
     model::trajectory preprocessed_input_trajectory;
@@ -59,109 +60,63 @@ get_circle_comparison_data(const model::trajectory &input_trajectory) {
     };
 }
 
-class framework : public sdl2_framework {
-    bool _is_rerender = true;
-    bool _is_recording_trajectory = false;
-    model::trajectory _trajectory;
-public:
-    framework() {
-        subscribe_to_pattern_matching();
+class framework : public record_trajectory_sdl2_framework {
+
+    void handle_input_trajectory(model::trajectory input) {
+        namespace bg = boost::geometry;
+        using trajecmp::transform::douglas_peucker;
+
+        input = douglas_peucker(3)(input);
+        if (bg::num_points(input) < 3) return;
+        draw_comparison_data(get_circle_comparison_data(input));
     }
 
-    void subscribe_to_pattern_matching() {
-        using trajecmp::util::subscribe_with_latest_from;
+    void draw_comparison_data(const circle_comparison_data &data) {
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
+        const model::trajectory &input_trajectory =
+                data.preprocessed_input_trajectory;
+        const model::trajectory &pattern_trajectory =
+                data.preprocessed_pattern_trajectory;
+        const bg::distance_info_result <model::point> &distance =
+                data.distance;
+        static const auto visualization_size = 300;
+        int w, h;
+        SDL_GetRendererOutputSize(_renderer, &w, &h);
+        const int center_x = w / 2;
+        const int center_y = h / 2;
+        const model::vector center(center_x, center_y);
+        const auto transform_for_visualization = trajecmp::functional::pipe(
+                trajecmp::transform::scale_to_const<visualization_size>(
+                        pm::normalized_size),
+                trajecmp::transform::translate_by(center)
+        );
+        const auto is_similar = distance.real_distance <
+                                pattern_matching::normalized_size *
+                                0.20;
 
-        pm::input_trajectory_stream
-                .map(trajecmp::transform::douglas_peucker(3))
-                .filter(trajecmp::predicate::has_min_num_points(3))
-                .map(get_circle_comparison_data)
-                .subscribe([&](const circle_comparison_data &data) {
-                    const model::trajectory &input_trajectory =
-                            data.preprocessed_input_trajectory;
-                    const model::trajectory &pattern_trajectory =
-                            data.preprocessed_pattern_trajectory;
-                    const bg::distance_info_result<model::point> &distance =
-                            data.distance;
-                    static const auto visualization_size = 300;
-                    int w, h;
-                    SDL_GetRendererOutputSize(_renderer, &w, &h);
-                    const int center_x = w / 2;
-                    const int center_y = h / 2;
-                    const model::vector center(center_x, center_y);
-                    const auto transform_for_visualization = trajecmp::functional::pipe(
-                            trajecmp::transform::scale_to_const<visualization_size>(
-                                    pm::normalized_size),
-                            trajecmp::transform::translate_by(center)
-                    );
-                    const auto is_similar = distance.real_distance <
-                                            pattern_matching::normalized_size *
-                                            0.20;
-
-                    LOG(pattern_trajectory);
-                    draw_trajectory(_renderer, transform_for_visualization(
-                            pattern_trajectory), color_code::yellow);
-                    const model::trajectory visualization_input_trajectory =
-                            transform_for_visualization(input_trajectory);
-                    draw_trajectory(_renderer,
-                                    visualization_input_trajectory,
-                                    is_similar ? color_code::green
-                                               : color_code::red);
-                    model::trajectory distance_trajectory{
-                            distance.projected_point1,
-                            distance.projected_point2,
-                    };
-                    draw_trajectory(_renderer, transform_for_visualization(
-                            distance_trajectory), color_code::pink);
-                    draw_box(_renderer, center, 10, color_code::gray);
-                    LOG(distance.real_distance);
-
-                    SDL_RenderPresent(_renderer);
-                    _is_rerender = false;
-                });
-    }
-
-    void display() override {
-        if (!_is_rerender) {
-            return;
-        }
-        SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-        SDL_RenderClear(_renderer);
-
-        draw_trajectory(_renderer, _trajectory);
+        LOG(pattern_trajectory);
+        draw_trajectory(_renderer, transform_for_visualization(
+                pattern_trajectory), color_code::yellow);
+        const model::trajectory visualization_input_trajectory =
+                transform_for_visualization(input_trajectory);
+        draw_trajectory(_renderer,
+                        visualization_input_trajectory,
+                        is_similar ? color_code::green
+                                   : color_code::red);
+        model::trajectory distance_trajectory{
+                distance.projected_point1,
+                distance.projected_point2,
+        };
+        draw_trajectory(_renderer, transform_for_visualization(
+                distance_trajectory), color_code::pink);
+        draw_box(_renderer, center, 10, color_code::gray);
+        LOG(distance.real_distance);
 
         SDL_RenderPresent(_renderer);
+        is_rerender(false);
     }
 
-    void handle_event(const SDL_Event &event) override {
-        namespace bg = boost::geometry;
-        sdl2_framework::handle_event(event);
-        switch (event.type) {
-            case SDL_MOUSEBUTTONDOWN:
-                _is_rerender = true;
-                _is_recording_trajectory = true;
-                bg::append(_trajectory, model::point(event.motion.x, event.motion.y));
-                break;
-            case SDL_MOUSEMOTION:
-                if (_is_recording_trajectory) {
-                    _is_rerender = true;
-                    bg::append(_trajectory, model::point(event.motion.x, event.motion.y));
-                }
-                break;
-            case SDL_MOUSEBUTTONUP:
-                _is_rerender = false;
-                _is_recording_trajectory = false;
-
-                std::cout << "emit trajectory" << _trajectory << '\n';
-                pattern_matching::input_trajectory_subject
-                        .get_subscriber()
-                        .on_next(_trajectory);
-
-                bg::clear(_trajectory);
-                break;
-        }
-    }
 };
 
 int main() {
