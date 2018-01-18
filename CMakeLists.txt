@@ -35,6 +35,7 @@ set(TEST_FILES
         test/runner.cpp
         test/trajecmp/algorithm/find_index_test.cpp
         test/trajecmp/algorithm/minmax_index_test.cpp
+        test/trajecmp/distance/distance_info_test.cpp
         test/trajecmp/distance/modified_hausdorff_test.cpp
         test/trajecmp/gesture/circle_test.cpp
         test/trajecmp/gesture/rectangle_test.cpp
