@@ -29,34 +29,14 @@ set(SRC_FILES
         src/model.cpp
 )
 
-add_executable(
-        sdl2-example
-        app/sdl2-example.cpp
-        ${SRC_FILES}
-)
-target_include_directories(sdl2-example PUBLIC src)
-target_include_directories(sdl2-example PUBLIC ../../src)
-target_link_libraries(sdl2-example ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
+function(add_app name)
+    add_executable(${name} app/${name}.cpp ${SRC_FILES})
+    target_include_directories(${name} PUBLIC src)
+    target_include_directories(${name} PUBLIC ../../src)
+    target_link_libraries(${name} ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
+endfunction(add_app)
 
-add_executable(sdl2-count-circles app/sdl2-count-circles.cpp ${SRC_FILES})
-target_include_directories(sdl2-count-circles PUBLIC src)
-target_include_directories(sdl2-count-circles PUBLIC ../../src)
-target_link_libraries(sdl2-count-circles ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
-
-add_executable(
-        sdl2-estimate-center-of-circle-segment
-        app/sdl2-estimate-center-of-circle-segment.cpp
-        ${SRC_FILES}
-)
-target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC src)
-target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC ../../src)
-target_link_libraries(sdl2-estimate-center-of-circle-segment ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
-
-add_executable(
-        sdl2-rectangle
-        app/sdl2-rectangle.cpp
-        ${SRC_FILES}
-)
-target_include_directories(sdl2-rectangle PUBLIC src)
-target_include_directories(sdl2-rectangle PUBLIC ../../src)
-target_link_libraries(sdl2-rectangle ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
+add_app(sdl2-example)
+add_app(sdl2-count-circles)
+add_app(sdl2-estimate-center-of-circle-segment)
+add_app(sdl2-rectangle)
