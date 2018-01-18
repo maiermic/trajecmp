@@ -3,6 +3,7 @@
 
 #include <array>
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/geometry/core/point_type.hpp>
 #include <boost/geometry/geometries/box.hpp>
@@ -19,6 +20,8 @@
 #include <trajecmp/distance/distances_to_point.hpp>
 #include <trajecmp/range/to_trajectory.hpp>
 #include <ostream>
+#include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
+#include <trajecmp/trajectory/rectangle.hpp>
 
 namespace trajecmp { namespace gesture {
 
@@ -145,6 +148,55 @@ namespace trajecmp { namespace gesture {
                  ? to_trajectory(reverse(trajectory))
                  : to_trajectory(concat(min_corner, reverse(head),
                                         reverse(tail)));
+    }
+
+    template<
+            class Trajectory,
+            class Distance = typename boost::geometry::coordinate_type<Trajectory>::type,
+            class Point = typename boost::geometry::point_type<Trajectory>::type,
+            class Index = typename Trajectory::difference_type
+    >
+    struct rectangle_comparison_data {
+        Trajectory preprocessed_input_trajectory;
+        Trajectory preprocessed_pattern_trajectory;
+        Distance distance;
+        trajecmp::gesture::rectangle_corner_indices<Index> preprocessed_input_corner_indices;
+        boost::geometry::model::box<Point> preprocessed_pattern_corners;
+    };
+
+    template<
+            class Trajectory,
+            class Point = typename boost::geometry::point_type<Trajectory>::type,
+            class Index = typename Trajectory::difference_type,
+            class DistanceFn
+    >
+    auto get_rectangle_comparison_data(
+            const Trajectory &input_trajectory,
+            const DistanceFn &distanceFn) {
+        namespace bg = boost::geometry;
+        using box = bg::model::box<Point>;
+        const box min_bounding_rectangle =
+                bg::return_envelope<box>(input_trajectory);
+        using trajecmp::gesture::estimate_rectangle_corners;
+        const auto corners = estimate_rectangle_corners(min_bounding_rectangle,
+                                                        input_trajectory);
+        const Trajectory preprocessed_input_trajectory =
+                trajecmp::gesture::get_normalized_rectangle_trajectory(
+                        corners, input_trajectory);
+        const Trajectory preprocessed_pattern_trajectory =
+                trajecmp::trajectory::rectangle<Trajectory>(
+                        min_bounding_rectangle);
+        using Distance = typename std::result_of<DistanceFn(
+                const Trajectory &input, const Trajectory &pattern)>::type;
+        return rectangle_comparison_data<Trajectory, Distance, Point, Index> {
+                preprocessed_input_trajectory,
+                preprocessed_pattern_trajectory,
+                distanceFn(preprocessed_input_trajectory,
+                           preprocessed_pattern_trajectory),
+                estimate_rectangle_corners(min_bounding_rectangle,
+                                           preprocessed_input_trajectory),
+                min_bounding_rectangle,
+        };
     }
 
 }} // namespace trajecmp::gesture
