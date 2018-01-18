@@ -41,7 +41,7 @@ struct framework : public record_trajectory_sdl2_framework {
         using pattern_matching::modified_hausdorff_info;
 
         input = douglas_peucker(3)(input);
-        if (bg::num_points(input) < 5) return;
+        if (bg::num_points(input) < 4) return;
         const auto mbs = trajecmp::geometry::min_bounding_sphere(input);
         input = translate_by(negative_vector_of(mbs.center))(input);
         input = scale_to_const<pm::normalized_size>(mbs.radius * 2)(input);
