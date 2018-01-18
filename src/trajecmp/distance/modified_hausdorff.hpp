@@ -7,6 +7,7 @@
 #include <boost/geometry/extensions/algorithms/distance_info.hpp>
 
 #include <trajecmp/transform/sub_trajectory.hpp>
+#include "distance_info.hpp"
 
 namespace trajecmp { namespace distance {
     namespace detail {
@@ -46,26 +47,22 @@ namespace trajecmp { namespace distance {
                         : bg::length(current_trajectory) / length_t1;
                 const auto neighbours_trajectory = neighbours(t2, current_percentage);
                 distance_info_result current_result;
-                bg::distance_info(current, neighbours_trajectory, current_result);
+                trajecmp::distance::distance_info(current, neighbours_trajectory, current_result);
                 if (result.real_distance < current_result.real_distance) {
                     result = current_result;
-                    // fix distance_info result
-                    // https://gitter.im/boostorg/geometry?at=59e3878af7299e8f53ee02a7
-                    result.projected_point2 = current;
-                    // https://gitter.im/boostorg/geometry?at=59e3a246177fb9fe7e8063f6
-                    if (result.fraction1 < 0) {
-                        result.fraction1 = 0;
-                        result.projected_point1 =
-                                *std::begin(neighbours_trajectory);
-                    } else if (result.fraction1 > 1) {
-                        result.fraction1 = 1;
-                        result.projected_point1 =
-                                *(--std::end(neighbours_trajectory));
-                    }
                 }
             }
             return result;
         };
+
+        template<typename Point>
+        void swap_distance_result_order(
+                boost::geometry::distance_info_result<Point> &result) {
+            std::swap(result.fraction1, result.fraction2);
+            std::swap(result.projected_distance1, result.projected_distance2);
+            std::swap(result.projected_point1, result.projected_point2);
+            std::swap(result.seg_id1, result.seg_id2);
+        }
     } // namespace detail
 
 
@@ -100,8 +97,12 @@ namespace trajecmp { namespace distance {
     constexpr auto modified_hausdorff_info(Neighbours &&neighbours) {
         return [=](const auto &t1, const auto &t2) {
             const auto d1 = detail::modified_hausdorff_info(t1, t2, neighbours);
-            const auto d2 = detail::modified_hausdorff_info(t2, t1, neighbours);
-            return (d1.real_distance < d2.real_distance) ? d2 : d1;
+            auto d2 = detail::modified_hausdorff_info(t2, t1, neighbours);
+            if (d1.real_distance < d2.real_distance) {
+                detail::swap_distance_result_order(d2);
+                return d2;
+            }
+            return d1;
         };
     };
 
