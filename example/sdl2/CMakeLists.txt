@@ -22,19 +22,23 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2GFX_INCLUDE_DIR})
 
 include_directories(include)
 
-add_executable(
-        sdl2-example
-        app/sdl2-example.cpp
+set(SRC_FILES
         src/sdl2_framework.cpp
         src/record_trajectory_sdl2_framework.cpp
         src/draw.cpp
         src/model.cpp
 )
+
+add_executable(
+        sdl2-example
+        app/sdl2-example.cpp
+        ${SRC_FILES}
+)
 target_include_directories(sdl2-example PUBLIC src)
 target_include_directories(sdl2-example PUBLIC ../../src)
 target_link_libraries(sdl2-example ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
 
-add_executable(sdl2-count-circles app/sdl2-count-circles.cpp src/sdl2_framework.cpp)
+add_executable(sdl2-count-circles app/sdl2-count-circles.cpp ${SRC_FILES})
 target_include_directories(sdl2-count-circles PUBLIC src)
 target_include_directories(sdl2-count-circles PUBLIC ../../src)
 target_link_libraries(sdl2-count-circles ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2GFX_LIBRARY})
@@ -42,7 +46,7 @@ target_link_libraries(sdl2-count-circles ${CONAN_LIBS} ${SDL2_LIBRARIES} ${SDL2G
 add_executable(
         sdl2-estimate-center-of-circle-segment
         app/sdl2-estimate-center-of-circle-segment.cpp
-        src/sdl2_framework.cpp
+        ${SRC_FILES}
 )
 target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC src)
 target_include_directories(sdl2-estimate-center-of-circle-segment PUBLIC ../../src)
@@ -51,10 +55,7 @@ target_link_libraries(sdl2-estimate-center-of-circle-segment ${CONAN_LIBS} ${SDL
 add_executable(
         sdl2-rectangle
         app/sdl2-rectangle.cpp
-        src/sdl2_framework.cpp
-        src/record_trajectory_sdl2_framework.cpp
-        src/draw.cpp
-        src/model.cpp
+        ${SRC_FILES}
 )
 target_include_directories(sdl2-rectangle PUBLIC src)
 target_include_directories(sdl2-rectangle PUBLIC ../../src)
