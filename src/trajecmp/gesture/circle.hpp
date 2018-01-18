@@ -166,21 +166,6 @@ namespace trajecmp { namespace gesture {
         const Radius radius = boost::geometry::distance(center, trajectory.front());
         // angle of complete windings
         const auto winding_angle = r_360 * winding_number;
-        LOG(winding_number);
-        LOG(winding_number_unfixed);
-        LOG(r2d(start_angle_clockwise));
-        LOG(r2d(start_angle_counterclockwise));
-        LOG(r2d(end_angle_clockwise));
-        LOG(r2d(end_angle_counterclockwise));
-        LOG(extrema.minima);
-        LOG(extrema.maxima);
-        LOG(is_clockwise_winding_direction);
-        LOG(w);
-        LOG(w_index);
-        LOG(r2d(w_angle_clockwise));
-        LOG(w2);
-        LOG(w2_index);
-        LOG(r2d(w2_angle_clockwise));
         // In each case-branch of the nested if statement is a comment
         // that shows a representation of the relation of the angles
         // using the abbreviations:
@@ -192,7 +177,6 @@ namespace trajecmp { namespace gesture {
         if (start_angle_clockwise < w2_angle_clockwise) {
             if (start_angle_clockwise < w_angle_clockwise) {
                 if (w2_angle_clockwise < w_angle_clockwise) {
-                    LOG_TEXT("s < w2 < w");
                     // s < w2 < w
                     // 0 -> 270 -> 180
                     // counterclockwise
@@ -205,7 +189,6 @@ namespace trajecmp { namespace gesture {
                             is_clockwise_winding_direction,
                     };
                 } else {
-                    LOG_TEXT("s < w < w2");
                     // s < w < w2
                     // 0 -> 45 -> 90
                     // clockwise
@@ -224,7 +207,6 @@ namespace trajecmp { namespace gesture {
                     };
                 }
             } else {
-                LOG_TEXT("w < s < w2");
                 // w < s < w2
                 // 90 -> 0 -> 270
                 // counterclockwise
@@ -242,7 +224,6 @@ namespace trajecmp { namespace gesture {
                 // w2 < s < w
                 // 270 -> 315 -> 0
                 // clockwise
-                LOG_TEXT("w2 < s < w");
                 return {
                         -start_angle_counterclockwise,
                         end_angle_clockwise + winding_angle,
@@ -257,7 +238,6 @@ namespace trajecmp { namespace gesture {
                     // 180 -> 90 -> 0
                     // 330 -> 240 -> 150
                     // counterclockwise
-                    LOG_TEXT("w2 < w < s")
                     const Angle end_angle =
                             -end_angle_counterclockwise - winding_angle;
                     const Angle start_angle =
@@ -277,7 +257,6 @@ namespace trajecmp { namespace gesture {
                     // 340 -> 0 -> 20
                     // 350 -> 10 -> 30
                     // clockwise
-                    LOG_TEXT("w < w2 < s")
                     return {
                             -start_angle_counterclockwise,
                             end_angle_clockwise + winding_angle,
