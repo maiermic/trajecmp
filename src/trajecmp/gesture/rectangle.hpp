@@ -1,5 +1,5 @@
-#ifndef TRAJECMP_GESTURE_CIRCLE_HPP
-#define TRAJECMP_GESTURE_CIRCLE_HPP
+#ifndef TRAJECMP_GESTURE_RECTANGLE_HPP
+#define TRAJECMP_GESTURE_RECTANGLE_HPP
 
 #include <array>
 #include <algorithm>
@@ -202,4 +202,4 @@ namespace trajecmp { namespace gesture {
 }} // namespace trajecmp::gesture
 
 
-#endif //TRAJECMP_GESTURE_CIRCLE_HPP
+#endif //TRAJECMP_GESTURE_RECTANGLE_HPP
