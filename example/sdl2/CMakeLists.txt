@@ -37,6 +37,7 @@ function(add_app name)
 endfunction(add_app)
 
 add_app(sdl2-example)
+add_app(sdl2-circle-or-rectangle)
 add_app(sdl2-count-circles)
 add_app(sdl2-estimate-center-of-circle-segment)
 add_app(sdl2-rectangle)
