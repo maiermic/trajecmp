@@ -22,6 +22,30 @@ namespace trajecmp { namespace algorithm {
         return std::make_pair(min_index, max_index);
     }
 
+    /**
+     * Version of <code>std::min_element</code> that returns index instead of
+     * iterator.
+     */
+    template<typename Values>
+    auto min_index(const Values &values) {
+        const auto min = std::min_element(std::begin(values), std::end(values));
+        return (min == std::end(values))
+               ? -1l
+               : std::distance(std::begin(values), min);
+    }
+
+    /**
+     * Version of <code>std::max_element</code> that returns index instead of
+     * iterator.
+     */
+    template<typename Values>
+    auto max_index(const Values &values) {
+        const auto max = std::max_element(std::begin(values), std::end(values));
+        return (max == std::end(values))
+               ? -1l
+               : std::distance(std::begin(values), max);
+    }
+
 }} // namespace trajecmp::util
 
 
