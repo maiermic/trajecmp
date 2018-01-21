@@ -109,17 +109,24 @@ namespace trajecmp { namespace transform {
         static_assert(trajecmp::trait::is_box<Box>);
         using Vector = typename boost::geometry::point_type<Trajectory>::type;
         using Coordinate = typename boost::geometry::coordinate_type<Trajectory>::type;
+        using trajecmp::geometry::min_bounding_box;
         using trajecmp::geometry::point::operator-;
         using trajecmp::geometry::point::operator/;
         auto mbs = trajecmp::geometry::min_bounding_sphere(trajectory);
-        const auto mbb = trajecmp::geometry::min_bounding_box(trajectory);
+        const auto mbb = min_bounding_box(trajectory);
         translate_and_scale(
                 trajecmp::geometry::negative_vector_of(mbs.center),
                 (result_mbb.max_corner() - result_mbb.min_corner()) /
                 (mbb.max_corner() - mbb.min_corner()),
                 trajectory);
-        trajectory = translate_by(trajecmp::geometry::negative_vector_of(
-                boost::geometry::return_centroid<Vector>(result_mbb)))(trajectory);
+        // it's faster to recalculate the MBB instead of MBS to recenter the
+        // trajectory after the non-uniform scaling
+        using boost::geometry::return_centroid;
+        const auto centroid_of_mbb =
+                return_centroid<Vector>(min_bounding_box(trajectory));
+        const auto centroid_of_result_mbb = return_centroid<Vector>(result_mbb);
+        trajectory = translate_by(centroid_of_result_mbb - centroid_of_mbb)(
+                trajectory);
     }
 
     /**
