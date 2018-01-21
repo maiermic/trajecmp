@@ -46,8 +46,9 @@ struct framework : public record_trajectory_sdl2_framework {
         using pattern_matching::modified_hausdorff_info;
         input = douglas_peucker(3)(input);
         if (bg::num_points(input) < 3) return;
-        trajecmp::transform::translate_and_scale_using_mbs(
-                pattern_matching::normalized_size, input);
+        trajecmp::transform::translate_using_mbs_and_scale_using_mbb(
+                trajecmp::geometry::min_bounding_box(_pattern),
+                input);
         bg::append(input, *std::begin(input));
         input = rearrange_closed_input_using_pattern_corners(_pattern, input);
         const auto distance = modified_hausdorff_info(_pattern, input);
