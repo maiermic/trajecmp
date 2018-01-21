@@ -14,6 +14,13 @@ namespace trajecmp { namespace trait {
                     boost::geometry::point_tag
             >::type::value;
 
+    template<typename Box>
+    constexpr bool is_box = std::is_same
+            <
+                    typename boost::geometry::tag<Box>::type,
+                    boost::geometry::box_tag
+            >::type::value;
+
 }}
 
 #endif //TRAJECMP_TRAIT_CONCEPT_HPP
