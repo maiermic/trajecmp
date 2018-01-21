@@ -19,6 +19,17 @@ namespace pattern {
             {0, 0}
     };
 
+    /**
+     * Triangle with height and width of 2 and two corners on bottom and
+     * one on top.
+     */
+    const model::trajectory triangle_up{
+            {-1.0f, 0.0f},
+            {1.0f,  0.0f},
+            {0.0f,  2.0f},
+            {-1.0f, 0.0f},
+    };
+
 } // namespace pattern
 
 #endif //PATTERN_HPP
