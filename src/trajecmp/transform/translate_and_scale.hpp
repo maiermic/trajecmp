@@ -9,18 +9,73 @@
 #include <trajecmp/geometry/point/point.hpp>
 #include <trajecmp/geometry/hyper_sphere.hpp>
 #include <trajecmp/geometry/min_bounding_sphere.hpp>
+#include <trajecmp/trait/concept.hpp>
+#include <trajecmp/geometry/min_bounding_box.hpp>
+#include <trajecmp/geometry/point/arithmetic.hpp>
 #include "map_coordinates.hpp"
 
 namespace trajecmp { namespace transform {
 
+    /**
+     * Translate and then scale trajectory using vectors.
+     * Note that non-uniform scaling (different scalars for the dimensions)
+     * invalidates some previous calculated features like the minimum bounding
+     * sphere.
+     * They must be recalculated for the transformed trajectory.
+     * For uniform scaling use the overload of this function that takes a scalar
+     * value instead of a scalar vector.
+     *
+     * @tparam Trajectory
+     * @tparam Vector Has to satisfy the Boost Geometry point concept.
+     * @tparam Scale Has to satisfy the Boost Geometry point concept.
+     * @param vector Trajectory points are translated by this vector.
+     * @param scale Scale for each dimension the trajectory points are scaled
+     * by.
+     * @param trajectory
+     * @return
+     */
+    template<
+            typename Trajectory,
+            typename Vector = typename boost::geometry::point_type<Trajectory>::type,
+            typename Scale = Vector
+    >
+    std::enable_if_t<trajecmp::trait::is_point<Scale>>
+    translate_and_scale(const Vector &vector,
+                        Scale scale,
+                        Trajectory &trajectory) {
+        using Point = Vector;
+        using Coordinate = typename boost::geometry::coordinate_type<Trajectory>::type;
+        for (Point &point : trajectory) {
+            map_coordinates_with_index(point, [&](std::size_t i, Coordinate c) {
+                using trajecmp::geometry::point::get;
+                return (c + get(i, vector)) * get(i, scale);
+            });
+        }
+    };
+
+    /**
+     * Translate using a translation vector and then scale using a scalar value.
+     * For non-uniform scaling use the overload of this function that takes a
+     * scalar vector instead of a scalar value.
+     *
+     * @tparam Trajectory
+     * @tparam Vector
+     * @tparam Scale
+     * @param vector Trajectory points are translated by this vector.
+     * @param scale Scalar value that is used to scale each point of the
+     * trajectory.
+     * @param trajectory
+     * @return
+     */
     template<
             typename Trajectory,
             typename Vector = typename boost::geometry::point_type<Trajectory>::type,
             typename Scale = typename boost::geometry::coordinate_type<Trajectory>::type
     >
-    void translate_and_scale(const Vector &vector,
-                             Scale scale,
-                             Trajectory &trajectory) {
+    std::enable_if_t<!trajecmp::trait::is_point<Scale>>
+    translate_and_scale(const Vector &vector,
+                        Scale scale,
+                        Trajectory &trajectory) {
         using Point = Vector;
         using Coordinate = typename boost::geometry::coordinate_type<Trajectory>::type;
         for (Point &point : trajectory) {
@@ -30,6 +85,42 @@ namespace trajecmp { namespace transform {
             });
         }
     };
+
+    /**
+     * Moves the trajectory so that the center of the MBS (minimum bounding
+     * sphere) lies in the origin and scales the trajectory so that the MBS of
+     * the transformed trajectory corresponds to the diameter of the MBS and the
+     * MBB (minimum bounding box) of the transformed trajectory corresponds to
+     * <code>result_mbb</code>.
+     * Since the MBS is not passed, it is calculated internally.
+     *
+     * @tparam Box
+     * @tparam Trajectory
+     * @param result_mbb The minimum bounding box that the transformed trajectory
+     * @param trajectory
+     */
+    template<
+            typename Box,
+            typename Trajectory
+    >
+    void
+    translate_using_mbs_and_scale_using_mbb(const Box result_mbb,
+                                            Trajectory &trajectory) {
+        static_assert(trajecmp::trait::is_box<Box>);
+        using Vector = typename boost::geometry::point_type<Trajectory>::type;
+        using Coordinate = typename boost::geometry::coordinate_type<Trajectory>::type;
+        using trajecmp::geometry::point::operator-;
+        using trajecmp::geometry::point::operator/;
+        auto mbs = trajecmp::geometry::min_bounding_sphere(trajectory);
+        const auto mbb = trajecmp::geometry::min_bounding_box(trajectory);
+        translate_and_scale(
+                trajecmp::geometry::negative_vector_of(mbs.center),
+                (result_mbb.max_corner() - result_mbb.min_corner()) /
+                (mbb.max_corner() - mbb.min_corner()),
+                trajectory);
+        trajectory = translate_by(trajecmp::geometry::negative_vector_of(
+                boost::geometry::return_centroid<Vector>(result_mbb)))(trajectory);
+    }
 
     /**
      * Moves the trajectory so that the center of the MBS (minimum bounding
