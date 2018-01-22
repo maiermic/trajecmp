@@ -50,30 +50,25 @@ public:
 
     void draw_comparison_data(
             boost::geometry::distance_info_result <model::point> distance,
-            model::trajectory input_trajectory,
+            model::trajectory &input_trajectory,
             model::trajectory pattern_trajectory) {
-        static const auto visualization_size = 300;
-        const auto transform_for_visualization = trajecmp::functional::pipe(
-                trajecmp::transform::scale_to_const<visualization_size>(
-                        pattern_matching::normalized_size),
-                trajecmp::transform::translate_by(
-                        model::vector(visualization_size / 2,
-                                      visualization_size / 2))
-        );
         const auto is_similar = distance.real_distance <
                                 pattern_matching::normalized_size * 0.20;
-        draw_trajectory(_renderer,
-                        transform_for_visualization(pattern_trajectory),
-                        color_code::yellow);
-        draw_trajectory(_renderer,
-                        transform_for_visualization(input_trajectory),
-                        is_similar ? color_code::green : color_code::red);
         model::trajectory distance_trajectory{
                 distance.projected_point1,
                 distance.projected_point2,
         };
+        transform_for_visualization(pattern_trajectory);
+        transform_for_visualization(input_trajectory);
+        transform_for_visualization(distance_trajectory);
         draw_trajectory(_renderer,
-                        transform_for_visualization(distance_trajectory),
+                        pattern_trajectory,
+                        color_code::yellow);
+        draw_trajectory(_renderer,
+                        input_trajectory,
+                        is_similar ? color_code::green : color_code::red);
+        draw_trajectory(_renderer,
+                        distance_trajectory,
                         color_code::pink);
         std::cout << "distance: " << distance.real_distance << '\n';
         SDL_RenderPresent(_renderer);
