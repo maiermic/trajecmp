@@ -12,6 +12,7 @@
 #include <trajecmp/trait/concept.hpp>
 #include <trajecmp/geometry/min_bounding_box.hpp>
 #include <trajecmp/geometry/point/arithmetic.hpp>
+#include <trajecmp/geometry/vector.hpp>
 #include "map_coordinates.hpp"
 
 namespace trajecmp { namespace transform {
