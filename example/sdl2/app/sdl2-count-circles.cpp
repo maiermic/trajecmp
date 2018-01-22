@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <numeric>
 #include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
@@ -12,6 +13,7 @@
 #include <boost/geometry/algorithms/append.hpp>
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
+#include "trajecmp/distance/distances_to_point.hpp"
 #include "trajecmp/util/angle.hpp"
 #include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "trajecmp/trajectory/circle.hpp"
@@ -38,9 +40,15 @@ get_circle_comparison_data(const model::trajectory &input_trajectory) {
     const auto c = trajecmp::gesture::estimate_circle_segment(input_trajectory, mbs);
     LOG(r2d(c.start_angle));
     LOG(r2d(c.end_angle));
+    LOG(c.winding_number);
     LOG_SEP();
+    const auto radii =
+        trajecmp::distance::distances_to_point(mbs.center, input_trajectory);
+    const auto sum = std::accumulate(radii.begin(),
+                                     radii.end(), 0.0f);
+    const auto radius_factor = (sum / radii.size()) / mbs.radius;
     const auto pattern_trajectory =
-            trajecmp::trajectory::circle<model::trajectory>(pm::normalized_size / 2)
+            trajecmp::trajectory::circle<model::trajectory>(radius_factor * pm::normalized_size / 2)
                     .sample(r2d(c.start_angle), r2d(c.end_angle), 5.0f);
     const auto preprocess_input = [&](model::trajectory trajectory) {
         return trajecmp::transform::scale_to_const<pm::normalized_size>(mbs.radius * 2)(
@@ -95,7 +103,7 @@ class framework : public record_trajectory_sdl2_framework {
         draw_trajectory(_renderer, input_trajectory,
                         is_similar ? color_code::green
                                    : color_code::red);
-        
+
         draw_trajectory(_renderer, distance_trajectory, color_code::pink);
         draw_box(_renderer, get_visualization_center(), 10, color_code::gray);
         LOG(distance.real_distance);
