@@ -129,19 +129,6 @@ class framework : public record_trajectory_sdl2_framework {
                           data.distance);
     }
 
-    void transform_for_visualization(model::trajectory &trajectory) {
-        namespace pm = pattern_matching;
-        using trajecmp::transform::scale_and_translate;
-        static const auto visualization_size = 300;
-        int w, h;
-        SDL_GetRendererOutputSize(_renderer, &w, &h);
-        const int center_x = w / 2;
-        const int center_y = h / 2;
-        const model::vector center(center_x, center_y);
-        scale_and_translate(visualization_size / pm::normalized_size, center,
-                            trajectory);
-    }
-
     void draw_trajectories(
             model::trajectory &pattern_trajectory,
             model::trajectory &input_trajectory,
