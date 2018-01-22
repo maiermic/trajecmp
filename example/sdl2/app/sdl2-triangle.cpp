@@ -80,19 +80,6 @@ struct framework : public record_trajectory_sdl2_framework {
         draw_box(_renderer, input_trajectory.at(1), 10, color_code::blue);
     }
 
-    void transform_for_visualization(model::trajectory &trajectory) {
-        namespace pm = pattern_matching;
-        using trajecmp::transform::scale_and_translate;
-        int w, h;
-        SDL_GetRendererOutputSize(_renderer, &w, &h);
-        const int center_x = w / 2;
-        const int center_y = h / 2;
-        const model::vector center(center_x, center_y);
-        const auto visualization_size = std::min(w, h) - 20;
-        scale_and_translate(visualization_size / pm::normalized_size, center,
-                            trajectory);
-    }
-
 };
 
 int main() {

@@ -20,6 +20,10 @@ public:
     void display() override;
 
     void handle_event(const SDL_Event &event) override;
+
+    void transform_for_visualization(model::trajectory &trajectory);
+
+    model::point get_visualization_center();
 };
 
 #endif //TRAJECMP_RECORD_TRAJECTORY_SDL2_FRAMEWORK_HPP

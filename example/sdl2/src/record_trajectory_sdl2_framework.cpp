@@ -1,3 +1,4 @@
+#include <trajecmp/transform/translate_and_scale.hpp>
 #include "record_trajectory_sdl2_framework.hpp"
 
 void record_trajectory_sdl2_framework::display() {
@@ -44,4 +45,25 @@ bool record_trajectory_sdl2_framework::is_rerender() const {
 
 void record_trajectory_sdl2_framework::is_rerender(bool is_rerender) {
     record_trajectory_sdl2_framework::_is_rerender = is_rerender;
+}
+
+void record_trajectory_sdl2_framework::transform_for_visualization(model::trajectory &trajectory) {
+    namespace pm = pattern_matching;
+    using trajecmp::transform::scale_and_translate;
+    int w, h;
+    SDL_GetRendererOutputSize(_renderer, &w, &h);
+    const int center_x = w / 2;
+    const int center_y = h / 2;
+    const model::vector center(center_x, center_y);
+    const auto visualization_size = std::min(w, h) - 20;
+    scale_and_translate(visualization_size / pm::normalized_size,
+                        center,
+                        trajectory);
+}
+
+model::point record_trajectory_sdl2_framework::get_visualization_center() {
+    int w, h;
+    SDL_GetRendererOutputSize(_renderer, &w, &h);
+    return { w / 2, h / 2};
+
 }
