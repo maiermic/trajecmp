@@ -1,14 +1,20 @@
 #ifndef TRAJECMP_GESTURE_CIRCLE_HPP
 #define TRAJECMP_GESTURE_CIRCLE_HPP
 
+#include <iterator>
+#include <numeric>
+
 #include <trajecmp/distance/distances_to_start.hpp>
+#include <trajecmp/distance/distances_to_point.hpp>
 #include <trajecmp/distance/modified_hausdorff.hpp>
 #include <trajecmp/geometry/hyper_sphere.hpp>
+#include <trajecmp/geometry/min_bounding_sphere.hpp>
 #include <trajecmp/util/angle.hpp>
 #include <trajecmp/util/approx.hpp>
 #include <trajecmp/util/find_local_extrema.hpp>
 #include <trajecmp/model/point.hpp>
 #include <trajecmp/trait/number_type_trait.hpp>
+#include <trajecmp/trajectory/circle.hpp>
 #include <boost/geometry.hpp>
 
 namespace trajecmp { namespace gesture {
@@ -269,6 +275,42 @@ namespace trajecmp { namespace gesture {
             }
         }
     }
+
+    template<
+            typename Trajectory,
+            typename Size = typename boost::geometry::coordinate_type<Trajectory>::type
+    >
+    Trajectory estimate_circle_trajectory_average_radius_factor_sized(
+            Size max_size,
+            const Trajectory &input_trajectory,
+            const trajecmp::geometry::hyper_sphere_of<Trajectory> &mbs) {
+        using trajecmp::util::r2d;
+        using trajecmp::distance::distances_to_point;
+        using trajecmp::trajectory::circle;
+        using Float = Size;
+
+        const auto c = estimate_circle_segment(input_trajectory, mbs);
+        const auto radii = distances_to_point(mbs.center, input_trajectory);
+        const auto sum = std::accumulate(std::begin(radii), std::end(radii),
+                                         Float(0));
+        const auto radius_factor = (sum / radii.size()) / mbs.radius;
+        LOG(radius_factor)
+        return circle<Trajectory>(radius_factor * max_size / Float(2))
+                .sample(r2d(c.start_angle), r2d(c.end_angle), Float(5));
+    }
+
+    template<
+            typename Trajectory,
+            typename Size = typename boost::geometry::coordinate_type<Trajectory>::type
+    >
+    Trajectory estimate_circle_trajectory_average_radius_factor_sized(
+            Size max_size,
+            const Trajectory &input_trajectory) {
+        const auto mbs =
+                trajecmp::geometry::min_bounding_sphere(input_trajectory);
+        return estimate_circle_trajectory_average_radius_factor_sized(
+                max_size, input_trajectory, mbs);
+    };
 
 }} // namespace trajecmp::util
 
