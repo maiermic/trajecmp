@@ -183,7 +183,7 @@ namespace trajecmp { namespace transform {
                 trajectory
         );
         boost::geometry::assign_zero(mbs.center);
-        mbs.radius = size;
+        mbs.radius = size / 2;
     }
 
     template<
