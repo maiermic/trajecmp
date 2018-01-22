@@ -40,17 +40,12 @@ get_circle_comparison_data(
         const model::trajectory &input_trajectory,
         const trajecmp::geometry::hyper_sphere_of<model::trajectory> &mbs) {
     using trajecmp::util::r2d;
+    using trajecmp::gesture::estimate_circle_trajectory_average_radius_factor_sized;
     namespace pm = pattern_matching;
 
-    const auto c = trajecmp::gesture::estimate_circle_segment(input_trajectory, mbs);
     const auto pattern_trajectory =
-            trajecmp::trajectory::circle<model::trajectory>(pm::normalized_size / 2)
-                    .sample(r2d(c.start_angle), r2d(c.end_angle), 5.0f);
-    LOG(input_trajectory);
-    LOG(mbs.center);
-    LOG(mbs.radius);
-    LOG(r2d(c.start_angle))
-    LOG(r2d(c.end_angle))
+            estimate_circle_trajectory_average_radius_factor_sized(
+                    pm::normalized_size, input_trajectory, mbs);
     return {
             input_trajectory,
             pattern_trajectory,
@@ -59,18 +54,6 @@ get_circle_comparison_data(
                     pattern_trajectory
             ),
     };
-}
-
-void translate_and_scale_using_mbs(
-        trajecmp::geometry::hyper_sphere_of<model::trajectory> &mbs,
-        model::trajectory &trajectory) {
-    trajecmp::transform::translate_and_scale(
-            trajecmp::geometry::negative_vector_of(mbs.center),
-            pattern_matching::normalized_size / (mbs.radius * 2),
-            trajectory
-    );
-    mbs.center = model::point(0.0, 0.0);
-    mbs.radius = pattern_matching::normalized_size;
 }
 
 model::trajectory get_distance_trajectory(
@@ -86,13 +69,15 @@ class framework : public record_trajectory_sdl2_framework {
     void handle_input_trajectory(model::trajectory input) override {
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
+        using trajecmp::transform::translate_and_scale_using_mbs;
         using trajecmp::gesture::get_rectangle_comparison_data;
+        using pattern_matching::normalized_size;
 
         // shared preprocessing of input trajectory
         input = douglas_peucker(3)(input);
         if (bg::num_points(input) < 3) return;
         auto mbs = trajecmp::geometry::min_bounding_sphere(input);
-        translate_and_scale_using_mbs(mbs, input);
+        translate_and_scale_using_mbs(normalized_size, mbs, input);
 
         auto circle_data =
                 get_circle_comparison_data(input, mbs);
@@ -101,9 +86,9 @@ class framework : public record_trajectory_sdl2_framework {
                 input, pattern_matching::modified_hausdorff_info);
 
         const bool is_rectangle = rectangle_data.distance.real_distance <
-                                  pattern_matching::normalized_size * 0.20;
+                                  normalized_size * 0.20;
         const bool is_circle = circle_data.distance.real_distance <
-                                  pattern_matching::normalized_size * 0.20;
+                                  normalized_size * 0.20;
 
         LOG(circle_data.distance.real_distance);
         LOG(rectangle_data.distance.real_distance);
