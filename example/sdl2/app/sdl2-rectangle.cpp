@@ -46,60 +46,47 @@ struct framework : public record_trajectory_sdl2_framework {
         input = translate_by(negative_vector_of(mbs.center))(input);
         input = scale_to_const<pm::normalized_size>(mbs.radius * 2)(input);
         bg::append(input, *std::begin(input));
-        draw_rectangle_comparison_data(
-                get_rectangle_comparison_data(input, modified_hausdorff_info)
-        );
+        auto data = get_rectangle_comparison_data(input,
+                                                  modified_hausdorff_info);
+        draw_rectangle_comparison_data(data);
     }
 
-    void draw_rectangle_comparison_data(const rectangle_comparison_data &data) {
+    void draw_rectangle_comparison_data(rectangle_comparison_data &data) {
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
-        const model::trajectory &input_trajectory =
+        model::trajectory &input_trajectory =
                 data.preprocessed_input_trajectory;
-        const model::trajectory &pattern_trajectory =
+        model::trajectory &pattern_trajectory =
                 data.preprocessed_pattern_trajectory;
         const bg::distance_info_result <model::point> &distance = data.distance;
-        static const auto visualization_size = 300;
-        int w, h;
-        SDL_GetRendererOutputSize(_renderer, &w, &h);
-        const int center_x = w / 2;
-        const int center_y = h / 2;
-        const model::vector center(center_x, center_y);
-        const auto transform_for_visualization = trajecmp::functional::pipe(
-                trajecmp::transform::scale_to_const<visualization_size>(
-                        pm::normalized_size),
-                trajecmp::transform::translate_by(center)
-        );
         const auto is_similar = distance.real_distance <
                                 pattern_matching::normalized_size *
                                 0.20;
-
-        draw_trajectory(_renderer, transform_for_visualization(
-                pattern_trajectory), color_code::yellow);
-        const model::trajectory visualization_input_trajectory =
-                transform_for_visualization(input_trajectory);
-        draw_trajectory(_renderer,
-                        visualization_input_trajectory,
-                        is_similar ? color_code::green
-                                   : color_code::red);
         model::trajectory distance_trajectory{
                 distance.projected_point1,
                 distance.projected_point2,
         };
-        draw_trajectory(_renderer, transform_for_visualization(
-                distance_trajectory), color_code::pink);
-        draw_box(_renderer, center, 10, color_code::gray);
+        transform_for_visualization(input_trajectory);
+        transform_for_visualization(pattern_trajectory);
+        transform_for_visualization(distance_trajectory);
+        draw_trajectory(_renderer, pattern_trajectory, color_code::yellow);
+        draw_trajectory(_renderer,
+                        input_trajectory,
+                        is_similar ? color_code::green
+                                   : color_code::red);
+        draw_trajectory(_renderer, distance_trajectory, color_code::pink);
+        draw_box(_renderer, get_visualization_center(), 10, color_code::gray);
         LOG(distance.real_distance);
 
         LOG(data.preprocessed_input_corner_indices.min_corner);
         LOG(data.preprocessed_input_corner_indices.max_corner);
         draw_box(_renderer,
-                 visualization_input_trajectory.at(
+                 input_trajectory.at(
                          data.preprocessed_input_corner_indices.min_corner),
                  10,
                  color_code::pink);
         draw_box(_renderer,
-                 visualization_input_trajectory.at(
+                 input_trajectory.at(
                          data.preprocessed_input_corner_indices.max_corner),
                  10,
                  color_code::cyan);
