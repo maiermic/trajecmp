@@ -13,6 +13,7 @@
 #include <boost/geometry/algorithms/append.hpp>
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
+#include <trajecmp/transform/translate_and_scale.hpp>
 #include "trajecmp/distance/distances_to_point.hpp"
 #include "trajecmp/util/angle.hpp"
 #include "trajecmp/util/boost_geometry_to_string.hpp"
@@ -26,72 +27,33 @@
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
 
-struct circle_comparison_data {
-    model::trajectory preprocessed_input_trajectory;
-    model::trajectory preprocessed_pattern_trajectory;
-    boost::geometry::distance_info_result<model::point> distance;
-};
-
-circle_comparison_data
-get_circle_comparison_data(const model::trajectory &input_trajectory) {
-    using trajecmp::util::r2d;
-    namespace pm = pattern_matching;
-    const auto mbs = trajecmp::geometry::min_bounding_sphere(input_trajectory);
-    const auto c = trajecmp::gesture::estimate_circle_segment(input_trajectory, mbs);
-    LOG(r2d(c.start_angle));
-    LOG(r2d(c.end_angle));
-    LOG(c.winding_number);
-    LOG_SEP();
-    const auto radii =
-        trajecmp::distance::distances_to_point(mbs.center, input_trajectory);
-    const auto sum = std::accumulate(radii.begin(),
-                                     radii.end(), 0.0f);
-    const auto radius_factor = (sum / radii.size()) / mbs.radius;
-    const auto pattern_trajectory =
-            trajecmp::trajectory::circle<model::trajectory>(radius_factor * pm::normalized_size / 2)
-                    .sample(r2d(c.start_angle), r2d(c.end_angle), 5.0f);
-    const auto preprocess_input = [&](model::trajectory trajectory) {
-        return trajecmp::transform::scale_to_const<pm::normalized_size>(mbs.radius * 2)(
-                trajecmp::transform::translate_by(trajecmp::geometry::negative_vector_of(c.center))(
-                        trajectory)
-        );
-    };
-    const model::trajectory preprocessed_input_trajectory =
-            preprocess_input(input_trajectory);
-    return {
-            preprocessed_input_trajectory,
-            pattern_trajectory,
-            pm::modified_hausdorff_info(
-                    preprocessed_input_trajectory,
-                    pattern_trajectory
-            ),
-    };
-}
 
 class framework : public record_trajectory_sdl2_framework {
 
     void handle_input_trajectory(model::trajectory input) {
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
+        using trajecmp::transform::translate_and_scale_using_mbs;
+        using trajecmp::gesture::estimate_circle_trajectory_average_radius_factor_sized;
+        using pattern_matching::normalized_size;
+        using pattern_matching::modified_hausdorff_info;
 
         input = douglas_peucker(3)(input);
         if (bg::num_points(input) < 3) return;
-        auto data = get_circle_comparison_data(input);
-        draw_comparison_data(data);
+        auto mbs = trajecmp::geometry::min_bounding_sphere(input);
+        translate_and_scale_using_mbs(normalized_size, mbs, input);
+        auto pattern = estimate_circle_trajectory_average_radius_factor_sized(
+                        normalized_size, input, mbs);
+        draw_comparison_data(modified_hausdorff_info(input, pattern), input,
+                             pattern);
     }
 
-    void draw_comparison_data(circle_comparison_data &data) {
-        namespace pm = pattern_matching;
-        namespace bg = boost::geometry;
-        model::trajectory &input_trajectory =
-                data.preprocessed_input_trajectory;
-        model::trajectory &pattern_trajectory =
-                data.preprocessed_pattern_trajectory;
-        bg::distance_info_result <model::point> &distance =
-                data.distance;
-        const auto is_similar = distance.real_distance <
-                                pattern_matching::normalized_size *
-                                0.20;
+    void draw_comparison_data(
+            const boost::geometry::distance_info_result<model::point> &distance,
+            model::trajectory &input_trajectory,
+            model::trajectory &pattern_trajectory) {
+        using pattern_matching::normalized_size;
+        const auto is_similar = distance.real_distance < normalized_size * 0.20;
         model::trajectory distance_trajectory{
                 distance.projected_point1,
                 distance.projected_point2,
