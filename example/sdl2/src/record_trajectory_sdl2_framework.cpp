@@ -1,12 +1,16 @@
 #include <trajecmp/transform/translate_and_scale.hpp>
 #include "record_trajectory_sdl2_framework.hpp"
 
+void record_trajectory_sdl2_framework::renderer_clear() {
+    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(_renderer);
+}
+
 void record_trajectory_sdl2_framework::display() {
     if (!_is_rerender) {
         return;
     }
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(_renderer);
+    renderer_clear();
 
     draw_trajectory(_renderer, _trajectory);
 

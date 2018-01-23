@@ -17,6 +17,8 @@ public:
 
     virtual void handle_input_trajectory(model::trajectory input)= 0;
 
+    void renderer_clear();
+
     void display() override;
 
     void handle_event(const SDL_Event &event) override;
