@@ -152,8 +152,19 @@ public:
                         beautified_rectangle_trajectory);
                 draw_trajectory(_renderer, beautified_rectangle_trajectory,
                                 color_code::orange);
-                _notification_box.message("matched rectangle in circle, draw circle again");
-                _notification_box.error("");
+                const auto mbs_b_circle = min_bounding_sphere(
+                        _beautified_circle_trajectory);
+                const auto mbs_b_rectangle = min_bounding_sphere(
+                        beautified_rectangle_trajectory);
+                const auto d = bg::distance(mbs_b_rectangle.center,
+                                            mbs_b_circle.center);
+                if (mbs_b_circle.radius < d + mbs_b_rectangle.radius) {
+                    _notification_box.message("draw circle again");
+                    _notification_box.error("beautified rectangle outside of circle");
+                } else {
+                    _notification_box.message("matched rectangle in circle, draw circle again");
+                    _notification_box.error("");
+                }
                 _notification_box.render(_renderer);
                 SDL_RenderPresent(_renderer);
                 is_rerender(false);
