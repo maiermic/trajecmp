@@ -29,6 +29,7 @@
 #include "trajecmp/transform/translate_and_scale.hpp"
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
+#include "notification_box.hpp"
 
 struct circle_comparison_data {
     model::trajectory preprocessed_input_trajectory;
@@ -72,6 +73,20 @@ class framework : public record_trajectory_sdl2_framework {
     };
     state _state = state::match_circle;
     model::trajectory _beautified_circle_trajectory;
+    notification_box _notification_box;
+
+public:
+    framework() : _notification_box(nullptr) {
+        TTF_Init();
+        const char *font_path = "/usr/share/fonts/truetype/freefont/FreeSans.ttf";
+        TTF_Font *font = TTF_OpenFont(font_path, 18);
+        _notification_box = notification_box(font);
+        _notification_box.message("draw circle");
+    }
+
+    ~framework() override {
+        TTF_Quit();
+    }
 
     void handle_input_trajectory(model::trajectory input) override {
         namespace bg = boost::geometry;
@@ -106,8 +121,11 @@ class framework : public record_trajectory_sdl2_framework {
                 draw_beautified_circle_trajectory();
                 SDL_RenderPresent(_renderer);
                 _state = state::match_rectangle;
+                _notification_box.message("draw rectangle");
+                _notification_box.error("");
             } else {
-                // TODO show mismatch notification
+                _notification_box.message("draw circle");
+                _notification_box.error("mismatched circle");
             }
         } else {
             bg::append(input, *std::begin(input));
@@ -126,13 +144,20 @@ class framework : public record_trajectory_sdl2_framework {
                         beautified_rectangle_trajectory);
                 draw_trajectory(_renderer, beautified_rectangle_trajectory,
                                 color_code::orange);
+                _notification_box.message("matched rectangle in circle, draw circle again");
+                _notification_box.error("");
+                _notification_box.render(_renderer);
                 SDL_RenderPresent(_renderer);
+                is_rerender(false);
+                _state = state::match_circle;
+                return;
             } else {
-                // TODO show mismatch notification
+                _notification_box.message("draw circle again");
+                _notification_box.error("mismatched rectangle");
+                _state = state::match_circle;
             }
-            _state = state::match_circle;
         }
-        is_rerender(false);
+        is_rerender(true);
     }
 
     void draw_beautified_circle_trajectory()  {
@@ -142,10 +167,14 @@ class framework : public record_trajectory_sdl2_framework {
 
     void display() override {
         record_trajectory_sdl2_framework::display();
-        if (_state == state::match_rectangle) {
-            draw_beautified_circle_trajectory();
+        if (is_rerender()) {
+            _notification_box.render(_renderer);
+            if (_state == state::match_rectangle) {
+                draw_beautified_circle_trajectory();
+            }
             SDL_RenderPresent(_renderer);
         }
+        is_rerender(false);
     }
 };
 
