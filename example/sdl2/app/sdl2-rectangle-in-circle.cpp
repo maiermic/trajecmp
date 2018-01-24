@@ -74,7 +74,7 @@ class framework : public record_trajectory_sdl2_framework {
     state _state = state::match_circle;
     model::trajectory _beautified_circle_trajectory;
     notification_box _notification_box;
-
+    trajecmp::geometry::hyper_sphere_of<model::trajectory> _mbs_of_circle_input;
 public:
     framework() : _notification_box(nullptr) {
         TTF_Init();
@@ -102,7 +102,14 @@ public:
         if (bg::num_points(input) < 3) return;
         auto mbs = min_bounding_sphere(input);
         if (_state == state::match_rectangle) {
-            // TODO check size and position are similar to circle
+            const auto d = bg::distance(mbs.center, _mbs_of_circle_input.center);
+            if (_mbs_of_circle_input.radius < d + mbs.radius) {
+                _notification_box.message("draw circle again");
+                _notification_box.error("input outside of circle");
+                _state = state::match_circle;
+                is_rerender(true);
+                return;
+            }
         }
         const auto original_mbs = mbs;
         translate_and_scale_using_mbs(normalized_size, mbs, input);
@@ -121,7 +128,8 @@ public:
                 draw_beautified_circle_trajectory();
                 SDL_RenderPresent(_renderer);
                 _state = state::match_rectangle;
-                _notification_box.message("draw rectangle");
+                _mbs_of_circle_input = original_mbs;
+                _notification_box.message("draw rectangle in circle");
                 _notification_box.error("");
             } else {
                 _notification_box.message("draw circle");
