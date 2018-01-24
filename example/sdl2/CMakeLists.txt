@@ -28,6 +28,8 @@ set(SRC_FILES
         src/record_trajectory_sdl2_framework.cpp
         src/draw.cpp
         src/model.cpp
+        src/notification_box.cpp
+        src/text_renderer.cpp
 )
 
 function(add_app name)
