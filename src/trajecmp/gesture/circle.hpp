@@ -294,7 +294,6 @@ namespace trajecmp { namespace gesture {
         const auto sum = std::accumulate(std::begin(radii), std::end(radii),
                                          Float(0));
         const auto radius_factor = (sum / radii.size()) / mbs.radius;
-        LOG(radius_factor)
         return circle<Trajectory>(radius_factor * max_size / Float(2))
                 .sample(r2d(c.start_angle), r2d(c.end_angle), Float(5));
     }
