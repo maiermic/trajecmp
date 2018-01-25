@@ -35,27 +35,53 @@ struct circle_comparison_data {
     model::trajectory preprocessed_input_trajectory;
     model::trajectory preprocessed_pattern_trajectory;
     boost::geometry::distance_info_result<model::point> distance;
+    float radius_factor;
 };
 
-circle_comparison_data
-get_circle_comparison_data(
+/**
+ * Get data of comparison of input trajectory and circle pattern.
+ *
+ * @param input_trajectory Normalized input trajectory with size of MBS and
+ * center of MBS equal to origin.
+ * @param mbs Minimum bounding sphere (MBS) of <code>input_trajectory</code>
+ * @param result Data of comparison is stored in this object.
+ * It is only initialized if <code>true</code> is returned.
+ * @return False if comparison is cancled since it is forseeable that input is
+ * not similar to a single circle.
+ */
+bool get_circle_comparison_data(
         const model::trajectory &input_trajectory,
-        const trajecmp::geometry::hyper_sphere_of<model::trajectory> &mbs) {
+        const trajecmp::geometry::hyper_sphere_of<model::trajectory> &mbs,
+        circle_comparison_data &result) {
     using trajecmp::util::r2d;
-    using trajecmp::gesture::estimate_circle_trajectory_average_radius_factor_sized;
+    using trajecmp::gesture::estimate_circle_segment;
+    using trajecmp::gesture::get_average_radius_factor_sized_circle_trajectory;
+    using trajecmp::distance::average_distance_to_point;
+    using trajecmp::trajectory::circle;
     namespace pm = pattern_matching;
 
+    const auto c = estimate_circle_segment(input_trajectory, mbs);
+    const auto a = r2d(std::abs(c.start_angle - c.end_angle));
+    if (c.winding_number > 1 || a < 360 - 45 || a > 360 + 45) {
+        return false;
+    }
+    const auto average_radius =
+            average_distance_to_point(mbs.center, input_trajectory);
+    const auto radius_factor = average_radius / mbs.radius;
     const auto pattern_trajectory =
-            estimate_circle_trajectory_average_radius_factor_sized(
-                    pm::normalized_size, input_trajectory, mbs);
-    return {
+            circle<model::trajectory>(
+                    radius_factor * pm::normalized_size / 2.0f)
+                    .sample(r2d(c.start_angle), r2d(c.end_angle), 5.0f);
+    result = {
             input_trajectory,
             pattern_trajectory,
             pm::modified_hausdorff_info(
                     input_trajectory,
                     pattern_trajectory
             ),
+            radius_factor,
     };
+    return true;
 }
 
 model::trajectory get_distance_trajectory(
@@ -96,6 +122,8 @@ public:
         using trajecmp::gesture::get_rectangle_comparison_data;
         using trajecmp::geometry::point::operator-;
         using pattern_matching::normalized_size;
+        using trajecmp::util::r2d;
+        using trajecmp::trajectory::circle;
 
         // shared preprocessing of input trajectory
         input = douglas_peucker(3)(input);
@@ -114,16 +142,17 @@ public:
         const auto original_mbs = mbs;
         translate_and_scale_using_mbs(normalized_size, mbs, input);
         if (_state == state::match_circle) {
-            auto circle_data = get_circle_comparison_data(input, mbs);
-            const bool is_circle = circle_data.distance.real_distance <
-                                      normalized_size * 0.20;
+            circle_comparison_data circle_data;
+            const bool is_circle =
+                    get_circle_comparison_data(input, mbs, circle_data) &&
+                    circle_data.distance.real_distance < normalized_size * 0.2;
             if (is_circle) {
                 _beautified_circle_trajectory =
-                        circle_data.preprocessed_pattern_trajectory;
-                trajecmp::transform::scale_and_translate(
-                        original_mbs.radius * 2 / normalized_size,
-                        original_mbs.center,
-                        _beautified_circle_trajectory);
+                        circle<model::trajectory>(circle_data.radius_factor * original_mbs.radius)
+                                .sample(0, 360, 5.0f);
+                _beautified_circle_trajectory =
+                        trajecmp::transform::translate_by(original_mbs.center)(
+                                _beautified_circle_trajectory);
                 renderer_clear();
                 draw_beautified_circle_trajectory();
                 SDL_RenderPresent(_renderer);
