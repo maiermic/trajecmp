@@ -16,6 +16,7 @@
 #include <trajecmp/trait/number_type_trait.hpp>
 #include <trajecmp/trajectory/circle.hpp>
 #include <boost/geometry.hpp>
+#include <trajecmp/distance/average_distance_to_point.hpp>
 
 namespace trajecmp { namespace gesture {
 
@@ -285,15 +286,14 @@ namespace trajecmp { namespace gesture {
             const Trajectory &input_trajectory,
             const trajecmp::geometry::hyper_sphere_of<Trajectory> &mbs) {
         using trajecmp::util::r2d;
-        using trajecmp::distance::distances_to_point;
+        using trajecmp::distance::average_distance_to_point;
         using trajecmp::trajectory::circle;
         using Float = Size;
 
         const auto c = estimate_circle_segment(input_trajectory, mbs);
-        const auto radii = distances_to_point(mbs.center, input_trajectory);
-        const auto sum = std::accumulate(std::begin(radii), std::end(radii),
-                                         Float(0));
-        const auto radius_factor = (sum / radii.size()) / mbs.radius;
+        const auto average_distance =
+                average_distance_to_point(mbs.center, input_trajectory);
+        const auto radius_factor = average_distance / mbs.radius;
         return circle<Trajectory>(radius_factor * max_size / Float(2))
                 .sample(r2d(c.start_angle), r2d(c.end_angle), Float(5));
     }
