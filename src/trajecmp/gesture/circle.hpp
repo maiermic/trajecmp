@@ -311,6 +311,29 @@ namespace trajecmp { namespace gesture {
                 max_size, input_trajectory, mbs);
     };
 
+    template<
+            typename Trajectory,
+            typename Size = typename boost::geometry::coordinate_type<Trajectory>::type,
+            typename Point = typename boost::geometry::point_type<Trajectory>::type,
+            typename Angle = typename boost::geometry::coordinate_type<Trajectory>::type
+    >
+    Trajectory get_average_radius_factor_sized_circle_trajectory(
+            Size max_size,
+            const Trajectory &input_trajectory,
+            const trajecmp::geometry::hyper_sphere_of<Trajectory> &mbs,
+            const circle_segment_info<Angle, Point> &c) {
+        using trajecmp::util::r2d;
+        using trajecmp::distance::average_distance_to_point;
+        using trajecmp::trajectory::circle;
+        using Float = Size;
+
+        const auto average_distance =
+                average_distance_to_point(mbs.center, input_trajectory);
+        const auto radius_factor = average_distance / mbs.radius;
+        return circle<Trajectory>(radius_factor * max_size / Float(2))
+                .sample(r2d(c.start_angle), r2d(c.end_angle), Float(5));
+    }
+
 }} // namespace trajecmp::util
 
 
