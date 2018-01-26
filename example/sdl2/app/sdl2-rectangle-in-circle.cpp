@@ -30,6 +30,7 @@
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
 #include "notification_box.hpp"
+#include "font.hpp"
 
 struct circle_comparison_data {
     model::trajectory preprocessed_input_trajectory;
@@ -102,11 +103,7 @@ class framework : public record_trajectory_sdl2_framework {
     notification_box _notification_box;
     trajecmp::geometry::hyper_sphere_of<model::trajectory> _mbs_of_circle_input;
 public:
-    framework() : _notification_box(nullptr) {
-        TTF_Init();
-        const char *font_path = "/usr/share/fonts/truetype/freefont/FreeSans.ttf";
-        TTF_Font *font = TTF_OpenFont(font_path, 18);
-        _notification_box = notification_box(font);
+    framework() : _notification_box(open_default_font()) {
         _notification_box.message("draw circle");
     }
 
