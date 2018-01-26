@@ -26,9 +26,17 @@
 #include "trajecmp/transform/douglas_peucker.hpp"
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
+#include "notification_box.hpp"
+#include "font.hpp"
 
 
 class framework : public record_trajectory_sdl2_framework {
+    notification_box _notification_box;
+
+public:
+    framework() : _notification_box(open_default_font()) {
+        _notification_box.message("draw circles");
+    }
 
     void handle_input_trajectory(model::trajectory input) {
         namespace bg = boost::geometry;
@@ -61,6 +69,7 @@ class framework : public record_trajectory_sdl2_framework {
         transform_for_visualization(pattern_trajectory);
         transform_for_visualization(input_trajectory);
         transform_for_visualization(distance_trajectory);
+        renderer_clear();
         draw_trajectory(_renderer, pattern_trajectory, color_code::yellow);
         draw_trajectory(_renderer, input_trajectory,
                         is_similar ? color_code::green
@@ -69,11 +78,27 @@ class framework : public record_trajectory_sdl2_framework {
         draw_trajectory(_renderer, distance_trajectory, color_code::pink);
         draw_box(_renderer, get_visualization_center(), 10, color_code::gray);
         LOG(distance.real_distance);
-
+        if (is_similar) {
+            _notification_box.message("matched circles");
+            _notification_box.error("");
+        } else {
+            _notification_box.message("draw circles");
+            _notification_box.error("mismatched circles");
+        }
+        _notification_box.render(_renderer);
         SDL_RenderPresent(_renderer);
         is_rerender(false);
     }
 
+    void display() override {
+        record_trajectory_sdl2_framework::display();
+        if (is_rerender()) {
+            _notification_box.render(_renderer);
+            SDL_RenderPresent(_renderer);
+        }
+        is_rerender(false);
+    }
+    
 };
 
 int main() {
