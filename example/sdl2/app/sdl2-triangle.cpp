@@ -17,6 +17,7 @@
 #include <boost/geometry/extensions/strategies/cartesian/distance_info.hpp>
 #include "trajecmp/transform/rearrange_closed_trajectory.hpp"
 #include <trajecmp/transform/close.hpp>
+#include <notification_box.hpp>
 #include "trajecmp/util/angle.hpp"
 #include "trajecmp/util/boost_geometry_to_string.hpp"
 #include "trajecmp/util/subscribe_with_latest_from.hpp"
@@ -25,6 +26,7 @@
 #include "trajecmp/transform/translate_and_scale.hpp"
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
+#include "font.hpp"
 
 model::trajectory get_distance_trajectory(
         const boost::geometry::distance_info_result<model::point> &distance) {
@@ -36,8 +38,12 @@ model::trajectory get_distance_trajectory(
 
 struct framework : public record_trajectory_sdl2_framework {
     const model::trajectory _pattern;
+    notification_box _notification_box;
 
-    explicit framework(const model::trajectory &pattern) : _pattern(pattern) {}
+    explicit framework(const model::trajectory &pattern)
+            : _pattern(pattern), _notification_box(open_default_font()) {
+        _notification_box.message("draw triangle");
+    }
 
     void handle_input_trajectory(model::trajectory input) override {
         namespace bg = boost::geometry;
@@ -53,7 +59,9 @@ struct framework : public record_trajectory_sdl2_framework {
         input = rearrange_closed_input_using_pattern_corners(_pattern, input);
         const auto distance = modified_hausdorff_info(_pattern, input);
         auto pattern_trajectory = _pattern;
+        renderer_clear();
         draw_trajectories(pattern_trajectory, input, distance);
+        _notification_box.render(_renderer);
         SDL_RenderPresent(_renderer);
         is_rerender(false);
     }
@@ -70,6 +78,13 @@ struct framework : public record_trajectory_sdl2_framework {
         const auto is_similar = distance.real_distance <
                                 pattern_matching::normalized_size *
                                 0.20;
+        if (is_similar) {
+            _notification_box.message("matched triangle, draw triangle again");
+            _notification_box.error("");
+        } else {
+            _notification_box.message("draw triangle again");
+            _notification_box.error("mismatched triangle");
+        }
         draw_trajectory(_renderer, pattern_trajectory, color_code::yellow);
         draw_trajectory(_renderer, input_trajectory,
                         is_similar ? color_code::green : color_code::red);
@@ -78,6 +93,15 @@ struct framework : public record_trajectory_sdl2_framework {
         draw_box(_renderer, input_trajectory.at(0), 10, color_code::orange);
         draw_box(_renderer, pattern_trajectory.at(1), 10, color_code::blue);
         draw_box(_renderer, input_trajectory.at(1), 10, color_code::blue);
+    }
+
+    void display() override {
+        record_trajectory_sdl2_framework::display();
+        if (is_rerender()) {
+            _notification_box.render(_renderer);
+            SDL_RenderPresent(_renderer);
+        }
+        is_rerender(false);
     }
 
 };
