@@ -27,7 +27,10 @@ void text_renderer::create_texture(SDL_Renderer *renderer) {
 }
 
 void text_renderer::render(SDL_Renderer *renderer) {
-    if (_texture == nullptr && !_text.empty()) {
+    if (_text.empty()) {
+        return;
+    }
+    if (_texture == nullptr) {
         create_texture(renderer);
     }
     SDL_RenderCopy(renderer, _texture, nullptr, &_texture_rect);
