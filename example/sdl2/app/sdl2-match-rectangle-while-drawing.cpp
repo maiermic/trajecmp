@@ -43,16 +43,6 @@ public:
                   _percentage_of_drawn_input(0.0f),
                   _is_recording_trajectory(false) {
         _notification_box.message("draw rectangle from the upper left corner downwards");
-
-        // TODO delete
-        model::trajectory input_example;
-        boost::geometry::read_wkt(
-//                "LINESTRING(264 108,274 223,274 290)",
-                "LINESTRING(177 144,185 295,192 289,261 288)",
-                input_example
-        );
-//        _display_counter = 9;
-//        handle_input_trajectory_part(input_example);
     }
 
     void
@@ -102,32 +92,6 @@ public:
                             ? i / (pattern.size() - 1.0f)
                             : length_of_input / length_of_pattern;
                 }
-                // TODO delete
-//                if (i == 2) {
-//                    model::trajectory input_trajectory = input;
-//                    model::trajectory pattern_trajectory = p;
-//                    using pattern_matching::modified_hausdorff_info;
-//                    const auto distance_i = modified_hausdorff_info(input_trajectory, pattern_trajectory);
-//                    const auto is_similar = distance_i.real_distance <
-//                                            pattern_matching::normalized_size *
-//                                            0.20;
-//                    model::trajectory distance_trajectory{
-//                            distance_i.projected_point1,
-//                            distance_i.projected_point2,
-//                    };
-//                    transform_for_visualization(input_trajectory);
-//                    transform_for_visualization(pattern_trajectory);
-//                    transform_for_visualization(distance_trajectory);
-//                    renderer_clear();
-//                    draw_trajectory(_renderer, pattern_trajectory, color_code::yellow);
-//                    draw_trajectory(_renderer,
-//                                    input_trajectory,
-//                                    is_similar ? color_code::green
-//                                               : color_code::red);
-//                    draw_trajectory(_renderer, distance_trajectory, color_code::pink);
-//                    SDL_RenderPresent(_renderer);
-//                    is_rerender(false);
-//                }
             }
             if (distance >= 20) {
                 _percentage_of_drawn_input = 0.0f;
@@ -145,7 +109,6 @@ public:
         using pattern_matching::modified_hausdorff_info;
 
         input = douglas_peucker(3)(input);
-        LOG(input)
         if (bg::num_points(input) < 4) return;
         auto mbs = trajecmp::geometry::min_bounding_sphere(input);
         translate_and_scale_using_mbs(pm::normalized_size, mbs, input);
