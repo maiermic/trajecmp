@@ -41,6 +41,7 @@ text_renderer::text_renderer(
         const SDL_Point &_text_pos,
         const SDL_Color &_text_color)
         : _font(_font),
+          _texture(nullptr),
           _text_color(_text_color),
           _text_pos(_text_pos) {
 
