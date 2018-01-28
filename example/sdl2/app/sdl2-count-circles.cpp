@@ -39,7 +39,7 @@ public:
         _notification_box.message("draw circles");
     }
 
-    void handle_input_trajectory(model::trajectory input) {
+    void handle_input_trajectory(model::trajectory input) override {
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
         using trajecmp::transform::translate_and_scale_using_mbs;
