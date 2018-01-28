@@ -25,6 +25,7 @@
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
 #include <font.hpp>
+#include <trajecmp/transform/translate_and_scale.hpp>
 #include "notification_box.hpp"
 
 
@@ -32,31 +33,118 @@ struct framework : public record_trajectory_sdl2_framework {
     using rectangle_comparison_data =
     trajecmp::gesture::rectangle_comparison_data<model::trajectory, boost::geometry::distance_info_result<model::point>>;
     notification_box _notification_box;
+    int _display_counter;
+    float _percentage_of_drawn_input;
+    bool _is_recording_trajectory;
 
 public:
-    framework() : _notification_box(open_default_font()) {
-        _notification_box.message("draw rectangle");
+    framework() : _notification_box(open_default_font()),
+                  _display_counter(0),
+                  _percentage_of_drawn_input(0.0f),
+                  _is_recording_trajectory(false) {
+        _notification_box.message("draw rectangle from the upper left corner downwards");
+
+        // TODO delete
+        model::trajectory input_example;
+        boost::geometry::read_wkt(
+//                "LINESTRING(264 108,274 223,274 290)",
+                "LINESTRING(177 144,185 295,192 289,261 288)",
+                input_example
+        );
+//        _display_counter = 9;
+//        handle_input_trajectory_part(input_example);
+    }
+
+    void
+    handle_input_trajectory_part(const model::trajectory &input_part) override {
+        _is_recording_trajectory = true;
+        if (_display_counter % 10 == 9) {
+            namespace pm = pattern_matching;
+            namespace bg = boost::geometry;
+            using trajecmp::transform::douglas_peucker;
+            using trajecmp::transform::translate_and_scale_using_mbs;
+            using trajecmp::gesture::get_rectangle_comparison_data;
+            using trajecmp::geometry::min_bounding_box;
+            using pattern_matching::modified_hausdorff;
+
+            model::trajectory input = input_part;
+            input = douglas_peucker(3)(input);
+            if (bg::num_points(input) < 2) return;
+            auto mbs = trajecmp::geometry::min_bounding_sphere(input);
+            translate_and_scale_using_mbs(pm::normalized_size, mbs, input);
+
+            const model::trajectory pattern =
+                    trajecmp::trajectory::rectangle<model::trajectory>(
+                            min_bounding_box(input));
+            model::trajectory partial_pattern = { pattern.front() };
+            float distance = 100.0; // TODO max value
+            int match_index = -1;
+            for (int i = 1; i < pattern.size(); ++i) {
+                partial_pattern.push_back(pattern.at(i));
+                auto p = partial_pattern;
+                mbs = trajecmp::geometry::min_bounding_sphere(p);
+                translate_and_scale_using_mbs(pm::normalized_size, mbs, p);
+                const float d = (float) modified_hausdorff(input, p);
+                if (d <= distance) {
+                    distance = d;
+                    match_index = i;
+                }
+                // TODO delete
+//                if (i == 2) {
+//                    model::trajectory input_trajectory = input;
+//                    model::trajectory pattern_trajectory = p;
+//                    using pattern_matching::modified_hausdorff_info;
+//                    const auto distance_i = modified_hausdorff_info(input_trajectory, pattern_trajectory);
+//                    const auto is_similar = distance_i.real_distance <
+//                                            pattern_matching::normalized_size *
+//                                            0.20;
+//                    model::trajectory distance_trajectory{
+//                            distance_i.projected_point1,
+//                            distance_i.projected_point2,
+//                    };
+//                    transform_for_visualization(input_trajectory);
+//                    transform_for_visualization(pattern_trajectory);
+//                    transform_for_visualization(distance_trajectory);
+//                    renderer_clear();
+//                    draw_trajectory(_renderer, pattern_trajectory, color_code::yellow);
+//                    draw_trajectory(_renderer,
+//                                    input_trajectory,
+//                                    is_similar ? color_code::green
+//                                               : color_code::red);
+//                    draw_trajectory(_renderer, distance_trajectory, color_code::pink);
+//                    SDL_RenderPresent(_renderer);
+//                    is_rerender(false);
+//                }
+            }
+            LOG(distance)
+            LOG(match_index)
+            _percentage_of_drawn_input =
+                    (match_index == -1 || distance > 20)
+                    ? 0.0f
+                    : (match_index / (pattern.size() - 1.0f));
+        }
     }
     
     void handle_input_trajectory(model::trajectory input) override {
+        _is_recording_trajectory = false;
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
-        using trajecmp::transform::translate_by;
-        using trajecmp::geometry::negative_vector_of;
-        using trajecmp::transform::scale_to_const;
+        using trajecmp::transform::translate_and_scale_using_mbs;
         using trajecmp::gesture::get_rectangle_comparison_data;
         using pattern_matching::modified_hausdorff_info;
 
         input = douglas_peucker(3)(input);
+        LOG(input)
         if (bg::num_points(input) < 4) return;
-        const auto mbs = trajecmp::geometry::min_bounding_sphere(input);
-        input = translate_by(negative_vector_of(mbs.center))(input);
-        input = scale_to_const<pm::normalized_size>(mbs.radius * 2)(input);
+        auto mbs = trajecmp::geometry::min_bounding_sphere(input);
+        translate_and_scale_using_mbs(pm::normalized_size, mbs, input);
         bg::append(input, *std::begin(input));
         auto data = get_rectangle_comparison_data(input,
                                                   modified_hausdorff_info);
         draw_rectangle_comparison_data(data);
+        _display_counter = 0;
+        _percentage_of_drawn_input = 0.0f;
     }
 
     void draw_rectangle_comparison_data(rectangle_comparison_data &data) {
@@ -117,10 +205,17 @@ public:
     void display() override {
         record_trajectory_sdl2_framework::display();
         if (is_rerender()) {
+            if (_is_recording_trajectory) {
+                std::ostringstream message;
+                message << "percentage of drawn input: " << std::fixed
+                        << std::setprecision(2) << _percentage_of_drawn_input;
+                _notification_box.message(message.str());
+            }
             _notification_box.render(_renderer);
             SDL_RenderPresent(_renderer);
         }
         is_rerender(false);
+        ++_display_counter;
     }
 };
 
