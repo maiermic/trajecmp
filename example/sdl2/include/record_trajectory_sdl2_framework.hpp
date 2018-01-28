@@ -17,6 +17,8 @@ public:
 
     virtual void handle_input_trajectory(model::trajectory input)= 0;
 
+    virtual void handle_input_trajectory_part(const model::trajectory &input_part);
+
     void renderer_clear();
 
     void display() override;

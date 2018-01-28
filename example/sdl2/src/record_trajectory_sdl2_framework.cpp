@@ -32,6 +32,7 @@ void record_trajectory_sdl2_framework::handle_event(const SDL_Event &event) {
                 _is_rerender = true;
                 bg::append(_trajectory,
                            model::point(event.motion.x, event.motion.y));
+                handle_input_trajectory_part(_trajectory);
             }
             break;
         case SDL_MOUSEBUTTONUP:
@@ -70,4 +71,8 @@ model::point record_trajectory_sdl2_framework::get_visualization_center() {
     SDL_GetRendererOutputSize(_renderer, &w, &h);
     return { w / 2, h / 2};
 
+}
+
+void record_trajectory_sdl2_framework::handle_input_trajectory_part(
+        const model::trajectory &input_part) {
 }
