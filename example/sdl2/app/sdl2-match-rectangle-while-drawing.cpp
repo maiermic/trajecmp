@@ -54,7 +54,6 @@ public:
             using trajecmp::transform::douglas_peucker;
             using trajecmp::transform::translate_and_scale_using_mbs;
             using trajecmp::gesture::get_rectangle_comparison_data;
-            using trajecmp::geometry::min_bounding_box;
             using trajecmp::transform::sub_trajectory;
             using pattern_matching::modified_hausdorff;
             using bg::length;
@@ -67,7 +66,7 @@ public:
 
             const model::trajectory pattern =
                     trajecmp::trajectory::rectangle<model::trajectory>(
-                            min_bounding_box(input));
+                            trajecmp::geometry::min_bounding_box(input));
             const double length_of_pattern = length(pattern);
             const double length_of_input = length(input);
             model::trajectory partial_pattern = { pattern.front() };
@@ -113,21 +112,21 @@ public:
         auto mbs = trajecmp::geometry::min_bounding_sphere(input);
         translate_and_scale_using_mbs(pm::normalized_size, mbs, input);
         bg::append(input, *std::begin(input));
-        auto data = get_rectangle_comparison_data(input,
-                                                  modified_hausdorff_info);
-        draw_rectangle_comparison_data(data);
+        model::trajectory pattern =
+                trajecmp::trajectory::rectangle<model::trajectory>(
+                        trajecmp::geometry::min_bounding_box(input));
+        draw_rectangle_comparison_data(input, pattern,
+                                       modified_hausdorff_info(input, pattern));
         _display_counter = 0;
         _percentage_of_drawn_input = 0.0f;
     }
 
-    void draw_rectangle_comparison_data(rectangle_comparison_data &data) {
+    void draw_rectangle_comparison_data(
+            model::trajectory &input_trajectory,
+            model::trajectory &pattern_trajectory,
+            const boost::geometry::distance_info_result<model::point> &distance) {
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
-        model::trajectory &input_trajectory =
-                data.preprocessed_input_trajectory;
-        model::trajectory &pattern_trajectory =
-                data.preprocessed_pattern_trajectory;
-        const bg::distance_info_result <model::point> &distance = data.distance;
         const auto is_similar = distance.real_distance <
                                 pattern_matching::normalized_size *
                                 0.20;
@@ -148,18 +147,6 @@ public:
         draw_box(_renderer, get_visualization_center(), 10, color_code::gray);
         LOG(distance.real_distance);
 
-        LOG(data.preprocessed_input_corner_indices.min_corner);
-        LOG(data.preprocessed_input_corner_indices.max_corner);
-        draw_box(_renderer,
-                 input_trajectory.at(
-                         data.preprocessed_input_corner_indices.min_corner),
-                 10,
-                 color_code::pink);
-        draw_box(_renderer,
-                 input_trajectory.at(
-                         data.preprocessed_input_corner_indices.max_corner),
-                 10,
-                 color_code::cyan);
         std::ostringstream variables_str;
         variables_str << "distance: " << std::fixed
                       << std::setprecision(2) << distance.real_distance;
