@@ -24,12 +24,20 @@
 #include "trajecmp/transform/douglas_peucker.hpp"
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
+#include <font.hpp>
+#include "notification_box.hpp"
 
 
 struct framework : public record_trajectory_sdl2_framework {
     using rectangle_comparison_data =
     trajecmp::gesture::rectangle_comparison_data<model::trajectory, boost::geometry::distance_info_result<model::point>>;
+    notification_box _notification_box;
 
+public:
+    framework() : _notification_box(open_default_font()) {
+        _notification_box.message("draw rectangle");
+    }
+    
     void handle_input_trajectory(model::trajectory input) override {
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
@@ -69,6 +77,7 @@ struct framework : public record_trajectory_sdl2_framework {
         transform_for_visualization(input_trajectory);
         transform_for_visualization(pattern_trajectory);
         transform_for_visualization(distance_trajectory);
+        renderer_clear();
         draw_trajectory(_renderer, pattern_trajectory, color_code::yellow);
         draw_trajectory(_renderer,
                         input_trajectory,
@@ -90,11 +99,29 @@ struct framework : public record_trajectory_sdl2_framework {
                          data.preprocessed_input_corner_indices.max_corner),
                  10,
                  color_code::cyan);
-
+        std::ostringstream variables_str;
+        variables_str << "distance: " << std::fixed
+                      << std::setprecision(2) << distance.real_distance;
+        if (is_similar) {
+            _notification_box.message("matched rectangle, " + variables_str.str());
+            _notification_box.error("");
+        } else {
+            _notification_box.message("draw rectangle");
+            _notification_box.error("mismatched rectangle, " + variables_str.str());
+        }
+        _notification_box.render(_renderer);
         SDL_RenderPresent(_renderer);
         is_rerender(false);
     }
 
+    void display() override {
+        record_trajectory_sdl2_framework::display();
+        if (is_rerender()) {
+            _notification_box.render(_renderer);
+            SDL_RenderPresent(_renderer);
+        }
+        is_rerender(false);
+    }
 };
 
 int main() {
