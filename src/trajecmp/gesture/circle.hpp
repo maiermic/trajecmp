@@ -53,12 +53,26 @@ namespace trajecmp { namespace gesture {
             typename Radius = typename boost::geometry::coordinate_type<Point>::type
     >
     struct circle_segment_info {
+        using Float = typename boost::geometry::coordinate_type<Point>::type;
+
         Angle start_angle;
         Angle end_angle;
         Point center;
         Radius radius;
         int winding_number;
         bool is_clockwise_winding_direction;
+
+        int full_circle_count() const {
+            return winding_number;
+        }
+
+        Float angle_diff() const {
+            return std::abs(start_angle - end_angle);
+        }
+
+        Float circle_count() const {
+            return angle_diff() / trajecmp::util::d2r(Angle(360.0));
+        }
     };
 
     /**
