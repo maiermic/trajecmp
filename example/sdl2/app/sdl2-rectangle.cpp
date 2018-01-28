@@ -30,7 +30,7 @@ struct framework : public record_trajectory_sdl2_framework {
     using rectangle_comparison_data =
     trajecmp::gesture::rectangle_comparison_data<model::trajectory, boost::geometry::distance_info_result<model::point>>;
 
-    void handle_input_trajectory(model::trajectory input) {
+    void handle_input_trajectory(model::trajectory input) override {
         namespace pm = pattern_matching;
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
