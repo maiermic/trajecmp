@@ -65,7 +65,9 @@ public:
             using trajecmp::transform::translate_and_scale_using_mbs;
             using trajecmp::gesture::get_rectangle_comparison_data;
             using trajecmp::geometry::min_bounding_box;
+            using trajecmp::transform::sub_trajectory;
             using pattern_matching::modified_hausdorff;
+            using bg::length;
 
             model::trajectory input = input_part;
             input = douglas_peucker(3)(input);
@@ -76,18 +78,29 @@ public:
             const model::trajectory pattern =
                     trajecmp::trajectory::rectangle<model::trajectory>(
                             min_bounding_box(input));
+            const double length_of_pattern = length(pattern);
+            const double length_of_input = length(input);
             model::trajectory partial_pattern = { pattern.front() };
             float distance = 100.0; // TODO max value
-            int match_index = -1;
+            _percentage_of_drawn_input = 0.0f;
             for (int i = 1; i < pattern.size(); ++i) {
                 partial_pattern.push_back(pattern.at(i));
-                auto p = partial_pattern;
+                model::trajectory p;
+                if (i < 3) {
+                    p = partial_pattern;
+                } else {
+                    const double l = length_of_input / length(partial_pattern);
+                    p = sub_trajectory(partial_pattern, 0.0, std::min(l, 1.0));
+                }
                 mbs = trajecmp::geometry::min_bounding_sphere(p);
                 translate_and_scale_using_mbs(pm::normalized_size, mbs, p);
                 const float d = (float) modified_hausdorff(input, p);
                 if (d <= distance) {
                     distance = d;
-                    match_index = i;
+                    _percentage_of_drawn_input =
+                            (i < 3)
+                            ? i / (pattern.size() - 1.0f)
+                            : length_of_input / length_of_pattern;
                 }
                 // TODO delete
 //                if (i == 2) {
@@ -116,12 +129,9 @@ public:
 //                    is_rerender(false);
 //                }
             }
-            LOG(distance)
-            LOG(match_index)
-            _percentage_of_drawn_input =
-                    (match_index == -1 || distance > 20)
-                    ? 0.0f
-                    : (match_index / (pattern.size() - 1.0f));
+            if (distance >= 20) {
+                _percentage_of_drawn_input = 0.0f;
+            }
         }
     }
     
