@@ -43,7 +43,8 @@ public:
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
         using trajecmp::transform::translate_and_scale_using_mbs;
-        using trajecmp::gesture::estimate_circle_trajectory_average_radius_factor_sized;
+        using trajecmp::gesture::estimate_circle_segment;
+        using trajecmp::gesture::get_average_radius_factor_sized_circle_trajectory;
         using pattern_matching::normalized_size;
         using pattern_matching::modified_hausdorff_info;
 
@@ -51,16 +52,18 @@ public:
         if (bg::num_points(input) < 3) return;
         auto mbs = trajecmp::geometry::min_bounding_sphere(input);
         translate_and_scale_using_mbs(normalized_size, mbs, input);
-        auto pattern = estimate_circle_trajectory_average_radius_factor_sized(
-                        normalized_size, input, mbs);
+        const auto c = estimate_circle_segment(input, mbs);
+        auto pattern = get_average_radius_factor_sized_circle_trajectory(
+                normalized_size, input, mbs, c);
         draw_comparison_data(modified_hausdorff_info(input, pattern), input,
-                             pattern);
+                             pattern, c);
     }
 
     void draw_comparison_data(
             const boost::geometry::distance_info_result<model::point> &distance,
             model::trajectory &input_trajectory,
-            model::trajectory &pattern_trajectory) {
+            model::trajectory &pattern_trajectory,
+            const trajecmp::gesture::circle_segment_info<float, model::point> &c) {
         using pattern_matching::normalized_size;
         const auto is_similar = distance.real_distance < normalized_size * 0.20;
         model::trajectory distance_trajectory{
@@ -83,6 +86,8 @@ public:
         variables_str << "distance: " << std::fixed
                       << std::setprecision(2) << distance.real_distance;
         if (is_similar) {
+            variables_str << ", circle count: " << c.circle_count()
+                          << ", full circle count: " << c.full_circle_count();
             _notification_box.message("matched circles, " + variables_str.str());
             _notification_box.error("");
         } else {
