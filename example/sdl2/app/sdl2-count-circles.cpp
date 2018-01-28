@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 #include <iterator>
 #include <numeric>
@@ -77,13 +78,16 @@ public:
 
         draw_trajectory(_renderer, distance_trajectory, color_code::pink);
         draw_box(_renderer, get_visualization_center(), 10, color_code::gray);
-        LOG(distance.real_distance);
+
+        std::ostringstream variables_str;
+        variables_str << "distance: " << std::fixed
+                      << std::setprecision(2) << distance.real_distance;
         if (is_similar) {
-            _notification_box.message("matched circles");
+            _notification_box.message("matched circles, " + variables_str.str());
             _notification_box.error("");
         } else {
             _notification_box.message("draw circles");
-            _notification_box.error("mismatched circles");
+            _notification_box.error("mismatched circles, " + variables_str.str());
         }
         _notification_box.render(_renderer);
         SDL_RenderPresent(_renderer);
