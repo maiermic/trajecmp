@@ -29,6 +29,8 @@
 
 
 struct framework : public record_trajectory_sdl2_framework {
+    static constexpr float max_distance =
+            pattern_matching::normalized_size * 0.20;
     using rectangle_comparison_data =
     trajecmp::gesture::rectangle_comparison_data<model::trajectory, boost::geometry::distance_info_result<model::point>>;
     notification_box _notification_box;
@@ -45,15 +47,32 @@ public:
         using trajecmp::transform::translate_by;
         using trajecmp::geometry::negative_vector_of;
         using trajecmp::transform::scale_to_const;
+        using trajecmp::transform::close_with_max_distance;
         using trajecmp::gesture::get_rectangle_comparison_data;
         using pattern_matching::modified_hausdorff_info;
 
         input = douglas_peucker(3)(input);
-        if (bg::num_points(input) < 4) return;
+        if (bg::num_points(input) < 4) {
+            renderer_clear();
+            _notification_box.message("draw rectangle");
+            _notification_box.error("mismatched rectangle, not enough points to be an rectangle");
+            _notification_box.render(_renderer);
+            SDL_RenderPresent(_renderer);
+            is_rerender(false);
+            return;
+        }
         const auto mbs = trajecmp::geometry::min_bounding_sphere(input);
         input = translate_by(negative_vector_of(mbs.center))(input);
         input = scale_to_const<pm::normalized_size>(mbs.radius * 2)(input);
-        bg::append(input, *std::begin(input));
+        if (!close_with_max_distance(max_distance, input)) {
+            renderer_clear();
+            _notification_box.message("draw rectangle");
+            _notification_box.error("mismatched rectangle, start and end points not close enough");
+            _notification_box.render(_renderer);
+            SDL_RenderPresent(_renderer);
+            is_rerender(false);
+            return;
+        }
         auto data = get_rectangle_comparison_data(input,
                                                   modified_hausdorff_info);
         draw_rectangle_comparison_data(data);
@@ -67,9 +86,7 @@ public:
         model::trajectory &pattern_trajectory =
                 data.preprocessed_pattern_trajectory;
         const bg::distance_info_result <model::point> &distance = data.distance;
-        const auto is_similar = distance.real_distance <
-                                pattern_matching::normalized_size *
-                                0.20;
+        const auto is_similar = distance.real_distance < max_distance;
         model::trajectory distance_trajectory{
                 distance.projected_point1,
                 distance.projected_point2,
