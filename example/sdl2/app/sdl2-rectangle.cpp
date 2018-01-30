@@ -25,6 +25,7 @@
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
 #include <font.hpp>
+#include <trajecmp/transform/translate_and_scale.hpp>
 #include "notification_box.hpp"
 
 
@@ -41,15 +42,13 @@ public:
     }
     
     void handle_input_trajectory(model::trajectory input) override {
-        namespace pm = pattern_matching;
         namespace bg = boost::geometry;
         using trajecmp::transform::douglas_peucker;
-        using trajecmp::transform::translate_by;
-        using trajecmp::geometry::negative_vector_of;
-        using trajecmp::transform::scale_to_const;
+        using trajecmp::transform::translate_and_scale_using_mbs;
         using trajecmp::transform::close_with_max_distance;
         using trajecmp::gesture::get_rectangle_comparison_data;
         using pattern_matching::modified_hausdorff_info;
+        using pattern_matching::normalized_size;
 
         input = douglas_peucker(3)(input);
         if (bg::num_points(input) < 4) {
@@ -61,9 +60,7 @@ public:
             is_rerender(false);
             return;
         }
-        const auto mbs = trajecmp::geometry::min_bounding_sphere(input);
-        input = translate_by(negative_vector_of(mbs.center))(input);
-        input = scale_to_const<pm::normalized_size>(mbs.radius * 2)(input);
+        translate_and_scale_using_mbs(normalized_size, input);
         if (!close_with_max_distance(max_distance, input)) {
             renderer_clear();
             _notification_box.message("draw rectangle");
