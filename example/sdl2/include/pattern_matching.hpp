@@ -33,7 +33,7 @@ namespace pattern_matching {
     const rxcpp::rxsub::subject<model::trajectory> pattern_trajectory_subject;
     const auto pattern_trajectory_stream = pattern_trajectory_subject.get_observable();
 
-    static const auto normalized_size = 100;
+    static constexpr auto normalized_size = 100;
 
     inline auto preprocess(rxcpp::observable<model::trajectory> trajectory_stream,
                     std::string trajectory_name) {
