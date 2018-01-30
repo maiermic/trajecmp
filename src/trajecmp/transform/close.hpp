@@ -19,6 +19,31 @@ namespace trajecmp { namespace transform {
         }
     };
 
+    /**
+     * Closes trajectory if distance of start and end point is less than a
+     * max_distance.
+     *
+     * @tparam Trajectory
+     * @tparam Distance
+     * @param max_distance
+     * @param trajectory
+     * @return <code>true</code> if trajectory got closed.
+     */
+    template<
+            typename Trajectory,
+            typename Distance = typename boost::geometry::coordinate_type<Trajectory>::type
+    >
+    bool
+    close_with_max_distance(Distance max_distance, Trajectory &trajectory) {
+        const auto first = trajectory.front();
+        const auto last = trajectory.back();
+        if (boost::geometry::distance(first, last) > max_distance) {
+            return false;
+        }
+        boost::geometry::append(trajectory, first);
+        return true;
+    }
+
 }} // namespace trajecmp::transform
 
 #endif //TRAJECMP_TRANSFORM_CLOSE_HPP
