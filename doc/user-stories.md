@@ -9,6 +9,12 @@ beginnen.
 Außerdem soll er es auch gegen den Uhrzeigersinn zeichnen dürfen.
 Die Eingabe-Trajektorie im folgenden Beispiel soll als ähnlich angesehen werden: 
 ![initial](img/algorithm/begin-closed-trajectory-at-any-point/0-initial.png)  
+Dafür muss der Startpunkt und die Punktreihenfolge bei der Normierung an das
+Pattern angeglichen werden.
+Das Ziel ist es diese normierte Eingabe-Trajektorie zu erhalten:  
+![join input trajectory parts](img/algorithm/begin-closed-trajectory-at-any-point/4-join.png)
+
+Dafür gehen wir wie folgt vor:
 
 1. Berechne Indizes der Punkte mit minimalem Abstand zu Punkten des Patterns
    ![min points](img/algorithm/begin-closed-trajectory-at-any-point/1-min-points.png)  
