@@ -24,10 +24,10 @@ Dafür gehen wir wie folgt vor:
    kleinsten Abstand zum zweiten Punkt des Patterns.
    Insgesamt erhält man `[2, 4, 5, 1]`.
    
-   Implementiert in `estimate_corners` in [trajecmp/transform/rearrange_closed_trajectory.hpp](../src/trajecmp/transform/rearrange_closed_trajectory.hpp#48).
+   Implementiert in `estimate_corners` in [trajecmp/transform/rearrange_closed_trajectory.hpp](../src/trajecmp/transform/rearrange_closed_trajectory.hpp#L48).
    Bei einem Rechteck kann man ausnutzen, dass die Eckpunkte gegenüberliegen
    und muss nur für zwei Eckpunkte die minimalen und maximalen Abstände
-   berechnen (siehe `estimate_rectangle_corners` in [trajecmp/gesture/rectangle.hpp](../src/trajecmp/gesture/rectangle.hpp#62)) 
+   berechnen (siehe `estimate_rectangle_corners` in [trajecmp/gesture/rectangle.hpp](../src/trajecmp/gesture/rectangle.hpp#L62)) 
 2. Zeichenrichtung herausfinden
    1. Sortiere die Indizes: `[1, 2, 4, 5]`
    2. Prüfe anhand der Indizes, ob der Punkt nach dem Startpunkt des Patterns
