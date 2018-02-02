@@ -58,6 +58,11 @@ Dafür gehen wir wie folgt vor:
    ![join input trajectory parts](img/algorithm/begin-closed-trajectory-at-any-point/4-join.png)
 5. Regulärer Vergleich (wie bei nicht geschlossener Trajektorie)
 
+**Beispiele:**
+
+* [example/sdl2/app/sdl2-rectangle.cpp](../example/sdl2/app/sdl2-rectangle.cpp)
+* [example/sdl2/app/sdl2-triangle.cpp](../example/sdl2/app/sdl2-triangle.cpp)
+
 **Bemerkung:** Sollte das Pattern ähnliche Punkte bzw. mehrmals den gleichen
 Punkt enthalten, wird beim 1. Schritt für diese jeweils der gleiche Punkt der
 Eingabe-Trajektorie (mit minimalem Abstand) bestimmt.
