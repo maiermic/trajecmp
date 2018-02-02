@@ -79,6 +79,20 @@ namespace trajecmp { namespace transform {
     }
 
     /**
+     * Check the indices to see if the trajectory has been reversed.
+     * @tparam Index 
+     * @param corner_indices Indices of trajectory corners.
+     * @return <code>true</code> if trajectory is reversed.
+     */
+    template<class Index>
+    bool is_reversed_corner_index_order(
+            const corner_indices_type<Index> &corner_indices) {
+        const Index second_corner_index =
+                get_second_corner_index(corner_indices);
+        return second_corner_index == corner_indices.at(1);
+    }
+
+    /**
      * Rearrange the corners of the input trajectory according to the corner
      * indices.
      *
@@ -103,17 +117,13 @@ namespace trajecmp { namespace transform {
         using ranges::view::take;
 
         const auto first_corner_index = corner_indices.front();
-        const Index second_corner_index =
-                get_second_corner_index(corner_indices);
-        const bool is_reversed =
-                second_corner_index == corner_indices.at(1);
         const trajecmp::range::to_trajectory<Trajectory> to_trajectory{};
         const auto first_corner = ranges::view::single(
                 ranges::at(input_trajectory, first_corner_index));
         const auto head =
                 input_trajectory | take(first_corner_index) | drop(1);
         const auto tail = input_trajectory | drop(first_corner_index);
-        return is_reversed
+        return is_reversed_corner_index_order(corner_indices)
                ? first_corner_index == 0
                  ? input_trajectory
                  : to_trajectory(concat(tail, head, first_corner))
