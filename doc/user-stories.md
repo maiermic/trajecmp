@@ -28,7 +28,7 @@ Dafür gehen wir wie folgt vor:
    Bei einem Rechteck kann man ausnutzen, dass die Eckpunkte gegenüberliegen
    und muss nur für zwei Eckpunkte die minimalen und maximalen Abstände
    berechnen (siehe `estimate_rectangle_corners` in [trajecmp/gesture/rectangle.hpp](../src/trajecmp/gesture/rectangle.hpp#L62)) 
-2. Zeichenrichtung herausfinden
+2. Zeichenrichtung herausfinden (siehe [`is_reversed_corner_index_order`](../src/trajecmp/transform/rearrange_closed_trajectory.hpp#L88))
    1. Sortiere die Indizes: `[1, 2, 4, 5]`
    2. Prüfe anhand der Indizes, ob der Punkt nach dem Startpunkt des Patterns
       auf den Startpunkt folgt (=> gleiche Zeichenrichtung wie Pattern).
