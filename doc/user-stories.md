@@ -51,10 +51,12 @@ Dafür gehen wir wie folgt vor:
       Da dies nicht der Fall ist, ist die Eingabe-Trajektorie in umgekehrter
       Richtung zum Pattern gezeichnet worden.
 
-3. Teile die Eingabetrajektorie am Index des Startpunkts des Patterns  
+3. Teile die Eingabetrajektorie am Index des Startpunkts des Patterns
+   (siehe [`rearrange_corners_according_to_indices`](../src/trajecmp/transform/rearrange_closed_trajectory.hpp#L123))  
    ![split input trajectory](img/algorithm/begin-closed-trajectory-at-any-point/3-split.png)
 4. Füge Teile unter Berücksichtigung der Zeichenrichtung zusammen, um für die
-   Eingabetrajektorie die gleiche Punktabfolge wie beim Pattern zu erreichen  
+   Eingabetrajektorie die gleiche Punktabfolge wie beim Pattern zu erreichen
+   (siehe [`rearrange_corners_according_to_indices`](../src/trajecmp/transform/rearrange_closed_trajectory.hpp#L126))  
    ![join input trajectory parts](img/algorithm/begin-closed-trajectory-at-any-point/4-join.png)
 5. Regulärer Vergleich (wie bei nicht geschlossener Trajektorie)
 
