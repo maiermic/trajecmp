@@ -25,6 +25,7 @@
 #include "trajecmp/gesture/rectangle.hpp"
 #include "trajecmp/trajectory/circle.hpp"
 #include "trajecmp/transform/douglas_peucker.hpp"
+#include "trajecmp/transform/close.hpp"
 #include "trajecmp/transform/translate_and_scale.hpp"
 #include "../../logging.hpp"
 #include "record_trajectory_sdl2_framework.hpp"
@@ -65,6 +66,8 @@ model::trajectory get_distance_trajectory(
 }
 
 class framework : public record_trajectory_sdl2_framework {
+    static constexpr float max_distance =
+            pattern_matching::normalized_size * 0.20;
 
     void handle_input_trajectory(model::trajectory input) override {
         namespace bg = boost::geometry;
@@ -72,6 +75,7 @@ class framework : public record_trajectory_sdl2_framework {
         using trajecmp::transform::translate_and_scale_using_mbs;
         using trajecmp::gesture::get_rectangle_comparison_data;
         using pattern_matching::normalized_size;
+        using trajecmp::transform::close_with_max_distance;
 
         // shared preprocessing of input trajectory
         input = douglas_peucker(3)(input);
@@ -81,14 +85,15 @@ class framework : public record_trajectory_sdl2_framework {
 
         auto circle_data =
                 get_circle_comparison_data(input, mbs);
-        bg::append(input, *std::begin(input));
+        const bool is_closed = close_with_max_distance(max_distance, input);
         auto rectangle_data = get_rectangle_comparison_data(
                 input, pattern_matching::modified_hausdorff_info);
 
-        const bool is_rectangle = rectangle_data.distance.real_distance <
-                                  normalized_size * 0.20;
+        const bool is_rectangle = is_closed &&
+                                  rectangle_data.distance.real_distance <
+                                  max_distance;
         const bool is_circle = circle_data.distance.real_distance <
-                                  normalized_size * 0.20;
+                                  max_distance;
 
         LOG(circle_data.distance.real_distance);
         LOG(rectangle_data.distance.real_distance);
