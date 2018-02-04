@@ -97,18 +97,119 @@ Teil-Trajektorie.
 Sollte auch diese matchen, wird dies als Match der kombinerten Trajektorie
 angesehen.
 
+Wenn die Teil-Trajektorien in einer beliebigen Reihenfolge gezeichnet werden
+dürfen, muss mit allen Teil-Trajektorien verglichen werden.
+Die kombinierte Trajektorie beginnt mit der ersten Teil-Trajektorie, die matcht.
+Danach wird nur noch mit den noch nicht gematchten Teil-Trajektorien verglichen.
+Dies macht man solange bis alle Teil-Trajektorien gezeichnet worden sind oder
+der erste Mismatch auftritt.
+Sollten alle Teil-Trajektorien gematcht haben, matcht auch die kombinierte
+Trajektorie. 
+
 **Bemerkung:** Solange der Vergleich mit der kombinierten Trajektorie läuft,
 können keine anderen Patterns matchen, d.h. der Vergleich mit diesen entfällt.
 Außerdem müssen alle bereits gezeichneten Teile der kombinierten Trajektorie
 dem Nutzer angezeigt werden.
 
+### Beispiel
+Im Beispiel [sdl2-rectangle-in-circle][sdl2-rectangle-in-circle]
+soll zuerst ein Kreis und anschließend ein Rechteck gezeichnet werden.
+Die genaue Vorgehensweise ist im Beispiel beschrieben.
 
-## Es soll möglich sein, die Ähnlichkeit abhängig von der Lage im Raum zu definieren
-Der Mittelpunkt der Minimum Bounding Sphere wird mit der gewünschten Position im
-Raum verglichen.
-Der Abstand zwischen den Punkten wird für die Ähnlichkeitsdefinition verwendet.
+
+<a name="position-size-orientation-dependend"></a>
+## Es soll möglich sein, die Ähnlichkeit abhängig von der Größe, Position und Lage im Raum zu definieren
+Bei Position, Größe und Lage (Orientierung) handelt es sich um Eigenschaften
+einer Trajektorie, die als zusätzliche Kriterien beim Vergleich dienen können.
+Oft ist eine Prüfung dieser Kriterien noch während der Vorverarbeitung der
+Eingabe-Trajektorie möglich.
+Für Position und Größe reicht in der Regel die Minimum Bounding Sphere aus,
+die normalerweise für die Normalisierung von Größe und Position als Vorbereitung
+für den Vergleich mit dem Pattern benötigt wird.
+Ist ein Kriterium nicht erfüllt, kann auf weitere Vorverarbeitungsschritte
+(z.B. Normalisierung der Eingabe-Trajektorie) und den Vergleich mit dem Pattern
+verzichtet werden.
+
+### Position
+Der Mittelpunkt der Minimum Bounding Sphere (MBS) der Eingabe-Trajektorie wird
+mit der gewünschten Position im Raum verglichen.
+Soll zum Beispiel eine Trajektorie in der linken oberen Ecke gezeichnet
+werden, darf das Zentrum der MBS nicht weiter als ein festgelegtes Maximum
+von der linken oberen Ecke entfernt sein.  
+![compare-position-using-MBS](img/algorithm/position-size-orientation-dependend/compare-position-using-MBS.png)  
+Das Zentrum der MBS der roten Eingabe-Trajektorie ist zu weit entfernt.
+Daher kann es sich nicht um einen Match handeln.
+Ein Vergleich mit dem gewünschten Pattern ist nicht notwendig.
+Das Zentrum der MBS der grünen Eingabe-Trajektorie ist nah genug.
+Die gewünschte Position ist somit gegeben, aber es muss noch ein Vergleich mit
+dem gewünschten Pattern erfolgen, um den vollständigen Match (z.B. Kreis oder
+Rechteck in der linken oberen Ecke) zu bestätigen.
+Soll z.B. ein Dreieck in der linken oberen Ecke gezeichnet werden, wäre die
+Position der grünen Trajektorie zwar richtig, aber beim anschließenden
+Vergleich mit dem Dreieck-Pattern käme eine Nichtübereinstimmung heraus.
+
+Im Beispiel [sdl2-rectangle-in-circle][sdl2-rectangle-in-circle]
+soll ein Rechteck in einem Kreis gezeichnet werden.
+Der Kreis wird zuerst gezeichnet.
+Ob das anschließende Rechteck matcht, hängt von der Position des zuvor
+gezeichneten Kreises ab.
+Mehr dazu am Ende des folgenden Kapitels [Größe](#Größe).
+
+### Größe
+Als Größe lässt sich der Radius bzw. Durchmesser der MBS verwenden.
+Zum Beispiel kann man prüfen, ob der Durchmesser in etwa 100 beträgt,
+d.h. man legt eine maximal erlaubte Abweichung fest.
+Wenn diese z.B. 5 beträgt, muss der Durchmesser zwischen 95 und 105 liegen.
+Sonst wird die Eingabe-Trajektorie als Nichtübereinstimmung angesehen und der
+Vergleich mit dem Pattern entfällt.
+
+Im Beispiel [sdl2-rectangle-in-circle][sdl2-rectangle-in-circle]
+soll ein Rechteck in einem Kreis gezeichnet werden.
+Der Kreis wird zuerst gezeichnet.
+Ob das anschließende Rechteck matcht, hängt von der Position und Größe des
+zuvor gezeichneten Kreises ab.
+Es muss der Mittelpunkt und der Radius des Kreises `k` gespeichert werden.
+Von der anschließend gezeichneten Trajektorie wird die MBS `r` berechnet.
+Position und Größe passen, wenn die Mittelpunkte von `k` und `r` maximal
+`k.radius + r.radius` entfernt sind.
+Eine genauere Beschreibung findet man in [sdl2-rectangle-in-circle][sdl2-rectangle-in-circle].
+
+### Lage (Orientierung)
 Die Orientierung der Eingabe-Trajektorie kann bestimmt werden und ebenfalls in
 die Ähnlichkeitsdefinition einfließen.
+Dies ist hauptsächlich im 3D-Raum von Bedeutung.
+3D zu zeichnen erfordert ein gutes räumliches Vorstellungsvermögen.
+Es ist ratsam hauptsächlich in einer 2D-Ebene im 3D-Raum zeichenen zu lassen.
+Dies gelingt den Nutzern leichter.
+
+Im folgenden Beispiel hat der Nutzer in der yz-Ebene gezeichnet:  
+![layer-in-3D-space](img/algorithm/position-size-orientation-dependend/layer-in-3D-space.png)  
+Nach der Normalisierung befindet sich der Mittelpunkt der Minimum Bounding
+Sphere im Ursprung:  
+![normalized-layer-in-3D-space](img/algorithm/position-size-orientation-dependend/normalized-layer-in-3D-space.png)  
+Wir möchten in diesem Beispiel den Nutzer nur in Ebenen zeichnen lassen,
+die im rechten Winkel zum Boden stehen.
+Der Nutzer soll also nur auf einer imaginären Wand zeichnen, die sich vor ihm
+befindet.
+Am Boden sollen seine Zeichnungen nicht erkannt werden.
+Um dies zu erreichen, legen wir den Ortsvektor des Startpunkts der
+Eingabe-Trajektorie als Orientierung fest:  
+![orientation-in-3D-space](img/algorithm/position-size-orientation-dependend/orientation-in-3D-space.png)  
+Wir wollen alle gezeichneten Trajektorien so um die y-Achse rotieren,
+dass der Ortsvektor des Startpunkts in Richtung der x-Achse zeigt:  
+![visualization-of-normalized-orientation-in-3D-space](img/algorithm/position-size-orientation-dependend/visualization-of-normalized-orientation-in-3D-space.png)  
+In diesem Fall wird die Eingabe-Trajektorie also um 90° gedreht:  
+![orientation-normalized-in-3D-space](img/algorithm/position-size-orientation-dependend/orientation-normalized-in-3D-space.png)  
+Nun kann man die Eingabe-Trajektorie problemlos mit einem Pattern in der
+xy-Ebene vergleichen.
+Diese Vorgehensweise wird [hier](https://github.com/maiermic/MagicVR/blob/4cdb7eed0b4aa7b85bd25f10b0bb6abe039a1b80/sources/magicvr/MagicTricks.cpp#L176)
+in der Virtual Reality Anwendung MagicVR angewandt.
+
+Es besteht auch die Möglichkeit, die Orientierung anders zu definieren oder
+einzuschränken und frühzeitig (ohne Berechnung der Distanz zum Pattern) einen
+Mismatch zu erkennen.
+Die Vorgehensweise hängt vom Pattern und dem gewünschten Ergebnis ab.
+
 
 ## Zirkulare Trajektorien (z.B. ein Kreis mehrmals hintereinander am Stück) sollen erkannt werden können (Anzahl Umrundungen).
 Wie bei geschlossener Trajektorie, nur dass Minima für jeden Punkt bestimmt
@@ -176,3 +277,6 @@ ausgeführt werden müssen.
 Hinzu kommt, dass es strittig sein dürfte was der Nutzer versucht zu zeichnen.
 Unzuverlässige Vorhersagen sind zu befürchten und für den Benutzer schlecht
 nachzuvollziehen.
+
+
+[sdl2-rectangle-in-circle]: example/sdl2-rectangle-in-circle.md
