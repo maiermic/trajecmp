@@ -45,13 +45,13 @@ des Kreises liegt (siehe [Zeile 187 ff.][L187]).
 So sieht zum Beispiel ein erfolgreich im Kreis gezeichnetes Rechteck aus:  
 ![rectangle-inside](../img/algorithm/position-size-orientation-dependend/rectangle-inside.png)  
 
-[sdl2-rectangle-in-circle]: ../example/sdl2/app/sdl2-rectangle-in-circle.cpp
-[_beautified_circle_trajectory init]: ../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L147
-[beautified_rectangle_trajectory init]: ../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L173
-[MBS of rectangle in MBS of circle]: ../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L129
-[L142]: ../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L142
-[L166]: ../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L166
-[L187]: ../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L187
+[sdl2-rectangle-in-circle]: ../../example/sdl2/app/sdl2-rectangle-in-circle.cpp
+[_beautified_circle_trajectory init]: ../../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L147
+[beautified_rectangle_trajectory init]: ../../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L173
+[MBS of rectangle in MBS of circle]: ../../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L129
+[L142]: ../../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L142
+[L166]: ../../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L166
+[L187]: ../../example/sdl2/app/sdl2-rectangle-in-circle.cpp#L187
 
 
 
