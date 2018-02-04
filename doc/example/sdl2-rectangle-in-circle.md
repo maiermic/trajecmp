@@ -11,8 +11,6 @@ Das Rechteck muss sich vollständig im Kreis befinden,
 d.h. es ist keine Überschneidung mit dem Kreis erlaubt.
 
 ## Beschreibung der Vorgehensweise
-Im Beispiel [sdl2-rectangle-in-circle.cpp][sdl2-rectangle-in-circle]
-soll ein Rechteck in einem Kreis gezeichnet werden.
 Es ist fast unmöglich einen optimalen Kreis (Pattern) zu zeichnen.
 Der gezeichnete Kreis weicht daher auch bei einem Match vom optimalen Kreis ab.
 Es ist jedoch von Vorteil, einen optimalen Kreis für die Berechnungen zu
