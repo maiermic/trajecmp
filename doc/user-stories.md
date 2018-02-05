@@ -278,5 +278,10 @@ Hinzu kommt, dass es strittig sein dürfte was der Nutzer versucht zu zeichnen.
 Unzuverlässige Vorhersagen sind zu befürchten und für den Benutzer schlecht
 nachzuvollziehen.
 
+### Beispiel
+Das Beispiel [sdl2-match-rectangle-while-drawing][sdl2-match-rectangle-while-drawing]
+zeigt wie man anhand von Sub-Patterns erkennen kann, wie viel der Nutzer von
+einem Rechteck gezeichnet hat.
 
+[sdl2-match-rectangle-while-drawing]: example/sdl2-match-rectangle-while-drawing.md
 [sdl2-rectangle-in-circle]: example/sdl2-rectangle-in-circle.md
