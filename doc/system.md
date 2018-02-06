@@ -65,7 +65,7 @@ There is a wide range of distance functions to choose from.
 Each has its pros and cons.
 Which distance function to use is down to you.
 
-Take a look at my examples.
+Take a look at my [examples](examples.md).
 I obtained good results using a modified Hausdorff distance function. See [Learning Traffic Patterns at Intersections by Spectral Clustering of Motion Trajectories](https://pdfs.semanticscholar.org/e422/b3bcf04a0f9ace1a4ea2b8be583831eec547.pdf)
 by Atev, Stefan, Osama Masoud and Nikolaos Papanikolopoulos.
 
