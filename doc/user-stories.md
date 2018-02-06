@@ -1,5 +1,6 @@
 # User Stories
 
+<a name="closed-trajectory"></a>
 ## Eine geschlossene Trajektorie (Anfangspunkt = Endpunkt) soll an einem beliebigen Punkt angefangen werden können.
 Nehmen wir als Beispiel-Pattern ein Quadrat, das in der linken oberen Ecke
 beginnt und im Uhrzeigersinn gezeichnet wird:  
