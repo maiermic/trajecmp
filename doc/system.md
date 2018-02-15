@@ -7,6 +7,12 @@ This system diagram visualizes my approach:
 
 ![system diagram](img/system-diagram.png)
 
+**Note:**
+The following describes the old/functional design that uses streams and
+immutable data.
+The new/procedural design (described [at the end](#new-design)) uses mutations
+to reduce copying to a minimum, resulting in increased performance.
+
 It looks like this in C++
 
 ```c++
@@ -149,3 +155,74 @@ if the result is foreseeable without further processing.
 A filter operation needs a predicate, which is a [Callable] with signature `bool (const Trajectory &)`.
 It might be a functor that depends on input arguments.
 For example, `has_min_num_points(2)` only lets trajectories pass that have at least two points.
+
+## New Design
+Immutable data makes it easier to reason about shared data between multiple
+transformations (for multiple gestures).
+But an immutable transformation that does not change its input returns a
+modified copy as output.
+This leads to a higher memory consumption and lower runtime performance due to
+the additional copy instructions.
+Chaining map- and filter-operations requires to store each intermediate result.
+Sharing intermediate results between multiple transformations (for multiple
+gestures) is harder to get right with streams because you have to consider time,
+which is unnecessary, because the processing of input does normally not depend
+on the previous trajectory in time.
+
+### Filter
+A function that usually takes a `const Trajectory&` and maybe some other
+parameters and returns a boolean as output.
+
+```c++
+bool has_length_greater_than(int length, const Trajectory& trajectory);
+```
+
+It can be used in an `if`-statement to cancel preprocessing if the result is
+foreseeable:
+
+```c++
+if (!has_length_greater_than(min_length, input)) {
+    // cancel preprocessing because input trajectory is too short to match
+    return;
+}
+// continue preprocessing
+```
+
+### Map
+It is preferable to do a transformation in-place.
+If it is possible, you can pass `Trajectory&` to the transformation function
+and modify the trajectory directly.
+For example, it is possible to translate each point of a trajectory by a vector
+in-place:
+
+```c++
+void translate_by(const Vector &vector, Trajectory &trajectory);
+```
+
+If a transformation can not be done in-place you can fallback to the old design
+and use a function with signature `Trajectory (const Trajectory &)`.
+
+### Filter-Map
+Sometimes it is advantageous (e. g. for performance reasons or encapsulation)
+to combine filter and map in a single function.
+`close_with_max_distance` (see [close.hpp](../src/trajecmp/transform/close.hpp))
+closes a trajectory only if it is nearly closed (distance of start and end
+point is less than a maximum distance (tolerance value)).
+
+```c++
+bool close_with_max_distance(Distance max_distance, Trajectory &trajectory);
+```
+
+It can be used in an `if`-statement to cancel preprocessing if the result is
+foreseeable:
+
+```c++
+if (!close_with_max_distance(max_distance, input)) {
+    // cancel preprocessing because input trajectory is not nearly closed
+    return;
+}
+// continue preprocessing; input trajectory is closed (start- equals end-point)
+```
+
+Only if `true` is returned by `close_with_max_distance`, the transformation
+(here closing) has been successfully applied.
