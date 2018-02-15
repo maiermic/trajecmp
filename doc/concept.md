@@ -92,7 +92,8 @@ If the distance is lower than the limit we consider two trajectories to be simil
 #### Distance Function
 There is a wide range of distance functions to choose from.
 Each has its pros and cons.
-Good results are obtained using a [modified Hausdorff distance function][modifiedHausdorffDistFn].
+Good results are obtained using a modified Hausdorff distance function (see
+[Learning Traffic Patterns at Intersections by Spectral Clustering of Motion Trajectories][modifiedHausdorffDistFn]).
 
 ![modified-hausdorff-distance](img/modified-hausdorff-distance.png)
 
