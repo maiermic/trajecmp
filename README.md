@@ -39,7 +39,8 @@ you can define an interaction (for example a button press or a pinch gesture)
 that controls the recording (start and stop).
 Thereby, you only record trajectories that are intended by the user.
 
-Imagine a game where you play a wizard that can do magic tricks by moving his magic wand.
+Imagine a game where you play a wizard that can do magic tricks by moving his
+magic wand (see [MagicVR](https://github.com/maiermic/MagicVR)).
 By drawing a lightning in the air you can magic up a flash light.
 
 ![draw lightning with magic wand](doc/img/lightning.png)
