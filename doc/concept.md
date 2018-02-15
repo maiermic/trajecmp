@@ -92,7 +92,7 @@ If the distance is lower than the limit we consider two trajectories to be simil
 #### Distance Function
 There is a wide range of distance functions to choose from.
 Each has its pros and cons.
-Good results are obtained using a [modified Hausdorff distance function](modifiedHausdorffDistFn).
+Good results are obtained using a [modified Hausdorff distance function][modifiedHausdorffDistFn].
 
 ![modified-hausdorff-distance](img/modified-hausdorff-distance.png)
 
@@ -119,7 +119,7 @@ Here you can see two screenshots of a 2D demo application of trajecmp that visua
 The yellow trajectory represents the lightning pattern.
 (i) shows a green trajectory, which has been classified as similar.
 In (ii) you can see a red trajectory, which has been classified as dissimilar.
-The pink line represents the distance that has been calculated using the [modified Hausdorff distance function](modifiedHausdorffDistFn).
+The pink line represents the distance that has been calculated using the [modified Hausdorff distance function][modifiedHausdorffDistFn].
 
 Finding a good limit is crucial to avoid/reduce false positives and negatives.
 If the limit is not tolerant enough, measuring inaccuracy of the input device recording the object position and natural small deviations during each movement execution will make it hard or impossible to recognize a movement.
