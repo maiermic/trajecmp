@@ -1,26 +1,5 @@
 # Concept
 
-<style>
-.row {
-    display: flex;
-    flex-flow: row;
-    align-items: flex-end;
-}
-.column {
-    display: flex;
-    flex-flow: column;
-    width: 100%;
-}
-.column img {
-    width: 70%;
-    margin: auto;
-}
-.column label {
-    text-align: center;
-}
-</style>
-
-
 ## Definition Of Gestures
 A gesture describes a movement.
 It is defined using a trajectory that describes the movement, preprocessing
@@ -39,17 +18,10 @@ state of the application and trigger events (show effects)):
 A pattern trajectory describes the ideal path of a movement.
 It is very unlikely that exactly the same trajectory is drawn and recorded.
 
-<div class="row">
-    <div class="column">
-        <img src="img/lightning-trajectory.png"><br>
-        <label>(a) pattern trajectory</label>
-    </div>
-    <div class="column">
-        <img src="img/possible-lightning-trajectory-input.png"><br>
-        <label>(b) recorded trajectory</label>
-    </div>
-</div>
-<br>
+| ![pattern](img/lightning-trajectory.png) | ![input](img/possible-lightning-trajectory-input.png) |
+|:---:|:---:|
+| (a) pattern trajectory | (b) recorded trajectory |
+
 Most commonly, input and pattern trajectory differ in the number of points,
 length/size, position, etc.
 Distance functions may assume specific preconditions.
@@ -58,67 +30,58 @@ length.
 The goal of the preprocessing is to prepare a trajectory for comparison with
 another trajectory:
 
-<div class="column">
-    <div class="column">
-        <div class="row">
-            <div class="column">
-                <img src="img/min-bounding-sphere-preprocessing-1.png">
-            </div>
-            <div class="column">
-                <img src="img/preprocessing-input-1.png">
-            </div>
-        </div>
-        <label>i. Trajectories before the preprocessing (pattern on the left, input on the right) differ in length/size and position.</label>
-    </div>
-    <br>
-    <div class="column">
-        <div class="row">
-            <div class="column">
-                <img src="img/min-bounding-sphere-preprocessing-3.png">
-            </div>
-            <div class="column">
-                <img src="img/preprocessing-input-3.png">
-            </div>
-        </div>
-        <label>ii. Trajectories after the preprocessing (pattern on the left, input on the right) have similar length/size and the same position.</label>
-    </div>
-</div>
-<br>
+<table>
+  <tr>
+    <td><img src="img/min-bounding-sphere-preprocessing-1.png"></td>
+    <td><img src="img/preprocessing-input-1.png"></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+        i. Trajectories before the preprocessing (pattern on the left, input on the right) differ in length/size and position.    
+    </td>
+  </tr>
+  <tr>
+    <td><img src="img/min-bounding-sphere-preprocessing-3.png"></td>
+    <td><img src="img/preprocessing-input-3.png"></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+        ii. Trajectories after the preprocessing (pattern on the left, input on the right) have similar length/size and the same position.    
+    </td>
+  </tr>
+</table>
 
 The appropriate preprocessing steps depend on the same factors as the limit that is used for [deciding similarity](#deciding-similarity) including the preprocessing itself in that way that the preprocessing steps influence each other.
 It is important to translate the trajectory to the origin before it is scaled:
 
-<div class="column">
-    <div class="row">
-        <div class="column">
-            <img src="img/min-bounding-sphere-preprocessing-1.png">
-            <br>
-            <label>i. Calculate Minimum Bounding Sphere</label>
-        </div>
-        <div class="column">
-            <img src="img/min-bounding-sphere-preprocessing-2.png">
-            <br>
-            <label>ii. Translate</label>
-        </div>
-        <div class="column">
-            <img src="img/min-bounding-sphere-preprocessing-3.png">
-            <br>
-            <label>iii. Scale</label>
-        </div>
-    </div>
-    <br>
-    <ol type="i">
-        <li>
-            The smallest circle (hyper sphere) that contains all points of the trajectory is calculated.
-        </li>
-        <li>
-            Then the trajectory is moved so that the center of this circle is in the origin.
-        </li>
-        <li>
-            After that the trajectory is scaled so that the diameter of the circle is 100.
-        </li>
-    </ol>
-</div>
+<table>
+  <tr>
+    <td><img src="img/min-bounding-sphere-preprocessing-1.png"></td>
+    <td><img src="img/min-bounding-sphere-preprocessing-2.png"></td>
+    <td><img src="img/min-bounding-sphere-preprocessing-3.png"></td>
+  </tr>
+  <tr>
+    <td align="center">i. Calculate Minimum Bounding Sphere</td>
+    <td align="center">ii. Translate</td>
+    <td align="center">iii. Scale</td>
+  </tr>
+  <tr>
+    <td colspan="3">
+        <ol type="i">
+            <li>
+                The smallest circle (hyper sphere) that contains all points of the trajectory is calculated.
+            </li>
+            <li>
+                Then the trajectory is moved so that the center of this circle is in the origin.
+            </li>
+            <li>
+                After that the trajectory is scaled so that the diameter of the circle is 100.
+            </li>
+        </ol>    
+    </td>
+  </tr>
+</table>
+
 
 ### Comparing Trajectories
 To check two trajectories for similarity we use a distance function to calculate the distance between them.
@@ -149,19 +112,11 @@ The order of the points is taken into account by `C(p)`.
 We consider two trajectories to be similar if the distance is lower than the limit.
 Here you can see two screenshots of a 2D demo application of trajecmp that visualizes the comparison of two standardized trajectories:
 
-<div class="row">
-    <div class="column">
-        <img src="img/similar-trajectories.png" style="width: 95%;">
-        <br>
-        <label>(i) Similar trajectories</label>
-    </div>
-    <div class="column">
-        <img src="img/dissimilar-trajectories.png" style="width: 95%;">
-        <br>
-        <label>(ii) Dissimilar trajectories</label>
-    </div>
-</div>
-<br>The yellow trajectory represents the lightning pattern.
+| ![similar-trajectories](img/similar-trajectories.png) | ![dissimilar-trajectories](img/dissimilar-trajectories.png) |
+|:---:|:---:|
+| (i) Similar trajectories | (ii) Dissimilar trajectories |
+
+The yellow trajectory represents the lightning pattern.
 (i) shows a green trajectory, which has been classified as similar.
 In (ii) you can see a red trajectory, which has been classified as dissimilar.
 The pink line represents the distance that has been calculated using the [modified Hausdorff distance function](modifiedHausdorffDistFn).
