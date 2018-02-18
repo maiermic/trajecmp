@@ -1,4 +1,7 @@
 # Terminology
+Do not hesitate to [create an issue](https://github.com/maiermic/trajecmp/issues/new)
+if you miss the definition of a term.
+I will add it as soon as possible.
 
 ## Trajectory
 
