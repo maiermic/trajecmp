@@ -63,8 +63,11 @@ This library helps you with this process.
 ## What To Read Next
 
 Take a quick look at the [terminology](doc/terminology.md) I use.
-Then read the [system description](doc/gestures-implementation.md) to get a better understanding how it works.
-Have a look at the examples to see it in action.
+Then read about the [concept and basic approach how gestures are defined](doc/gestures-basics.md)
+to get a better understanding how it works in theory.
+Next read [how to implement the concept in practice](doc/gestures-implementation.md).
+Once you understand the basic concept, take a look at [advanced gestures](doc/gestures-advanced.md).
+Have a look at the [examples](doc/examples.md) to see it in action.
 [This](doc/how-to-build.md) guide explains how to build the tests and examples.
 If your browser supports [WebAssembly] you can run [this][online demo] demo online. 
 
