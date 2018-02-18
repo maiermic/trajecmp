@@ -1,4 +1,14 @@
 # Advanced Gestures
+The [basic approach](gestures-basics.md)
+uses preprocessing to prepare input and pattern trajectories for the comparison
+with the [modified Hausdorff distance function](gestures-basics.md#distance-function),
+which expects two trajectories with similar position, size and point order.
+The preprocessing of the basic approach can be enhanced to implement gestures
+that can not be detected using only the
+[basic preprocessing steps](gestures-basics.md#preprocessing): translate and
+scale (and rotate).
+This document describes how to implement such advanced kind of gestures using
+enhanced preprocessing and generated pattern trajectories.
 
 <a name="closed-trajectory"></a>
 ## Eine geschlossene Trajektorie (Anfangspunkt = Endpunkt) soll an einem beliebigen Punkt angefangen werden können.
