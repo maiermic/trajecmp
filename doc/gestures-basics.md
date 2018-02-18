@@ -141,5 +141,22 @@ Taken together, the limit depends on
 - the scale of the trajectories
 - the distance function
 
+##### How to find a good limit
+There is not an optimal limit value.
+You should consider different limits for different gestures.
+Do the following to find a good limit for a gesture.
+Record the executions of the gesture multiple times (most suitable executed by
+different people).
+Use the maximum distance of all recorded input trajectories that should be
+considered as similar to the gesture pattern.
+Try edge cases to provoke false positives and negatives.
+Choose a distance that minimizes those false positives and negatives.
+
+**Note:** If you change something that the limit depends on you should check if
+the limit is still suitable.
+If not, redo the finding process to find a new suitable limit.
+You can benefit from previous recorded trajectories of false positives and
+negatives when redoing the process, since you do not have to record
+trajectories again.
 
 [modifiedHausdorffDistFn]: https://pdfs.semanticscholar.org/e422/b3bcf04a0f9ace1a4ea2b8be583831eec547.pdf
