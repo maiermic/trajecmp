@@ -1,4 +1,4 @@
-# User Stories
+# Advanced Gestures
 
 <a name="closed-trajectory"></a>
 ## Eine geschlossene Trajektorie (Anfangspunkt = Endpunkt) soll an einem beliebigen Punkt angefangen werden können.
