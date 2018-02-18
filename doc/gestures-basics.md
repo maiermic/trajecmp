@@ -1,4 +1,4 @@
-# Concept
+# Gestures - Concept and basic approach
 
 ## Definition Of Gestures
 A gesture describes a movement.
