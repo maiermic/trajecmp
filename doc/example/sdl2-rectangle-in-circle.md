@@ -1,7 +1,7 @@
 # Rechteck im Kreis ([sdl2-rectangle-in-circle.cpp][sdl2-rectangle-in-circle])
 Dieses Beispiel zeigt, wie man eine
-[kombinierte Trajektorie](../user-stories.md#combined)
-definiert, deren Teil-Trajektorie [positions- und größen-abhängig](../user-stories.md#position-size-orientation-dependend)
+[kombinierte Trajektorie](../gestures-advanced.md#combined)
+definiert, deren Teil-Trajektorie [positions- und größen-abhängig](../gestures-advanced.md#position-size-orientation-dependend)
 ist.
 
 ## Beschreibung der Geste

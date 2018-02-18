@@ -84,7 +84,7 @@ no specific start point and order of points.
 See [Performance evaluation metrics and statistics for positional tracker evaluation](http://ai2-s2-pdfs.s3.amazonaws.com/e686/72c74d44fab77c60c35f015b9e22acc86f91.pdf)
 by Needham, Chris J. und Roger D. Boyle.
 But this use case can be also solved using modified Hausdorff distance (see
-[closed trajectory use case](user-stories.md#closed-trajectory))
+[closed trajectory use case](gestures-advanced.md#closed-trajectory))
 
 ### Deciding Similarity
 
