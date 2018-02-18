@@ -63,7 +63,7 @@ This library helps you with this process.
 ## What To Read Next
 
 Take a quick look at the [terminology](doc/terminology.md) I use.
-Then read the [system description](doc/system.md) to get a better understanding how it works.
+Then read the [system description](doc/gestures-implementation.md) to get a better understanding how it works.
 Have a look at the examples to see it in action.
 [This](doc/how-to-build.md) guide explains how to build the tests and examples.
 If your browser supports [WebAssembly] you can run [this][online demo] demo online. 
